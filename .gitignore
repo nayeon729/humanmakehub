@@ -1,0 +1,26 @@
+# node_modules (프론트엔드)
+frontend/node_modules/
+
+# .env 같은 민감 정보
+.env
+backend/.env
+
+# macOS 쓸 때 생기는 거
+.DS_Store
+
+# VS Code 설정
+.vscode/
+
+# 로그 파일
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python __pycache__ (백엔드)
+__pycache__/
+backend/__pycache__/
+
+# 파이썬 실행 파일
+*.pyc
+*.pyo
+*.pyd
