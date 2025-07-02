@@ -8,4 +8,4 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install fastapi uvicorn pymysql python-jose[bcrypt] python-multipart bcrypt \ pydantic[email]  python-dotenv
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
