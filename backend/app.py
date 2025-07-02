@@ -75,7 +75,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         cur.execute("SELECT * FROM users WHERE username = %s", (form_data.username,))
         user = cur.fetchone()
 
-        if not user or not bcrypt.checkpw(form_data.password.encode('utf-8'), user['docker logs fastapi-container'].encode('utf-8')):
+        if not user or not bcrypt.checkpw(form_data.password.encode('utf-8'), user['password'].encode('utf-8')):
             raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 올바르지 않습니다.")
 
         access_token = create_access_token(data={"sub": str(user['id']), "username": user['username']})  # ✅ 수정

@@ -1,10 +1,14 @@
 import pymysql
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 db_config = {
-    "host": "192.168.0.87",
-    "user": "root",
-    "password": "0000",
-    "database": "humanmakehub",
+    "host": os.getenv("DB_HOST", "host.docker.internal"),
+    "user": os.getenv("DB_USER", "root"),
+    "password": os.getenv("DB_PASSWORD", "1234"),
+    "database": os.getenv("DB_NAME", "humanmakehub"),
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
 }
