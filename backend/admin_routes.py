@@ -4,7 +4,7 @@ import pymysql
 from database import db_config
 from jwt_auth import get_current_user
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter( tags=["Admin"])
 
 # --- 필요한 모델 ---
 class RoleUpdate(BaseModel):
@@ -18,7 +18,7 @@ class PaymentAgreementUpdateStatus(BaseModel):
 
 @router.get("/users")
 def get_all_users(user: dict = Depends(get_current_user)):
-    if str(user["user_id"]) != "admin":
+    if str(user["role"]) != "admin":
         raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -32,7 +32,7 @@ def get_all_users(user: dict = Depends(get_current_user)):
 
 @router.get("/stats")
 def get_admin_stats(user: dict = Depends(get_current_user)):
-    if str(user["user_id"]) != "admin":
+    if str(user["role"]) != "admin":
         raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -97,12 +97,12 @@ def update_agreement_status(agreement_id: int, update: PaymentAgreementUpdateSta
     finally:
         conn.close()
 
-@router.put("/admin/users/{user_id}")
-def update_user_role(user_id: int, update: RoleUpdate):
+@router.put("/users/{user_id}")
+def update_user_role(user_id: str, update: RoleUpdate):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            cursor.execute("UPDATE users SET role = %s WHERE id = %s", (update.role, user_id))
+            cursor.execute("UPDATE user SET role = %s WHERE user_id = %s", (update.role, user_id))
         conn.commit()
         return {"message": "사용자 역할이 수정되었습니다."}
     except Exception as e:
@@ -110,7 +110,7 @@ def update_user_role(user_id: int, update: RoleUpdate):
     finally:
         conn.close()
 
-@router.delete("/admin/users/{user_id}")
+@router.delete("/users/{user_id}")
 def delete_user(user_id: int):
     try:
         conn = pymysql.connect(**db_config)
@@ -123,7 +123,7 @@ def delete_user(user_id: int):
     finally:
         conn.close()
 
-@router.put("/admin/assign_pm/{project_id}")
+@router.put("/assign_pm/{project_id}")
 def assign_pm_to_project(project_id: int, pm_username: str = Body(..., embed=True)):
     try:
         conn = pymysql.connect(**db_config)

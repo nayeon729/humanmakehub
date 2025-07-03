@@ -12,7 +12,7 @@ export default function AdminUserManagementPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     fetchUsers();
@@ -31,7 +31,7 @@ export default function AdminUserManagementPage() {
     }
   };
 
-  const handleRoleChange = async (id, newRole) => {
+  const handleRoleChange = async (user_id, newRole) => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
@@ -43,7 +43,7 @@ export default function AdminUserManagementPage() {
     }
     try {
       await axios.put(
-        `${BASE_URL}/admin/users/${id}`,
+        `${BASE_URL}/admin/users/${user_id}`,
         { role: newRole },
         {
           headers: {
@@ -54,7 +54,7 @@ export default function AdminUserManagementPage() {
       );
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === id ? { ...user, role: newRole } : user
+          user.user_id === user_id ? { ...user, role: newRole } : user
         )
       );
       alert("✅ 역할이 성공적으로 수정되었습니다.");
@@ -72,7 +72,7 @@ export default function AdminUserManagementPage() {
       await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== selectedUserId));
+      setUsers((prevUsers) => prevUsers.filter((user) => user.user_id !== selectedUserId));
       setDeleteDialogOpen(false);
       alert("사용자가 삭제되었습니다.");
     } catch (error) {
@@ -110,14 +110,14 @@ export default function AdminUserManagementPage() {
           </TableHead>
           <TableBody>
             {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.id}</TableCell>
-                <TableCell>{user.username}</TableCell>
+              <TableRow key={user.user_id}>
+                <TableCell>{user.user_id}</TableCell>
+                <TableCell>{user.nickname}</TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center" gap={1}>
                     <Select
                       value={user.role}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      onChange={(e) => handleRoleChange(user.user_id, e.target.value)}
                       size="small"
                     >
                       <MenuItem value="admin">admin</MenuItem>
@@ -147,7 +147,7 @@ export default function AdminUserManagementPage() {
                     color="error"
                     size="small"
                     onClick={() => {
-                      setSelectedUserId(user.id);
+                      setSelectedUserId(user.user_id);
                       setDeleteDialogOpen(true);
                     }}
                   >

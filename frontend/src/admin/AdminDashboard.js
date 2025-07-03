@@ -9,14 +9,11 @@ import axios from "axios";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
-    users: 0,
-    projects: 0,
-    earningsPending: 0,
-    reports: 0,
-    pendingProjects: 0,
+    user: 0,
+    project: 0,
   });
   const navigate = useNavigate();
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -40,23 +37,15 @@ export default function AdminDashboard() {
     {
       icon: <GroupsIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
       title: "회원 수",
-      count: `${stats.users} 명`,
+      count: `${stats.user} 명`,
     },
     {
       icon: <WorkspacesIcon sx={{ fontSize: 40, color: "#43a047" }} />,
       title: "프로젝트 수",
-      count: `${stats.projects} 건`,
+      count: `${stats.project} 건`,
     },
-    {
-      icon: <PaidIcon sx={{ fontSize: 40, color: "#fb8c00" }} />,
-      title: "지급 요청",
-      count: `${stats.earningsPending} 건`,
-    },
-    {
-      icon: <ReportProblemIcon sx={{ fontSize: 40, color: "#e53935" }} />,
-      title: "신고 접수",
-      count: `${stats.reports} 건`,
-    },
+   
+
   ];
 
   return (
@@ -68,7 +57,7 @@ export default function AdminDashboard() {
       <Grid container spacing={2} mt={1}>
         {cards.map((card, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
-            <Paper sx={{ p: 2, borderRadius: 2, textAlign: "center", boxShadow: 2 }}>
+            <Paper sx={{ p: 10, px:24, borderRadius: 2, textAlign: "center", boxShadow: 2 }}>
               {card.icon}
               <Typography variant="subtitle1" fontWeight={600} mt={1}>
                 {card.title}
@@ -90,12 +79,6 @@ export default function AdminDashboard() {
             <ListItemText
               primary="프로젝트 승인 대기"
               secondary={`클라이언트가 신청한 승인 대기 프로젝트 ${stats.pendingProjects || 0} 건이 있습니다.`}
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              primary="지급 요청 처리"
-              secondary={`${stats.earningsPending} 건 대기 중`}
             />
           </ListItem>
         </List>
