@@ -111,14 +111,15 @@ def update_user_role(user_id: str, update: RoleUpdate):
         conn.close()
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int):
+def delete_user(user_id: str):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+            cursor.execute("DELETE FROM user WHERE user_id = %s", (user_id,))
         conn.commit()
         return {"message": "사용자가 삭제되었습니다."}
     except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

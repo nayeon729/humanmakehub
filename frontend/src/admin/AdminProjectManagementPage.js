@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [pms, setPms] = useState([]);
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
   const navigate = useNavigate();
 
   useEffect(() => {
