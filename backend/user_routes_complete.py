@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
@@ -6,9 +6,8 @@ import pymysql
 import bcrypt
 from jwt_auth import create_access_token, get_current_user
 from database import db_config
-from typing import Optional
 
-app = FastAPI(title="HumanMakeHub API", description="FastAPI + pymysql + JWT 인증 기반 플랫폼 API")
+router = APIRouter(prefix="", tags=["User"])
 
 # ---------- 모델 ----------
 class SkillItem(BaseModel):
@@ -32,7 +31,7 @@ class DuplicateCheckRequest(BaseModel):
     nickname: Optional[str] = None
 
 # ---------- 로그인 ----------
-@app.post("/login")
+@router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = pymysql.connect(**db_config)
     try:
@@ -49,7 +48,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         conn.close()
 
 # ---------- 내 정보 조회 ----------
-@app.get("/me")
+@router.get("/me")
 def get_my_info(user: dict = Depends(get_current_user)):
     print("🔥 get_my_info 받은 user:", user)
     conn = pymysql.connect(**db_config)
@@ -100,7 +99,7 @@ def get_my_info(user: dict = Depends(get_current_user)):
         conn.close()
 
 # ---------- 회원가입 ----------
-@app.post("/register")
+@router.post("/register")
 def register_user(user: UserRegister):
     conn = pymysql.connect(**db_config)
     try:
@@ -151,7 +150,7 @@ def register_user(user: UserRegister):
     finally:
         conn.close()
 
-@app.post("/check-duplicate")
+@router.post("/check-duplicate")
 def check_duplicate(data: DuplicateCheckRequest):
     result = {
         "user_idExists": False,

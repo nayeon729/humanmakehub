@@ -1,28 +1,22 @@
-
 from fastapi import FastAPI
-from user_routes_complete import app as user_app
-from admin_routes import app as admin_app
-import os
-import pymysql
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
-# 메인 앱 생성
+from user_routes_complete import router as user_router
+from admin_routes import router as admin_router
+
+# .env 환경변수 로딩
+load_dotenv()
+
+# FastAPI 앱 생성
 app = FastAPI(title="HumanMakeHub 메인")
 
-db_config = {
-    "host": os.getenv("MYSQL_HOST", "localhost"),
-    "user": os.getenv("MYSQL_USER", "root"),
-    "password": os.getenv("MYSQL_PASSWORD", ""),
-    "database": os.getenv("MYSQL_DATABASE", "humanmakehub"),
-    "charset": "utf8mb4",
-    "cursorclass": pymysql.cursors.DictCursor,
-}
-SECRET_KEY = os.getenv("SECRET_KEY", "dev")
-ALGORITHM   = os.getenv("ALGORITHM", "HS256")
+# CORS 설정
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "*",  # 개발 중일 때는 허용
+    "*",  # 개발 중일 때 허용
 ]
 
 app.add_middleware(
@@ -33,6 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 역할별 서브앱 mount
-app.mount("/user", user_app)
-app.mount("/admin", admin_app)
+# ✅ 라우터 포함
+app.include_router(user_router, prefix="/user")
+app.include_router(admin_router, prefix="/admin")
+
+# 루트 확인용
+@app.get("/")
+def read_root():
+    return {"message": "Hello from main.py 👋"}
