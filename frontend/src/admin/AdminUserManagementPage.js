@@ -11,7 +11,9 @@ export default function AdminUserManagementPage() {
   const [tab, setTab] = useState("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [isSearchTriggered, setIsSearchTriggered] = useState(false);
   const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
@@ -81,8 +83,30 @@ export default function AdminUserManagementPage() {
     }
   };
 
-  const filteredUsers = tab === "all" ? users : users.filter(user => user.role === tab);
+  const handleSearch = () => {
+  const keyword = searchKeyword.trim().toLowerCase();
+  setIsSearchTriggered(true);
+  if (!keyword) {
+    setFilteredUsers(users); // 검색어 없으면 필터링 안 함
+    return;
+  }
 
+  const results = users.filter(
+    (user) =>
+      user.user_id.toLowerCase().includes(keyword) ||
+      user.nickname.toLowerCase().includes(keyword)
+  );
+  setFilteredUsers(results);
+  };
+  
+  const visibleUsers =
+  tab === "all"
+    ? isSearchTriggered
+      ? filteredUsers
+      : users
+    : (isSearchTriggered ? filteredUsers : users).filter(
+        (user) => user.role === tab
+      );
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -96,7 +120,24 @@ export default function AdminUserManagementPage() {
         <Tab label="멤버" value="member" />
         <Tab label="클라이언트" value="client" />
       </Tabs>
-
+      <Box display="flex" gap={1} mb={2}>
+        <input
+          type="text"
+          placeholder="아이디 또는 닉네임 검색"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
+          style={{
+            padding: "8px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+            flex: 1,
+          }}
+        />
+        <Button variant="contained" onClick={handleSearch}>
+          검색
+        </Button>
+      </Box>
       <Paper sx={{ mt: 2, p: 2 }}>
         <Table>
           <TableHead>
@@ -109,7 +150,7 @@ export default function AdminUserManagementPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredUsers.map((user) => (
+            {visibleUsers.map((user) => (
               <TableRow key={user.user_id}>
                 <TableCell>{user.user_id}</TableCell>
                 <TableCell>{user.nickname}</TableCell>
