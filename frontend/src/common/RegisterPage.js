@@ -3,6 +3,7 @@ import { Box, Typography, Button, TextField, Container, Paper, FormControlLabel,
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
 const TECH_STACKS = {
   "프론트엔드": ["React", "Vue.js", "Angular", "Next.js", "JavaScript", "TypeScript", "HTML/CSS"],
   "백엔드": ["Node.js", "Python", "Django", "FastAPI", "Spring", "Java", "PHP", "C#"],
@@ -53,14 +54,14 @@ export default function RegisterPage() {
 
   const checkDuplicate = async (field) => {
     try {
-      const res = await axios.post(`${BASE_URL}/check-duplicate`, {
-        username: form.username,
+      const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
+        user_id: form.username,
         email: form.email,
         nickname: form.nickname,
       });
 
-      if (field === "username") {
-        if (res.data.usernameExists) {
+      if (field === "user_id") {
+        if (res.data.user_idExists) {
           alert("이미 사용 중인 아이디입니다.");
           setUsernameChecked(false);
         } else {
@@ -106,17 +107,21 @@ export default function RegisterPage() {
 
     try {
       const payload = {
-        username: form.username,
+        user_id: form.username,
+        nickname: form.nickname,
         email: form.email,
         password: form.password,
+        role,
         phone: form.phone || "",         // ✅ null 방지
         company: form.company || "",
         portfolio: form.portfolio || "",
-        role,
-        techStacks: role === "member" ? experience : undefined,
+        skills: selectedTechs.map((tech) => ({
+    skill_code: getCodeForSkill(tech),
+    experience: experience[tech]?.isNewbie ? "신입" : `${experience[tech]?.years}년`,
+  }))
       };
 
-      await axios.post(`${BASE_URL}/register`, payload);
+      await axios.post(`${BASE_URL}/user/register`, payload);
       alert("회원가입 완료!");
       navigate("/login");
     } catch (error) {
@@ -143,7 +148,7 @@ export default function RegisterPage() {
               <Stack spacing={2} mt={3}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <TextField fullWidth label="아이디" name="username" value={form.username} onChange={handleFormChange} />
-                  <Button variant="outlined" onClick={() => checkDuplicate("username")}>중복확인</Button>
+                  <Button variant="outlined" onClick={() => checkDuplicate("user_id")}>중복확인</Button>
                 </Stack>
 
                 <Stack direction="row" spacing={1} alignItems="center">
