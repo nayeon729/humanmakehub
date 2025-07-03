@@ -14,12 +14,16 @@ export default function AdminUserManagementPage() {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isSearchTriggered, setIsSearchTriggered] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  useEffect(() => {
+    setCurrentPage(1); // 탭 바뀌면 1페이지로
+  }, [tab]);
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -86,6 +90,7 @@ export default function AdminUserManagementPage() {
   const handleSearch = () => {
   const keyword = searchKeyword.trim().toLowerCase();
   setIsSearchTriggered(true);
+  setCurrentPage(1);
   if (!keyword) {
     setFilteredUsers(users); // 검색어 없으면 필터링 안 함
     return;
@@ -107,6 +112,12 @@ export default function AdminUserManagementPage() {
     : (isSearchTriggered ? filteredUsers : users).filter(
         (user) => user.role === tab
       );
+
+  const paginatedUsers = visibleUsers.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(visibleUsers.length / itemsPerPage);
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -150,7 +161,7 @@ export default function AdminUserManagementPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {visibleUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <TableRow key={user.user_id}>
                 <TableCell>{user.user_id}</TableCell>
                 <TableCell>{user.nickname}</TableCell>
@@ -200,7 +211,18 @@ export default function AdminUserManagementPage() {
           </TableBody>
         </Table>
       </Paper>
-
+      <Box display="flex" justifyContent="center" mt={2} gap={1}>
+        {Array.from({ length: totalPages }, (_, idx) => (
+          <Button
+            key={idx + 1}
+            variant={currentPage === idx + 1 ? "contained" : "outlined"}
+            onClick={() => setCurrentPage(idx + 1)}
+            size="small"
+          >
+            {idx + 1}
+          </Button>
+        ))}
+      </Box>
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>사용자 삭제 확인</DialogTitle>
         <DialogContent>
