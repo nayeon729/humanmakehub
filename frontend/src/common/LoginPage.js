@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     try {
       // 1. 로그인 요청
-      const response = await axios.post(`${BASE_URL}/login`, new URLSearchParams({
+      const response = await axios.post(`${BASE_URL}/user/login`, new URLSearchParams({
         username,
         password,
       }));
@@ -27,7 +27,7 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
 
       // 2. 사용자 정보 요청 (/me)
-      const userRes = await axios.get(`${BASE_URL}/me`, {
+      const userRes = await axios.get(`${BASE_URL}/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

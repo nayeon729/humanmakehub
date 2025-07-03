@@ -10,7 +10,7 @@ SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 
 # 토큰 생성 함수
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -39,8 +39,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     conn = pymysql.connect(**db_config)
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
             user = cursor.fetchone()
             if user is None:
                 raise credentials_exception
