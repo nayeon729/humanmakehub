@@ -23,8 +23,8 @@ export default function SidebarLayout({ role }) {
     ],
     client: [
       { text: "대시보드", path: "/client/dashboard" },
-      { text: "회원정보", path: "/client/user_info" },
-      { text: "프로젝트 생성", path: "/client/project_create" },
+      { text: "회원정보", path: "/client/userinfo" },
+      { text: "프로젝트 생성", path: "/client/create" },
       { text: "프로젝트 목록", path: "/client/project_list" },
       { text: "공지사항", path: "/client/noticeboard" },
     ],

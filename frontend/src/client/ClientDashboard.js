@@ -5,7 +5,7 @@ import { Box, Typography, Button, Paper, Grid, Chip, Skeleton, Stack, LinearProg
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function ClientDashBoard() {
+export default function ClientDashboard() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ export default function ClientDashBoard() {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        📂 내 프로젝트 관리
+        📂 내 프로젝트 관리하기
       </Typography>
 
       <Button
