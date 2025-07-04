@@ -11,8 +11,10 @@ router = APIRouter(prefix="", tags=["User"])
 
 # ---------- 모델 ----------
 class SkillItem(BaseModel):
-    skill_code: str       # 기술 코드 (ex: B01, C02 등)
-    experience: str       # "신입" or "3년"
+    code_id: str       # 기술 코드 (ex: B01, C02 등)
+    years: str       # "신입" or "3년"
+    code_name: str    # 기술 이름 (ex: React, Python 등)
+    parent_code: str  # 부모코드 (ex: T01, T02 등)
 
 class UserRegister(BaseModel):
     user_id: str
@@ -62,7 +64,7 @@ def get_my_info(user: dict = Depends(get_current_user)):
                 SELECT 
                     us.skill_id,
                     cc.code_name,
-                    us.experience,
+                    us.years,
                     us.is_fresher
                 FROM user_skills us
                 JOIN common_code cc ON us.skill_id = cc.code_id
@@ -128,19 +130,19 @@ def register_user(user: UserRegister):
             if user.skills:
                 sql_skill = '''
                     INSERT INTO user_skills (
-                        user_id, skill_code, experience, is_fresher, create_dt, del_yn
+                        user_id, years, is_fresher, code_id, code_name, parent_code, create_dt, del_yn
                     ) VALUES (
-                        %s, %s, %s, %s, NOW(), 'N'
+                        %s, %s, %s, %s, %s, %s, NOW(), 'N'
                     )
                 '''
                 for skill in user.skills:
-                    is_fresher = 'Y' if skill.experience.strip() == "신입" else 'N'
+                    is_fresher = 'Y' if skill.years.strip() == "신입" else 'N'
                     try:
-                        years = 0 if is_fresher == 'Y' else int(skill.experience.strip().replace("년", ""))
+                        years = 0 if is_fresher == 'Y' else int(skill.years.strip().replace("년", ""))
                     except ValueError:
-                        raise HTTPException(status_code=400, detail=f"경력 입력값 오류: {skill.experience}")
+                        raise HTTPException(status_code=400, detail=f"경력 입력값 오류: {skill.years}")
                     cursor.execute(sql_skill, (
-                        user.user_id, skill.skill_code, years, is_fresher
+                        user.user_id, years, is_fresher, skill.code_id, skill.code_name, skill.parent_code
                     ))
 
         conn.commit()
@@ -181,3 +183,45 @@ def check_duplicate(data: DuplicateCheckRequest):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+# 기술불러오기
+@router.get("/tech-stacks")
+def get_tech_stacks():
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 자식 코드만 가져오기 (PARENT_CODE가 NULL 아닌 것만)  React , Node.js 등등
+            sql = """
+                SELECT code_id, code_name, parent_code
+                FROM common_code
+                WHERE group_id = 'TECH_STACK' AND parent_code IS NOT NULL
+                ORDER BY code_id ASC
+            """
+            cursor.execute(sql)
+            child_codes = cursor.fetchall()
+
+            # 부모 코드도 같이 가져오기  프론트엔드, 백엔드 등등
+            cursor.execute("""
+                SELECT code_id, code_name
+                FROM common_code
+                WHERE group_id = 'TECH_STACK' AND parent_code IS NULL
+                ORDER BY code_id ASC
+            """)
+            parent_codes = cursor.fetchall()
+
+        # 🧠 분류용 딕셔너리로 정리
+        result = {}
+        parent_map = {row["code_id"]: row["code_name"] for row in parent_codes}
+        for item in child_codes:
+            parent_name = parent_map.get(item["parent_code"], "기타")
+            if parent_name not in result:
+                result[parent_name] = []
+            result[parent_name].append({
+                "label": item["code_name"],
+                "code_id": item["code_id"],
+                "parent_code": item["parent_code"]
+            })
+
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, FormControlLabel, Checkbox, Chip, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -21,6 +21,7 @@ export default function RegisterPage() {
     username: "", email: "", password: "", confirmPassword: "",
     phone: "", company: "", portfolio: "", nickname: "", agreeTerms: false
   });
+  const [techStacks, setTechStacks] = useState({});
   const [selectedTechs, setSelectedTechs] = useState([]);
   const [experience, setExperience] = useState({});
   const [usernameChecked, setUsernameChecked] = useState(false);
@@ -29,15 +30,38 @@ export default function RegisterPage() {
 
   const BASE_URL = "http://127.0.0.1:8000";
 
+  useEffect(() => {
+    axios.get(`${BASE_URL}/user/tech-stacks`)
+      .then(res => {
+        setTechStacks(res.data);
+        console.log("res.data", res.data);
+      })
+      .catch(err => {
+        console.error("기술 스택 불러오기 실패", err);
+      });
+  }, []);
+
   const handleFormChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const toggleTech = (tech) => {
-    setSelectedTechs((prev) => (prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]));
+    setSelectedTechs((prev) => {
+      const exists = prev.some((t) => t.code_id === tech.code_id);
+      if (exists) {
+        return prev.filter((t) => t.code_id !== tech.code_id);
+      } else {
+        return [...prev, tech];
+      }
+    });
+
     setExperience((prev) => {
       const newExp = { ...prev };
-      prev[tech] ? delete newExp[tech] : (newExp[tech] = { years: "", isNewbie: false });
+      if (prev[tech.label]) {
+        delete newExp[tech.code_id];
+      } else {
+        newExp[tech.label] = { years: "", isNewbie: false };
+      }
       return newExp;
     });
   };
@@ -45,8 +69,8 @@ export default function RegisterPage() {
   const handleExpChange = (tech, field, value) => {
     setExperience((prev) => ({
       ...prev,
-      [tech]: {
-        ...prev[tech],
+      [tech.label]: {
+        ...prev[tech.label],
         [field]: field === "isNewbie" ? value : value.replace(/\D/, ""),
       },
     }));
@@ -68,6 +92,9 @@ export default function RegisterPage() {
           alert("사용 가능한 아이디입니다.");
           setUsernameChecked(true);
         }
+        console.log("techStacks", techStacks);
+        console.log("selectedTechs", selectedTechs);
+        console.log("experience", experience);
       }
 
       if (field === "email") {
@@ -116,9 +143,11 @@ export default function RegisterPage() {
         company: form.company || "",
         portfolio: form.portfolio || "",
         skills: selectedTechs.map((tech) => ({
-    skill_code: getCodeForSkill(tech),
-    experience: experience[tech]?.isNewbie ? "신입" : `${experience[tech]?.years}년`,
-  }))
+          code_id: tech.code_id,
+          years: experience[tech.label]?.isNewbie ? "신입" : `${experience[tech.label]?.years}년`,
+          code_name: tech.label,
+          parent_code: tech.parent_code,
+        }))
       };
 
       await axios.post(`${BASE_URL}/user/register`, payload);
@@ -191,22 +220,22 @@ export default function RegisterPage() {
 
                 {role === "member" && (
                   <>
-                    {Object.entries(TECH_STACKS).map(([category, techs]) => (
+                    {Object.entries(techStacks).map(([category, techs]) => (
                       <Box key={category} sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2 }}>
                         <Typography variant="subtitle1" fontWeight="bold" mb={1}>{category}</Typography>
                         <Stack direction="row" gap={1} flexWrap="wrap">
                           {techs.map((tech) => (
-                            <Chip key={tech} label={tech} clickable color={selectedTechs.includes(tech) ? "primary" : "default"} onClick={() => toggleTech(tech)} />
+                            <Chip key={tech.code_id} label={tech.label} clickable color={selectedTechs.some((t) => t.code_id ===tech.code_id) ? "primary" : "default"} onClick={() => toggleTech(tech)} />
                           ))}
                         </Stack>
                       </Box>
                     ))}
                     {selectedTechs.map((tech) => (
-                      <Paper key={tech} sx={{ p: 2, bgcolor: "#fafafa" }}>
-                        <Typography variant="subtitle2" fontWeight="bold">{tech} 경력 입력</Typography>
+                      <Paper key={tech.code_id} sx={{ p: 2, bgcolor: "#fafafa" }}>
+                        <Typography variant="subtitle2" fontWeight="bold">{tech.label} 경력 입력</Typography>
                         <Stack direction="row" spacing={2} alignItems="center">
-                          <TextField size="small" label="경력(년)" disabled={experience[tech]?.isNewbie} value={experience[tech]?.years || ""} onChange={(e) => handleExpChange(tech, "years", e.target.value)} />
-                          <FormControlLabel control={<Checkbox checked={experience[tech]?.isNewbie || false} onChange={(e) => handleExpChange(tech, "isNewbie", e.target.checked)} />} label="신입" />
+                          <TextField size="small" label="경력(년)" disabled={experience[tech.label]?.isNewbie} value={experience[tech.label]?.years || ""} onChange={(e) => handleExpChange(tech, "years", e.target.value)} />
+                          <FormControlLabel control={<Checkbox checked={experience[tech.label]?.isNewbie || false} onChange={(e) => handleExpChange(tech, "isNewbie", e.target.checked)} />} label="신입" />
                         </Stack>
                       </Paper>
                     ))}
