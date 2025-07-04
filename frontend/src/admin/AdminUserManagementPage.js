@@ -10,6 +10,7 @@ export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
   const [tab, setTab] = useState("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [recoverDialogOpen, setRecoverDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -72,20 +73,21 @@ export default function AdminUserManagementPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!selectedUserId) return;
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUsers((prevUsers) => prevUsers.filter((user) => user.user_id !== selectedUserId));
-      setDeleteDialogOpen(false);
-      alert("사용자가 삭제되었습니다.");
-    } catch (error) {
-      console.error("사용자 삭제 실패", error);
-      alert("사용자 삭제에 실패했습니다.");
-    }
-  };
+  if (!selectedUserId) return;
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchUsers();
+    setDeleteDialogOpen(false);
+    alert("✅ 사용자가 삭제(표시)되었습니다.");
+  } catch (error) {
+    console.error("❌ 사용자 삭제 실패", error);
+    alert("❌ 사용자 삭제에 실패했습니다.");
+  }
+};
+
 
   const handleSearch = () => {
   const keyword = searchKeyword.trim().toLowerCase();
@@ -103,15 +105,34 @@ export default function AdminUserManagementPage() {
   );
   setFilteredUsers(results);
   };
-  
-  const visibleUsers =
+
+
+  const handleRecoverUser = async () => {
+  if (!selectedUserId) return;
+  try {
+    const token = localStorage.getItem("token");
+    await axios.put(`${BASE_URL}/admin/users/${selectedUserId}/recover`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchUsers(); // 다시 리스트 새로고침
+    setRecoverDialogOpen(false);
+    alert("✅ 사용자가 복구되었습니다.");
+  } catch (error) {
+    console.error("❌ 사용자 복구 실패", error);
+    alert("❌ 사용자 복구에 실패했습니다.");
+  }
+};
+
+
+ const visibleUsers = (
   tab === "all"
     ? isSearchTriggered
       ? filteredUsers
       : users
     : (isSearchTriggered ? filteredUsers : users).filter(
         (user) => user.role === tab
-      );
+      )
+);
 
   const paginatedUsers = visibleUsers.slice(
   (currentPage - 1) * itemsPerPage,
@@ -194,18 +215,32 @@ export default function AdminUserManagementPage() {
                 </TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell align="center">
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    onClick={() => {
-                      setSelectedUserId(user.user_id);
-                      setDeleteDialogOpen(true);
-                    }}
-                  >
-                    삭제
-                  </Button>
-                </TableCell>
+  {user.del_yn === 'Y' ? (
+    <Button
+      variant="outlined"
+      color={user.del_yn === 'Y' ? "success" : "error"}
+      size="small"
+      onClick={() => {
+        setSelectedUserId(user.user_id);
+        setRecoverDialogOpen(true);
+      }}
+    >
+      복구
+    </Button>
+  ) : (
+    <Button
+      variant="outlined"
+      color="error"
+      size="small"
+      onClick={() => {
+        setSelectedUserId(user.user_id);
+        setDeleteDialogOpen(true); // 삭제 확인 다이얼로그
+      }}
+    >
+      삭제
+    </Button>
+  )}
+</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -227,13 +262,28 @@ export default function AdminUserManagementPage() {
         <DialogTitle>사용자 삭제 확인</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            정말로 이 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            정말로 이 사용자를 삭제하시겠습니까?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
           <Button onClick={handleDeleteConfirm} color="error" variant="contained">
             삭제 확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={recoverDialogOpen} onClose={() => setRecoverDialogOpen(false)}>
+        <DialogTitle>사용자 복구 확인</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            정말로 이 사용자를 복구하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
+          <Button onClick={handleRecoverUser} color="primary" variant="contained">
+            복구 확인
           </Button>
         </DialogActions>
       </Dialog>

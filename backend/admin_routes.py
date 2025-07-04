@@ -23,7 +23,8 @@ def get_all_users(user: dict = Depends(get_current_user)):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            cursor.execute("SELECT user_id, nickname, email, role FROM user")
+            # del_yn 포함해서 보내기!
+            cursor.execute("SELECT user_id, nickname, email, role, del_yn FROM user")
             return cursor.fetchall()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -60,8 +61,8 @@ def get_ongoing_projects(user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT id, title, status
-                FROM projects
+                SELECT project_id, title, status
+                FROM project
                 WHERE status IN ('승인 대기', '진행 중', '디자인 중')
                 ORDER BY id DESC
             """)
@@ -115,7 +116,7 @@ def delete_user(user_id: str):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            cursor.execute("DELETE FROM user WHERE user_id = %s", (user_id,))
+            cursor.execute("UPDATE user SET del_yn = 'Y' WHERE user_id = %s", (user_id,))
         conn.commit()
         return {"message": "사용자가 삭제되었습니다."}
     except Exception as e:
@@ -123,13 +124,25 @@ def delete_user(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
-
-@router.put("/assign_pm/{project_id}")
-def assign_pm_to_project(project_id: int, pm_username: str = Body(..., embed=True)):
+@router.put("/users/{user_id}/recover")
+def recover_user(user_id: str):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            cursor.execute("UPDATE projects SET pm = %s WHERE id = %s", (pm_username, project_id))
+            cursor.execute("UPDATE user SET del_yn = 'N' WHERE user_id = %s", (user_id,))
+        conn.commit()
+        return {"message": "사용자가 복구되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.put("/assign_pm/{project_id}")
+def assign_pm_to_project(project_id: int, pm_id: str = Body(..., embed=True)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE project SET pm_id = %s WHERE project_id = %s", (pm_id, project_id))
         conn.commit()
         return {"message": "PM 배정이 완료되었습니다."}
     except Exception as e:
