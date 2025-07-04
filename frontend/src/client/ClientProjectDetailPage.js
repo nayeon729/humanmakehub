@@ -23,7 +23,7 @@ export default function ClientProjectDetailPage() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
   const username = localStorage.getItem("username");
 
   useEffect(() => {

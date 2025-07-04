@@ -7,7 +7,7 @@ export default function MemberDashboard() {
   const [tasks, setTasks] = useState([]);
   const [requests, setRequests] = useState([]);
   const navigate = useNavigate(); // ✅ 추가
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     fetchTasks();

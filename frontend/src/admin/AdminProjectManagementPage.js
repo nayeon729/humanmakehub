@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [pms, setPms] = useState([]);
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = "http://localhost:8000";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +23,8 @@ export default function AdminProjectManagementPage() {
       const res = await axios.get(`${BASE_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setPms(res.data.filter((user) => user.role === "pm") || []);
+      setPms(res.data.filter((user) => user.role === "admin") || []);
+      console.log("✅ 토큰:", localStorage.getItem("token"));
     } catch (error) {
       console.error("PM 목록 불러오기 실패", error);
       setPms([]);
@@ -45,49 +46,49 @@ export default function AdminProjectManagementPage() {
     }
   };
 
-  const updateProject = async (id, updatedFields) => {
+  const updateProject = async (project_id, updatedFields) => {
     try {
-      await axios.put(`${BASE_URL}/projects/${id}`, updatedFields);
+      await axios.put(`${BASE_URL}/projects/${project_id}`, updatedFields);
     } catch (error) {
       console.error("프로젝트 업데이트 실패", error);
     }
   };
 
-  const handleProgressChange = (id, value) => {
+  const handleProgressChange = (project_id, value) => {
     setProjects((prev) =>
       prev.map((proj) =>
-        proj.id === id
+        proj.project_id === project_id
           ? { ...proj, progress: value, status: value === 100 ? "완료됨" : proj.status }
           : proj
       )
     );
-    updateProject(id, {
+    updateProject(project_id, {
       progress: value,
       status: value === 100 ? "완료됨" : undefined,
     });
   };
 
-  const handleStatusChange = (id, status) => {
+  const handleStatusChange = (project_id, status) => {
     setProjects((prev) =>
       prev.map((proj) =>
-        proj.id === id ? { ...proj, status } : proj
+        proj.project_id === project_id ? { ...proj, status } : proj
       )
     );
-    updateProject(id, { status });
+    updateProject(project_id, { status });
   };
 
-  const handleAssignPM = async (projectId, pmName) => {
+  const handleAssignPM = async (project_id, pmName) => {
     try {
-      const current = projects.find(p => p.id === projectId);
+      const current = projects.find(p => p.project_id === project_id);
       const newStatus = current.status === "승인 대기" ? "검토 중" : current.status;
       setProjects((prev) =>
         prev.map((proj) =>
-          proj.id === projectId
+          proj.project_id === project_id
             ? { ...proj, pm: pmName, status: newStatus }
             : proj
         )
       );
-      await axios.put(`${BASE_URL}/projects/${projectId}`, {
+      await axios.put(`${BASE_URL}/projects/${project_id}`, {
         pm: pmName,
         status: newStatus
       });
@@ -122,7 +123,7 @@ export default function AdminProjectManagementPage() {
           const formattedDate = new Date(proj.created_at).toLocaleDateString("ko-KR");
 
           return (
-            <Grid item xs={12} sm={6} md={4} key={proj.id}>
+            <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper
                 sx={{
                   p: 3,
@@ -144,7 +145,7 @@ export default function AdminProjectManagementPage() {
                 <Box sx={{ mb: 1 }}>
                   <Typography variant="h6" fontWeight="bold" noWrap>{proj.title}</Typography>
                   <Typography variant="body2" color="text.secondary">클라이언트: {proj.client}</Typography>
-                  <Typography variant="body2" color="text.secondary">프로젝트 ID: {proj.id}</Typography>
+                  <Typography variant="body2" color="text.secondary">프로젝트 ID: {proj.project_id}</Typography>
                 </Box>
 
                 <Box sx={{ mt: 1 }}>
@@ -159,12 +160,12 @@ export default function AdminProjectManagementPage() {
                     fullWidth
                     size="small"
                     value={proj.pm || ""}
-                    onChange={(e) => handleAssignPM(proj.id, e.target.value)}
+                    onChange={(e) => handleAssignPM(proj.project_id, e.target.value)}
                     disabled={isLocked}
                   >
                     <MenuItem value="">PM 미지정</MenuItem>
                     {pms.map((pm) => (
-                      <MenuItem key={pm.id} value={pm.username}>{pm.username}</MenuItem>
+                      <MenuItem key={pm.project_id} value={pm.username}>{pm.username}</MenuItem>
                     ))}
                   </Select>
                 </Box>
@@ -176,7 +177,7 @@ export default function AdminProjectManagementPage() {
                     <Typography variant="caption" color="text.secondary">{proj.progress}%</Typography>
                     <Slider
                       value={proj.progress}
-                      onChange={(e, newVal) => handleProgressChange(proj.id, newVal)}
+                      onChange={(e, newVal) => handleProgressChange(proj.project_id, newVal)}
                       min={0}
                       max={100}
                       size="small"
@@ -193,7 +194,7 @@ export default function AdminProjectManagementPage() {
                     fullWidth
                     size="small"
                     value={proj.status}
-                    onChange={(e) => handleStatusChange(proj.id, e.target.value)}
+                    onChange={(e) => handleStatusChange(proj.project_id, e.target.value)}
                     disabled={isLocked}
                   >
                     <MenuItem value="승인 대기">승인 대기</MenuItem>
@@ -211,7 +212,7 @@ export default function AdminProjectManagementPage() {
                   color="primary"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={() => navigate(`/admin/project/${proj.id}`)}
+                  onClick={() => navigate(`/admin/project/${proj.project_id}`)}
                 >
                   관리
                 </Button>
