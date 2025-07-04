@@ -14,7 +14,7 @@ export default function AdminProjectDetailPage() {
     const [team, setTeam] = useState([]);
     const [tasks, setTasks] = useState([]);
     const messagesEndRef = useRef(null);
-    const BASE_URL = "http://localhost:8000";
+    const BASE_URL = "http://127.0.0.1:8000";
 
     useEffect(() => {
         fetchProject();

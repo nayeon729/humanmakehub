@@ -4,9 +4,11 @@ import HomePage from "./common/HomePage";
 import LoginPage from "./common/LoginPage";
 import RegisterPage from "./common/RegisterPage";
 
-import ClientDashboard from "./client/ClientDashboard";
-import ClientProjectDetailPage from "./client/ClientProjectDetailPage";
-import ProjectCreatePage from "./client/ProjectCreatePage";
+import ClientDashBoard from "./client/ClientDashBoard";
+import ClientNoticeBoard from "./client/ClientNoticeBoard";
+import ClientProjectCreatePage from "./client/ClientProjectCreatePage";
+import ClientProjectList from "./client/ClientProjectList";
+import ClientUserInfo from "./client/ClinetUserInfo";
 
 // import PMDashboard from "./src/PMDashboard";
 // import TeamBuilderPage from "./src/TeamBuilderPage";
@@ -38,9 +40,12 @@ function App() {
 
         {/* 클라이언트 */}
         <Route element={<SidebarLayout role="client" />}>
-          <Route path="/client/dashboard" element={<ClientDashboard />} />
-          <Route path="/client/create" element={<ProjectCreatePage />} />
-          <Route path="/client/project/:projectId" element={<ClientProjectDetailPage />} />
+          <Route path="/client/dashboard" element={<ClientDashBoard />} />
+          <Route path="/client/notice" element={<ClientNoticeBoard />} />
+          <Route path="/client/project/create" element={<ClientProjectCreatePage />} />
+          <Route path="/client/projects" element={<ClientProjectList />} />
+          <Route path="/client/project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
+          <Route path="/client/userinfo" element={<ClientUserInfo />} />
         </Route>
 
         {/* PM */}

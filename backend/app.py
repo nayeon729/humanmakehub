@@ -22,7 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 # DB 설정
 db_config = {
-    "host": os.getenv("MYSQL_HOST", "localhost"),
+    "host": os.getenv("MYSQL_HOST", "127.0.0.1"),
     "user": os.getenv("MYSQL_USER", "root"),
     "password": os.getenv("MYSQL_PASSWORD", ""),
     "database": os.getenv("MYSQL_DATABASE", "humanmakehub"),
@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev")
 ALGORITHM   = os.getenv("ALGORITHM", "HS256")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # 또는 ["http://localhost:3000"] 만 허용
+    allow_origins=["http://127.0.0.1:3000"],  # 또는 ["http://127.0.0.1:3000"] 만 허용
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

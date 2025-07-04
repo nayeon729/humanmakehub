@@ -1,11 +1,11 @@
-// src/pages/client/ClientDashboard.js
+// src/pages/client/ClientDashBoard.js
 
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Paper, Grid, Chip, Skeleton, Stack, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function ClientDashboard() {
+export default function ClientDashBoard() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
