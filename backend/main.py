@@ -5,6 +5,7 @@ import os
 
 from user_routes_complete import router as user_router
 from admin_routes import router as admin_router
+from client_routes import router as client_router
 
 # .env 환경변수 로딩
 load_dotenv()
@@ -30,6 +31,7 @@ app.add_middleware(
 # ✅ 라우터 포함
 app.include_router(user_router, prefix="/user")
 app.include_router(admin_router, prefix="/admin")
+app.include_router(client_router, prefix="/client")
 
 # 루트 확인용
 @app.get("/")
