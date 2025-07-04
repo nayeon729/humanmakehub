@@ -16,7 +16,7 @@ export default function ProjectCreatePage() {
   const [urgency, setUrgency] = useState("보통");
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
 
   const handleCreateProject = async () => {
     if (!title.trim() || !description.trim() || !estimatedDuration || !budget) {

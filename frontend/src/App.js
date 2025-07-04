@@ -20,6 +20,7 @@ import MemberTaskPage from "./member/MemberTaskPage";
 
 import AdminDashboard from './admin/AdminDashboard';
 import AdminProjectManagementPage from "./admin/AdminProjectManagementPage";
+import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
@@ -66,6 +67,7 @@ function App() {
         <Route element={<SidebarLayout role="admin" />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUserManagementPage />} />
+          <Route path="/admin/projects/all" element={<AdminAllProjectsPage/>}/>
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />

@@ -10,7 +10,7 @@ export default function ClientDashBoard() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     fetchProjects();
