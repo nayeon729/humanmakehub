@@ -137,18 +137,29 @@ def recover_user(user_id: str):
     finally:
         conn.close()
 
-@router.put("/assign_pm/{project_id}")
-def assign_pm_to_project(project_id: int, pm_id: str = Body(..., embed=True)):
+
+@router.get("/projects")
+def get_all_projects(user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
-            cursor.execute("UPDATE project SET pm_id = %s WHERE project_id = %s", (pm_id, project_id))
-        conn.commit()
-        return {"message": "PM 배정이 완료되었습니다."}
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT 
+                    p.project_id, p.title, p.status, p.pm_id, p.category, p.description,
+                    p.estimated_duration, p.budget, p.create_dt,
+                    u.user_id AS client_id, u.nickname AS client_nickname, u.email AS client_email, u.company AS client_company, u.phone AS client_phone
+                FROM project p
+                LEFT JOIN user u 
+                    ON p.client_id = u.user_id AND u.role = 'client'
+                ORDER BY p.project_id DESC
+            """
+            cursor.execute(sql)
+            result = cursor.fetchall()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
-
-
 
