@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from pydantic import BaseModel
+from datetime import datetime
 import pymysql
 from database import db_config
 from jwt_auth import get_current_user
@@ -25,6 +26,11 @@ class PMAssignRequest(BaseModel):
 class ProjectFlexibleUpdate(BaseModel):
     status: Optional[str] = None
     progress: Optional[int] = None
+
+class NoticeCreate(BaseModel):
+    title: str
+    target_type: str
+    content: str
 
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
@@ -254,6 +260,27 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
         import traceback
         print("❌ 예외 발생:", e)
         traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/notices")
+def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":  # 관리자만 작성
+        raise HTTPException(status_code=403, detail="관리자 권한 필요")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                INSERT INTO notices (title, target_type, content, create_dt, create_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"]))
+        conn.commit()
+        return {"message": "공지사항이 등록되었습니다."}
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

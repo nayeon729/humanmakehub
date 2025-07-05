@@ -54,6 +54,7 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
     if (groupId === "TECH_STACK") return "기술 스택";
     if (groupId === "USER_GRADE") return "등급";
     if (groupId === "USER_ROLE") return "역할";
+    if (groupId === "NOTICE_TYPE") return "분류";
     return "선택하세요";
   };
 

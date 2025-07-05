@@ -25,9 +25,11 @@ import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
+import NoticeCreatePage from "./admin/NoticeCreatePage";
 
 import SidebarLayout from "./common/SidebarLayout";
 import TopNavbar from "./common/TopNavbar";
+import AdminNoticeCreatePage from "./admin/NoticeCreatePage";
 
 function App() {
   return (
@@ -73,6 +75,7 @@ function App() {
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />
+          <Route path="/admin/noticecreate" element={<NoticeCreatePage />}/>
         </Route>
 
       </Routes>
