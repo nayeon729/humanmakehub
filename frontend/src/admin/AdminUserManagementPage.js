@@ -190,9 +190,9 @@ export default function AdminUserManagementPage() {
 
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
         <Tab label="전체" value="all" />
-        <Tab label="PM" value="pm" />
-        <Tab label="멤버" value="member" />
-        <Tab label="클라이언트" value="client" />
+        <Tab label="PM" value="R03" />
+        <Tab label="멤버" value="R02" />
+        <Tab label="클라이언트" value="R01" />
       </Tabs>
       <Box display="flex" gap={1} mb={2}>
         <input
@@ -218,6 +218,7 @@ export default function AdminUserManagementPage() {
             <TableRow>
               <TableCell>아이디</TableCell>
               <TableCell>닉네임</TableCell>
+              <TableCell>등급</TableCell>
               <TableCell>역할</TableCell>
               <TableCell>이메일</TableCell>
               <TableCell align="center">관리</TableCell>
