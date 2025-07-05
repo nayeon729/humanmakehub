@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from pydantic import BaseModel
+from datetime import datetime
 import pymysql
 from database import db_config
 from jwt_auth import get_current_user
+from typing import Optional
 
 router = APIRouter( tags=["Admin"])
 
@@ -19,6 +21,17 @@ class PaymentAgreementUpdateStatus(BaseModel):
 
 class PMAssignRequest(BaseModel):
     project_id: int
+
+
+class ProjectFlexibleUpdate(BaseModel):
+    status: Optional[str] = None
+    progress: Optional[int] = None
+
+class NoticeCreate(BaseModel):
+    title: str
+    target_type: str
+    content: str
+
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
 
@@ -168,7 +181,7 @@ def get_all_projects(user: dict = Depends(get_current_user)):
             sql = """
                 SELECT 
                     p.project_id, p.title, p.status, p.pm_id, p.category, p.description,
-                    p.estimated_duration, p.budget, p.create_dt,
+                    p.estimated_duration, p.budget, p.urgency, p.create_dt,
                     u.user_id AS client_id, u.nickname AS client_nickname, u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
                 LEFT JOIN user u 
@@ -194,7 +207,7 @@ def get_pm_projects(user: dict = Depends(get_current_user)):
             sql = """
                 SELECT 
                     p.project_id, p.title, p.status, p.description,
-                    p.category, p.estimated_duration, p.budget, p.create_dt,
+                    p.category, p.estimated_duration, p.budget, p.create_dt, p.urgency, p.progress,
                     u.user_id AS client_id, u.nickname AS client_nickname,
                     u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
@@ -223,6 +236,50 @@ def assign_pm(data: PMAssignRequest, user: dict = Depends(get_current_user)):
                            (user["user_id"], data.project_id))
         conn.commit()
         return {"message": "PM으로 지정되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+        
+@router.put("/projects/{project_id}")
+def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = Depends(get_current_user)):    
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            if project.status is not None:
+                cursor.execute("UPDATE project SET status = %s WHERE project_id = %s", (project.status, project_id))
+
+            if project.progress is not None:
+                cursor.execute("UPDATE project SET progress = %s WHERE project_id = %s", (project.progress, project_id))
+
+        conn.commit()
+        return {"message": "프로젝트 업데이트 완료"}
+    except Exception as e:
+        import traceback
+        print("❌ 예외 발생:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/notices")
+def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":  # 관리자만 작성
+        raise HTTPException(status_code=403, detail="관리자 권한 필요")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                INSERT INTO notices (title, target_type, content, create_dt, create_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"]))
+        conn.commit()
+        return {"message": "공지사항이 등록되었습니다."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
