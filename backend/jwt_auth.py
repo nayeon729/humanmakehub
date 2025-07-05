@@ -50,12 +50,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # 관리자 권한 확인
 async def is_admin(user: dict = Depends(get_current_user)):
-    if user["role"] != "admin":
+    if user["role"] != "R03":
         raise HTTPException(status_code=403, detail="관리자 전용 기능입니다.")
     return user
 
 # PM 권한 확인
 async def is_pm(user: dict = Depends(get_current_user)):
-    if user["role"] not in ["pm", "admin"]:
+    if user["role"] not in ["R03"]:
         raise HTTPException(status_code=403, detail="PM 전용 기능입니다.")
     return user

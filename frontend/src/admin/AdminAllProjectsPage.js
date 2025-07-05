@@ -28,7 +28,7 @@ export default function AdminProjectManagementPage() {
       const cleanedProjects = res.data.map((proj) => ({
         ...proj,
         pm: proj.pm || "미지정",
-        status: proj.status || "승인 대기",
+        urgency: proj.urgency 
       }));
       setProjects(cleanedProjects);
     } catch (error) {
@@ -55,10 +55,15 @@ export default function AdminProjectManagementPage() {
   }
 };
 
-  const statusColor = (status) => {
-    if (status === "완료됨") return "success";
-    if (status === "진행 중") return "primary";
-    if (status === "검토 중") return "warning";
+  const urgencyMap={
+    U01:"긴급도: 여유",
+    U02:"긴급도: 보통",
+    U03:"긴급도: 높음",
+  }
+  const urgencyColor = (urgency) => {
+    if (urgency === "U01") return "success";
+    if (urgency === "U02") return "primary";
+    if (urgency === "U03") return "warning";
     return "default";
   };
  
@@ -82,7 +87,7 @@ export default function AdminProjectManagementPage() {
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                  <Chip label={proj.status} color={statusColor(proj.status)} size="small" />
+                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
                   <Typography variant="caption" color="text.secondary">
                     접수일: {formattedDate}
                   </Typography>

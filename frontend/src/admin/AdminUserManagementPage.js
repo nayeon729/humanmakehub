@@ -5,6 +5,7 @@ import {
   DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
 import axios from "axios";
+import Combo from "../components/Combo";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -16,6 +17,8 @@ export default function AdminUserManagementPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isSearchTriggered, setIsSearchTriggered] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [userGrade, setUserGrade] = useState("");
+  const [userRole, setUserRole] = useState("");
   const itemsPerPage = 10;
   const BASE_URL = "http://127.0.0.1:8000";
 
@@ -38,8 +41,48 @@ export default function AdminUserManagementPage() {
     }
   };
 
+
+  const handleGradeChange = async (user_id, newGrade) => {
+    const token = localStorage.getItem("token");
+    const user = users.find(u => u.user_id === user_id);
+  if (!user || user.grade === newGrade) return;
+    if (!token) {
+      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      return;
+    }
+    if (!newGrade) {
+      alert("새 등급이 유효하지 않습니다.");
+      return;
+    }
+    try {
+      await axios.put(
+        `${BASE_URL}/admin/users/${user_id}/grade`,
+        { grade: newGrade },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.user_id === user_id ? { ...user, grade: newGrade } : user
+        )
+      );
+      alert("✅ 등급이 성공적으로 수정되었습니다.");
+    } catch (error) {
+      console.error("❌ 등급 수정 실패", error);
+      const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
+      alert("❌ 등급 수정 실패: " + errorMsg);
+    }
+  };
+
+
   const handleRoleChange = async (user_id, newRole) => {
     const token = localStorage.getItem("token");
+    const user = users.find(u => u.user_id === user_id);
+  if (!user || user.role === newRole) return;
     if (!token) {
       alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
@@ -50,7 +93,7 @@ export default function AdminUserManagementPage() {
     }
     try {
       await axios.put(
-        `${BASE_URL}/admin/users/${user_id}`,
+        `${BASE_URL}/admin/users/${user_id}/role`,
         { role: newRole },
         {
           headers: {
@@ -76,7 +119,7 @@ export default function AdminUserManagementPage() {
   if (!selectedUserId) return;
   try {
     const token = localStorage.getItem("token");
-    await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}`, {
+    await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}/delete`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     fetchUsers();
@@ -147,10 +190,9 @@ export default function AdminUserManagementPage() {
 
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
         <Tab label="전체" value="all" />
-        <Tab label="관리자" value="admin" />
-        <Tab label="PM" value="pm" />
-        <Tab label="멤버" value="member" />
-        <Tab label="클라이언트" value="client" />
+        <Tab label="PM" value="R03" />
+        <Tab label="멤버" value="R02" />
+        <Tab label="클라이언트" value="R01" />
       </Tabs>
       <Box display="flex" gap={1} mb={2}>
         <input
@@ -176,6 +218,7 @@ export default function AdminUserManagementPage() {
             <TableRow>
               <TableCell>아이디</TableCell>
               <TableCell>닉네임</TableCell>
+              <TableCell>등급</TableCell>
               <TableCell>역할</TableCell>
               <TableCell>이메일</TableCell>
               <TableCell align="center">관리</TableCell>
@@ -187,31 +230,29 @@ export default function AdminUserManagementPage() {
                 <TableCell>{user.user_id}</TableCell>
                 <TableCell>{user.nickname}</TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user.user_id, e.target.value)}
-                      size="small"
-                    >
-                      <MenuItem value="admin">admin</MenuItem>
-                      <MenuItem value="pm">pm</MenuItem>
-                      <MenuItem value="member">member</MenuItem>
-                      <MenuItem value="client">client</MenuItem>
-                    </Select>
-                    <Chip
-                      label={user.role}
-                      size="small"
-                      color={
-                        user.role === "admin"
-                          ? "error"
-                          : user.role === "pm"
-                            ? "warning"
-                            : user.role === "member"
-                              ? "info"
-                              : "default"
-                      }
-                    />
-                  </Box>
+                  {user.role === "R02" ? (  // R02는 member
+                  <Box>
+                          <Combo
+                            groupId="USER_GRADE"
+                            defaultValue={user.grade}
+                            onSelectionChange={(val) => handleGradeChange(user.user_id, val)}
+                            sx={{ minWidth: 50 }}
+                          />
+                          
+                        </Box>
+                         ) : (
+                           <Typography/>
+                         )}
+                        </TableCell>
+                        <TableCell>
+                  <Box>
+                          <Combo
+                            groupId="USER_ROLE"
+                            defaultValue={user.role}
+                            onSelectionChange={(val) => handleRoleChange(user.user_id, val)}
+                            sx={{ minWidth: 50 }}
+                          />
+                        </Box>
                 </TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell align="center">

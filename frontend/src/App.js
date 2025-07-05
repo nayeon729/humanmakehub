@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./common/HomePage";
 import LoginPage from "./common/LoginPage";
 import RegisterPage from "./common/RegisterPage";
+import IdFind from "./common/IdFind";
+import PwFind from "./common/PwFind";
+// import IdFindView from "./common/IdFindView";
+import PwReset from "./common/PwReset";
 
 import ClientDashBoard from "./client/ClientDashboard";
 import ClientNoticeBoard from "./client/ClientNoticeBoard";
@@ -25,9 +29,11 @@ import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
+import NoticeCreatePage from "./admin/NoticeCreatePage";
 
 import SidebarLayout from "./common/SidebarLayout";
 import TopNavbar from "./common/TopNavbar";
+import AdminNoticeCreatePage from "./admin/NoticeCreatePage";
 
 function App() {
   return (
@@ -38,6 +44,10 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/idFind" element={<IdFind />} />
+          <Route path="/pwFind" element={<PwFind />} />
+          {/* <Route path="/idFindView" element={<IdFindView />} /> */}
+          <Route path="/pwReset" element={<PwReset />} />
         </Route>
         {/* 클라이언트 */}
         <Route element={<SidebarLayout role="client" />}>
@@ -72,6 +82,7 @@ function App() {
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />
+          <Route path="/admin/noticecreate" element={<NoticeCreatePage />} />
         </Route>
 
       </Routes>
