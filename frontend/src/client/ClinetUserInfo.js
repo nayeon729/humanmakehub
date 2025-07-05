@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
+import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
 
 
 const BASE_URL = "http://127.0.0.1:8000";
@@ -18,6 +19,9 @@ export default function ClientUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [projectType, setProjectType] = useState("");
+
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -69,38 +73,49 @@ export default function ClientUserInfo() {
     }
   };
   return (
-    <Card sx={{ p: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        안녕하세요! <strong>{userInfo.nickname}</strong> 님
-      </Typography>
-      <Divider sx={{ my: 2 }} />
+    <>
+      <Card sx={{ p: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          안녕하세요! <strong>{userInfo.nickname}</strong> 님
+        </Typography>
+        <Divider sx={{ my: 2 }} />
 
-      <Stack spacing={2}>
-        {infoItems.map((item) => (
-          <Box
-            key={item.label}
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <Typography color="text.secondary">{item.label}</Typography>
-            <Typography fontWeight="bold">{item.value}</Typography>
-          </Box>
-        ))}
-      </Stack>
+        <Stack spacing={2}>
+          {infoItems.map((item) => (
+            <Box
+              key={item.label}
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <Typography color="text.secondary">{item.label}</Typography>
+              <Typography fontWeight="bold">{item.value}</Typography>
+            </Box>
+          ))}
+        </Stack>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-        <Button variant="contained" onClick={() => navigate("/client/userupdate")}>회원정보 수정</Button>
-        <Button variant="outlined" onClick={() => setDialogOpen(true)}>회원탈퇴</Button>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+          <Button variant="contained" onClick={() => navigate("/client/userupdate")}>회원정보 수정</Button>
+          <Button variant="outlined" onClick={() => setDialogOpen(true)}>회원탈퇴</Button>
 
-        <PasswordConfirmDialog
-          open={dialogOpen}
-          onConfirm={(password) => {
-            setDialogOpen(false);
-            handleWithdraw(password);
-          }}
-          onCancel={() => setDialogOpen(false)}
+          <PasswordConfirmDialog
+            open={dialogOpen}
+            onConfirm={(password) => {
+              setDialogOpen(false);
+              handleWithdraw(password);
+            }}
+            onCancel={() => setDialogOpen(false)}
+          />
+
+        </Box>
+      </Card>
+
+      <Box>
+        <Combo
+          groupId="PROJECT_TYPE"                      // ✅ 이게 핵심!
+          defaultValue=""
+          onSelectionChange={(val) => setProjectType(val)}
+          sx={{ minWidth: 300 }}
         />
-
       </Box>
-    </Card>
+    </>
   );
 }
