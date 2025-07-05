@@ -7,6 +7,11 @@ import bcrypt
 from jwt_auth import create_access_token, get_current_user
 from database import db_config
 
+import random, string
+from datetime import datetime, timedelta
+from fastapi import APIRouter, HTTPException
+from email_utils import send_verification_email  # 위에서 만든 이메일 함수
+
 router = APIRouter(prefix="", tags=["User"])
 
 # ---------- 모델 ----------
@@ -157,7 +162,8 @@ def check_duplicate(data: DuplicateCheckRequest):
     result = {
         "user_idExists": False,
         "emailExists": False,
-        "nicknameExists": False
+        "nicknameExists": False,
+        "message": ""
     }
 
     try:
@@ -165,17 +171,37 @@ def check_duplicate(data: DuplicateCheckRequest):
         with conn.cursor() as cursor:
             # user_id 중복 확인
             if data.user_id:
-                cursor.execute("SELECT user_id FROM user WHERE user_id = %s", (data.user_id,))
+                cursor.execute("SELECT user_id FROM user WHERE user_id = %s AND del_yn = 'N'", (data.user_id,))
                 result["user_idExists"] = cursor.fetchone() is not None
 
             # 이메일 중복 확인
             if data.email:
-                cursor.execute("SELECT user_id FROM user WHERE email = %s", (data.email,))
+                cursor.execute("SELECT user_id FROM user WHERE email = %s AND del_yn = 'N'", (data.email,))
                 result["emailExists"] = cursor.fetchone() is not None
+                # ✅ 중복이 없을 때만 인증코드 발송
+                if not result["emailExists"]:
+                    # 32자리 랜덤 인증 코드 생성 (영문 + 숫자 조합)
+                    code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+                    
+                    # 3분 후 만료되도록 설정
+                    expire_time = datetime.now() + timedelta(minutes=3)
+
+                    # 인증 테이블에 이메일과 코드 저장  create_dt는 자동으로 현재시간 테이블있음
+                    cursor.execute("""
+                        INSERT INTO email_verification (email, code, expire_at)
+                        VALUES (%s, %s, %s)
+                    """, (data.email, code, expire_time))
+                    conn.commit()
+
+                    # 이메일 전송
+                    send_verification_email(data.email, code)
+
+                    # ✅ 메시지 담기
+                    result["message"] = "인증 메일을 보냈습니다!"
 
             # 닉네임 중복 확인
             if data.nickname:
-                cursor.execute("SELECT user_id FROM user WHERE nickname = %s", (data.nickname,))
+                cursor.execute("SELECT user_id FROM user WHERE nickname = %s AND del_yn = 'N'", (data.nickname,))
                 result["nicknameExists"] = cursor.fetchone() is not None
 
         return result
@@ -225,3 +251,44 @@ def get_tech_stacks():
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/verify-email")
+def verify_email(code: str):
+    # DB 연결
+    conn = pymysql.connect(**db_config)
+    with conn.cursor() as cursor:
+        # ✅ 먼저 해당 코드를 가진 이메일을 찾기
+        cursor.execute("""
+            SELECT id, email FROM email_verification
+            WHERE code = %s
+            AND is_verified = FALSE
+            AND expire_at > NOW()
+        """, (code,))
+        row = cursor.fetchone()
+
+        if not row:
+            raise HTTPException(status_code=400, detail="유효하지 않거나 만료된 코드입니다.")
+
+        email = row["email"]
+
+        # ✅ 해당 이메일의 가장 최신 인증 코드인지 확인 (만료되지 않고, 아직 인증 안 된 것만)
+        cursor.execute("""
+            SELECT id FROM email_verification
+            WHERE email = %s
+            AND is_verified = FALSE
+            AND expire_at > NOW()
+            ORDER BY create_dt DESC
+            LIMIT 1
+        """, (email,))
+        latest_row = cursor.fetchone()
+
+        if not latest_row or latest_row["id"] != row["id"]:
+            raise HTTPException(status_code=400, detail="이 코드는 최신 인증 코드가 아닙니다.")
+        
+
+        # 인증 완료 처리
+        cursor.execute("UPDATE email_verification SET is_verified = TRUE WHERE id = %s", (latest_row["id"],))
+        conn.commit()
+
+    return {"message": f"{row['email']} 인증이 완료되었습니다!"}
