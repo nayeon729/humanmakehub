@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, Typography, Paper, Grid, Chip, Stack, Button, IconButton
+  Box, Typography, Paper, Grid, Chip, Stack, Button, IconButton,Dialog, DialogTitle,
+  DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +9,8 @@ import AddIcon from '@mui/icons-material/Add';
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
+  const [pmDialogOpen, setPmDialogOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const BASE_URL = "http://127.0.0.1:8000";
   const navigate = useNavigate();
 
@@ -33,18 +36,38 @@ export default function AdminProjectManagementPage() {
     }
   };
 
+  const handleAssignPM = async (project_id) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.put(`${BASE_URL}/admin/projects/assign-pm`, {
+      project_id: project_id
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    // 다시 프로젝트 불러오기 (리렌더링)
+    fetchProjects();
+    alert('해당 프로젝트의 PM이 되었습니다.');
+  } catch (error) {
+    console.error("PM 지정 실패", error);
+  }
+};
+
   const statusColor = (status) => {
     if (status === "완료됨") return "success";
     if (status === "진행 중") return "primary";
     if (status === "검토 중") return "warning";
     return "default";
   };
-
+ 
   return (
-    <Box sx={{ p: 4 }}>
+    <>
+    <Box sx={{ p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography variant="h5" fontWeight="bold">📁 전체 프로젝트</Typography>
+          <Typography variant="h4" fontWeight="bold">📁 전체 프로젝트</Typography>
         </Stack>
         <IconButton color="primary" size="large">
           <AddIcon />
@@ -54,6 +77,7 @@ export default function AdminProjectManagementPage() {
       <Grid container spacing={3}>
         {projects.map((proj) => {
           const formattedDate = new Date(proj.create_dt).toLocaleDateString("ko-KR");
+          const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
@@ -91,9 +115,13 @@ export default function AdminProjectManagementPage() {
                   variant="contained"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={() => navigate(`/admin/project/${proj.project_id}`)}
+                  onClick={() => {
+                    setSelectedProjectId(proj.project_id);
+                    setPmDialogOpen(true);
+                  }}
+                  disabled={isManaged}
                 >
-                  관리하기
+                  {isManaged ? "관리 중" : "관리하기"}
                 </Button>
               </Paper>
             </Grid>
@@ -101,5 +129,23 @@ export default function AdminProjectManagementPage() {
         })}
       </Grid>
     </Box>
+    <Dialog open={pmDialogOpen} onClose={() => setPmDialogOpen(false)}>
+            <DialogTitle>pm 지정 확인</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                이  프로젝트를 관리하시겠습니까?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setPmDialogOpen(false)}>취소</Button>
+              <Button onClick={() => {
+                    handleAssignPM(selectedProjectId);
+                    setPmDialogOpen(false);
+                  }} color="primary" variant="contained">
+                확인
+              </Button>
+            </DialogActions>
+          </Dialog>
+</>    
   );
 }

@@ -7,6 +7,7 @@ import os
 from user_routes_complete import router as user_router
 from admin_routes import router as admin_router
 from client_routes import router as client_router
+from common_code import router as common_code_router
 
 
 # .env 환경변수 로딩
@@ -25,7 +26,6 @@ def list_routes():
 
 # CORS 설정
 origins = [
-    "http://127.0.0.1:3000",
     "http://127.0.0.1:3000",
     "*",  # 개발 중일 때 허용
 ]
@@ -51,6 +51,7 @@ for r in admin_router.routes:
 app.include_router(user_router, prefix="/user")
 app.include_router(admin_router, prefix="/admin")
 app.include_router(client_router, prefix="/client")
+app.include_router( common_code_router, prefix="/common", tags=["공통코드"])
 
 
 # 루트 확인용

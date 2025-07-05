@@ -13,6 +13,8 @@ class RoleUpdate(BaseModel):
 class PaymentAgreementUpdateStatus(BaseModel):
     status: str  # e.g. 제안승인, 팀원수락, 정산요청 등
 
+class PMAssignRequest(BaseModel):
+    project_id: int
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
 
@@ -163,3 +165,47 @@ def get_all_projects(user: dict = Depends(get_current_user)):
     finally:
         conn.close()
 
+@router.get("/my-projects")
+def get_pm_projects(user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":  # PM만 접근 가능
+        raise HTTPException(status_code=403, detail="PM만 접근할 수 있습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT 
+                    p.project_id, p.title, p.status, p.description,
+                    p.category, p.estimated_duration, p.budget, p.create_dt,
+                    u.user_id AS client_id, u.nickname AS client_nickname,
+                    u.email AS client_email, u.company AS client_company, u.phone AS client_phone
+                FROM project p
+                LEFT JOIN user u ON p.client_id = u.user_id
+                WHERE p.pm_id = %s
+                ORDER BY p.project_id DESC
+            """
+            cursor.execute(sql, (user["user_id"],))
+            result = cursor.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.put("/projects/assign-pm")
+def assign_pm(data: PMAssignRequest, user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="PM만 지정할 수 있습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            # pm_id를 현재 로그인한 사용자로 지정
+            cursor.execute("UPDATE project SET pm_id = %s, status = '검토 중' WHERE project_id = %s",
+                           (user["user_id"], data.project_id))
+        conn.commit()
+        return {"message": "PM으로 지정되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
