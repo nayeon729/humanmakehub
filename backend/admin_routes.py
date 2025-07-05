@@ -7,8 +7,12 @@ from jwt_auth import get_current_user
 router = APIRouter( tags=["Admin"])
 
 # --- 필요한 모델 ---
+class GradeUpdate(BaseModel):
+    grade:str
+
 class RoleUpdate(BaseModel):
     role: str
+
 
 class PaymentAgreementUpdateStatus(BaseModel):
     status: str  # e.g. 제안승인, 팀원수락, 정산요청 등
@@ -20,13 +24,12 @@ class PMAssignRequest(BaseModel):
 
 @router.get("/users")
 def get_all_users(user: dict = Depends(get_current_user)):
-    if str(user["role"]) != "admin":
+    if str(user["role"]) != "R03":
         raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            # del_yn 포함해서 보내기!
-            cursor.execute("SELECT user_id, nickname, email, role, del_yn FROM user")
+            cursor.execute("SELECT user_id, nickname, email, grade, role, del_yn FROM user")
             return cursor.fetchall()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -35,15 +38,15 @@ def get_all_users(user: dict = Depends(get_current_user)):
 
 @router.get("/stats")
 def get_admin_stats(user: dict = Depends(get_current_user)):
-    if str(user["role"]) != "admin":
+    if str(user["role"]) != "R03":
         raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            cursor.execute("SELECT COUNT(*) as count FROM user")
+            cursor.execute("SELECT COUNT(*) as count FROM user WHERE del_yn = 'N'")
             user_count = cursor.fetchone()["count"]
 
-            cursor.execute("SELECT COUNT(*) as count FROM project")
+            cursor.execute("SELECT COUNT(*) as count FROM project WHERE del_yn = 'N'")
             project_count = cursor.fetchone()["count"]
 
         return {
@@ -57,7 +60,7 @@ def get_admin_stats(user: dict = Depends(get_current_user)):
 
 @router.get("/ongoing_projects")
 def get_ongoing_projects(user: dict = Depends(get_current_user)):
-    if user.get("role") != "admin":
+    if user.get("role") != "R03":
         raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -76,7 +79,7 @@ def get_ongoing_projects(user: dict = Depends(get_current_user)):
 
 @router.put("/agreements/{agreement_id}/status")
 def update_agreement_status(agreement_id: int, update: PaymentAgreementUpdateStatus, user: dict = Depends(get_current_user)):
-    if user.get("role") != "admin":
+    if user.get("role") != "R03":
         raise HTTPException(status_code=403, detail="관리자만 상태를 변경할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -100,7 +103,20 @@ def update_agreement_status(agreement_id: int, update: PaymentAgreementUpdateSta
     finally:
         conn.close()
 
-@router.put("/users/{user_id}")
+@router.put("/users/{user_id}/grade")
+def update_user_grade(user_id: str, update: GradeUpdate):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE user SET GRADE = %s WHERE user_id = %s", (update.grade, user_id))
+        conn.commit()
+        return {"message": "사용자 등급이 수정되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.put("/users/{user_id}/role")
 def update_user_role(user_id: str, update: RoleUpdate):
     try:
         conn = pymysql.connect(**db_config)
@@ -113,7 +129,8 @@ def update_user_role(user_id: str, update: RoleUpdate):
     finally:
         conn.close()
 
-@router.delete("/users/{user_id}")
+
+@router.delete("/users/{user_id}/delete")
 def delete_user(user_id: str):
     try:
         conn = pymysql.connect(**db_config)
@@ -126,6 +143,7 @@ def delete_user(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
 @router.put("/users/{user_id}/recover")
 def recover_user(user_id: str):
     try:
@@ -142,7 +160,7 @@ def recover_user(user_id: str):
 
 @router.get("/projects")
 def get_all_projects(user: dict = Depends(get_current_user)):
-    if user["role"] != "admin":
+    if user["role"] != "R03":
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -154,7 +172,7 @@ def get_all_projects(user: dict = Depends(get_current_user)):
                     u.user_id AS client_id, u.nickname AS client_nickname, u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
                 LEFT JOIN user u 
-                    ON p.client_id = u.user_id AND u.role = 'client'
+                    ON p.client_id = u.user_id
                 ORDER BY p.project_id DESC
             """
             cursor.execute(sql)
@@ -167,7 +185,7 @@ def get_all_projects(user: dict = Depends(get_current_user)):
 
 @router.get("/my-projects")
 def get_pm_projects(user: dict = Depends(get_current_user)):
-    if user["role"] != "admin":  # PM만 접근 가능
+    if user["role"] != "R03":  # PM만 접근 가능
         raise HTTPException(status_code=403, detail="PM만 접근할 수 있습니다.")
 
     try:
@@ -194,7 +212,7 @@ def get_pm_projects(user: dict = Depends(get_current_user)):
 
 @router.put("/projects/assign-pm")
 def assign_pm(data: PMAssignRequest, user: dict = Depends(get_current_user)):
-    if user["role"] != "admin":
+    if user["role"] != "R03":
         raise HTTPException(status_code=403, detail="PM만 지정할 수 있습니다.")
 
     try:
