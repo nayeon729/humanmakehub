@@ -32,20 +32,19 @@ import TopNavbar from "./common/TopNavbar";
 function App() {
   return (
     <Router>
-      <TopNavbar />
       <Routes>
-
-        {/* 공통 */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
+        <Route element={<TopNavbar />}>
+          {/* 공통 */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Route>
         {/* 클라이언트 */}
         <Route element={<SidebarLayout role="client" />}>
           <Route path="/client/dashboard" element={<ClientDashBoard />} />
           <Route path="/client/notice" element={<ClientNoticeBoard />} />
           <Route path="/client/create" element={<ClientProjectCreatePage />} />
-          <Route path="/client/projects" element={<ClientProjectList />} />
+          <Route path="/client/list" element={<ClientProjectList />} />
           <Route path="/client/project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
           <Route path="/client/userinfo" element={<ClientUserInfo />} />
           <Route path="/client/userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
@@ -69,7 +68,7 @@ function App() {
         <Route element={<SidebarLayout role="admin" />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUserManagementPage />} />
-          <Route path="/admin/projects/all" element={<AdminAllProjectsPage/>}/>
+          <Route path="/admin/projects/all" element={<AdminAllProjectsPage />} />
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />

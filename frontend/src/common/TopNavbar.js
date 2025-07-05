@@ -144,24 +144,24 @@ export default function TopNavbar() {
       );
     }
 
-    {
-      role === "client" && (
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button color="inherit" component={Link} to="/client/dashboard">
-            클라이언트 대시보드
-          </Button>
-          <Button color="inherit" component={Link} to="/client/create">
-            프로젝트 등록
-          </Button>
-          <Button color="inherit" component={Link} to="/client/projects">
-            내 프로젝트
-          </Button>
-          <Button color="inherit" component={Link} to="/client/agreements">
-            정산 확인
-          </Button>
-        </Box>
-      )
-    }
+    // {
+    //   role === "client" && (
+    //     <Box sx={{ display: "flex", gap: 1 }}>
+    //       <Button color="inherit" component={Link} to="/client/dashboard">
+    //         클라이언트 대시보드
+    //       </Button>
+    //       <Button color="inherit" component={Link} to="/client/create">
+    //         프로젝트 등록
+    //       </Button>
+    //       <Button color="inherit" component={Link} to="/client/projects">
+    //         내 프로젝트
+    //       </Button>
+    //       <Button color="inherit" component={Link} to="/client/agreements">
+    //         정산 확인
+    //       </Button>
+    //     </Box>
+    //   )
+    // }
 
     return null;
   };
