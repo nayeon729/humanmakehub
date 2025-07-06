@@ -27,10 +27,11 @@ class ProjectFlexibleUpdate(BaseModel):
     status: Optional[str] = None
     progress: Optional[int] = None
 
-class NoticeCreate(BaseModel):
+class Notice(BaseModel):
     title: str
     target_type: str
     content: str
+
 
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
@@ -279,7 +280,7 @@ def delete_project(project_id: str):
         conn.close()
 
 @router.post("/notices")
-def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
+def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
     if user["role"] != "R03":  # 관리자만 작성
         raise HTTPException(status_code=403, detail="관리자 권한 필요")
     
@@ -352,7 +353,7 @@ def get_notice_detail(notice_id: int, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.delete("/notices/{notice_id}/delete")
-def delete_project(notice_id: str):
+def delete_notice(notice_id: str):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
@@ -364,3 +365,36 @@ def delete_project(notice_id: str):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+
+@router.put("/notices/{notice_id}/update")
+def update_project(notice_id: int, notice: Notice, user:dict = Depends(get_current_user)):    
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                 UPDATE notices
+                SET title = %s,
+                    target_type = %s,
+                    content = %s,
+                    update_dt = %s,
+                    update_id = %s
+                WHERE notice_id = %s
+            """
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"], notice_id))
+        conn.commit()
+        return {"message": "공지사항이 수정되었습니다."}
+    except Exception as e:
+        import traceback
+        print("❌ 예외 발생:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+
+         

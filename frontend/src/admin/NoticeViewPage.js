@@ -46,7 +46,7 @@ export default function AdminNoticeViewPage() {
             fetchNotice();
             setDeleteDialogOpen(false);
             alert("✅ 공지가 삭제(표시)되었습니다.")
-            navigate("/admin/notice/list");
+            navigate("/notice/list");
         } catch (error) {
             console.error("❌ 공지 삭제 실패", error);
             alert("❌ 공지 삭제에 실패했습니다.");
@@ -84,7 +84,7 @@ export default function AdminNoticeViewPage() {
                             <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
                                 <button
                                     style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
-                                    onClick={() => navigate(`/`)}
+                                    onClick={() => navigate(`/notice/${notice.notice_id}/update`)}
                                 >
                                     수정
                                 </button>

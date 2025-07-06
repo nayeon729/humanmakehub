@@ -55,7 +55,7 @@ export default function AdminNoticeListPage() {
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
                 {userRole === "R03" && (
-                <Button variant="contained" onClick={() => navigate("/admin/notice/create")}>
+                <Button variant="contained" onClick={() => navigate("/notice/create")}>
                     공지사항 등록
                 </Button>
                 )}
@@ -84,7 +84,7 @@ export default function AdminNoticeListPage() {
                     </TableHead>
                     <TableBody>
                         {notices.map((notice) => (
-                            <TableRow key={notice.id} onClick={() => navigate(`/admin/notice/${notice.notice_id}`)}>
+                            <TableRow key={notice.id} onClick={() => navigate(`/notice/${notice.notice_id}`)}>
                                 <TableCell>
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>
