@@ -53,6 +53,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @router.get("/me")
 def get_my_info(user: dict = Depends(get_current_user)):
     print("🔥 get_my_info 받은 user:", user)
+
     conn = pymysql.connect(**db_config)
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -60,25 +61,29 @@ def get_my_info(user: dict = Depends(get_current_user)):
             user_info = cursor.fetchone()
             if user_info is None:
                 raise HTTPException(status_code=404, detail="유저 정보를 찾을 수 없습니다.")
+
             cursor.execute("""
-                SELECT 
-                    us.skill_id,
-                    cc.code_name,
-                    us.years,
-                    us.is_fresher
-                FROM user_skills us
-                JOIN common_code cc ON us.skill_id = cc.code_id
-                WHERE us.user_id = %s AND us.del_yn = 'N'
-            """, (user["user_id"],))
+            SELECT 
+                us.code_id,
+                cc.code_name,
+                us.years,
+                us.parent_code,
+                us.is_fresher
+            FROM user_skills us
+            JOIN common_code cc ON us.code_id = cc.code_id
+            WHERE us.user_id = %s AND us.del_yn = 'N'
+        """, (user["user_id"],))
             skills = cursor.fetchall()
 
             skill_list = []
             for s in skills:
-                experience = "신입" if s["is_fresher"] == 'Y' else f"{s['experience']}년"
+                experience = "신입" if s["is_fresher"] == 'Y' else f"{s['years']}년"
                 skill_list.append({
-                    "skill_id": s["skill_id"],
+                    "code_id": s["code_id"],
                     "skill_name": s["code_name"],
-                    "experience": experience
+                    "years": s["years"],
+                    "is_fresher": s["is_fresher"],
+                    "parent_code": s["parent_code"]
                 })
 
             return {
@@ -87,7 +92,10 @@ def get_my_info(user: dict = Depends(get_current_user)):
                 "email": user_info["email"],
                 "phone": user_info["phone"],
                 "company": user_info["company"],
-                "portfolio": user_info["portfolio"],
+                "tech": user_info["tech"],
+                "experience": user_info["experience"],
+                "git": user_info["git"],
+                "portfolio": user_info["portfolio"],  
                 "role": user_info["role"],
                 "skills": skill_list
             }
@@ -99,6 +107,7 @@ def get_my_info(user: dict = Depends(get_current_user)):
     
     finally:
         conn.close()
+
 
 # ---------- 회원가입 ----------
 @router.post("/register")

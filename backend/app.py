@@ -899,54 +899,9 @@ def assign_pm_to_project(project_id: int, pm_username: str = Body(..., embed=Tru
     finally:
         conn.close()
 
-@app.get("/members")
-def get_all_members():
-    try:
-        conn = pymysql.connect(**db_config)
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            sql = """
-            SELECT id, username, role, phone, company, portfolio, skills, career, contact
-            FROM users
-            WHERE role = 'member'
-            """
-            cursor.execute(sql)
-            result = cursor.fetchall()
-        return result
-    except Exception as e:
-        print("🔴 전체 멤버 조회 실패:", str(e))
-        return []
-    finally:
-        conn.close()
 
-@app.get("/members/search")
-def search_members(keyword: Optional[str] = Query(None)):
-    try:
-        conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
-            if keyword:
-                sql = """
-                SELECT id, username, role, phone, company, portfolio
-                FROM users
-                WHERE role = 'member' AND (
-                    username LIKE %s OR
-                    phone LIKE %s OR
-                    company LIKE %s OR
-                    portfolio LIKE %s
-                )
-                """
-                param = f"%{keyword}%"
-                cursor.execute(sql, (param, param, param, param))
-            else:
-                # 검색어 없으면 전체 조회
-                sql = "SELECT id, username, role, phone, company, portfolio FROM users WHERE role = 'member'"
-                cursor.execute(sql)
-            result = cursor.fetchall()
-        return result
-    except Exception as e:
-        print("🔴 멤버 검색 실패:", str(e))
-        return []
-    finally:
-        conn.close()
+
+
 
 #팀원 배정
 class JoinRequestCreate(BaseModel):
