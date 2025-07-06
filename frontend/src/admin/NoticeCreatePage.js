@@ -8,7 +8,7 @@ import Combo from "../components/Combo";
 
 export default function AdminNoticeCreatePage() {
     const [title, setTitle] = useState("");
-    const [targetType, setTargetType] = useState("공지");
+    const [targetType, setTargetType] = useState("");
     const [content, setContent] = useState("");
     const navigate = useNavigate();
 
@@ -46,14 +46,16 @@ export default function AdminNoticeCreatePage() {
             </Typography>
 
             <Paper sx={{ p: 3, mt: 2 }}>
+                <Box sx={{mb: 2}}>
+                <Typography variant="body2">제목</Typography>
                 <TextField
-                    label="제목 *"
                     fullWidth
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     sx={{ mb: 2 }}
                 />
-                <Box>
+                </Box>
+                <Box sx={{mb: 5}}>
                     <Typography variant="body2">분류</Typography>
                     <Combo
                         groupId="NOTICE_TYPE"
@@ -63,8 +65,9 @@ export default function AdminNoticeCreatePage() {
                         sx={{ minWidth: 50 }}
                     />
                 </Box>
+                <Box sx={{mb: 2}}>
+                <Typography variant="body2">내용</Typography>
                 <TextField
-                    label="내용 *"
                     multiline
                     rows={8}
                     fullWidth
@@ -72,6 +75,7 @@ export default function AdminNoticeCreatePage() {
                     onChange={(e) => setContent(e.target.value)}
                     sx={{ mb: 2 }}
                 />
+                </Box>
 
                 <Button variant="contained" fullWidth onClick={handleSubmit}>
                     글 등록

@@ -76,7 +76,7 @@ export default function AdminNoticeListPage() {
                     </TableHead>
                     <TableBody>
                         {notices.map((notice) => (
-                            <TableRow key={notice.id}>
+                            <TableRow key={notice.id} onClick={()=> navigate(`/admin/notice/${notice.notice_id}`)}>
                                 <TableCell>
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>

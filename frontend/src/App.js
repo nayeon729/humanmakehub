@@ -31,6 +31,7 @@ import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
 import NoticeCreatePage from "./admin/NoticeCreatePage";
 import NoticeListPage from "./admin/NoticeListPage";
+import NoticeViewPage from "./admin/NoticeViewPage";
 
 import SidebarLayout from "./common/SidebarLayout";
 import TopNavbar from "./common/TopNavbar";
@@ -85,6 +86,7 @@ function App() {
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />
           <Route path="/admin/notice/create" element={<NoticeCreatePage />}/>
           <Route path="/admin/notice/list" element={<NoticeListPage />}/>
+          <Route path="/admin/notice/:noticeId" element={<NoticeViewPage />}/>
         </Route>
 
       </Routes>

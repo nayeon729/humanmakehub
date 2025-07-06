@@ -338,4 +338,29 @@ def get_notices(page: int = 1, keyword: str = ""):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+@router.get("/notices/{notice_id}")
+def get_notice_detail(notice_id: int, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("SELECT notice_id, title, target_type, content, create_dt FROM notices WHERE notice_id = %s", (notice_id,))
+            result = cursor.fetchone()
+        if not result:
+            raise HTTPException(status_code=404, detail="공지사항을 찾을 수 없습니다.")
+        return result
+    finally:
+        conn.close()
 
+@router.delete("/notices/{notice_id}/delete")
+def delete_project(notice_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE notices SET del_yn = 'Y' WHERE notice_id = %s", (notice_id,))
+        conn.commit()
+        return {"message": "공지가 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
