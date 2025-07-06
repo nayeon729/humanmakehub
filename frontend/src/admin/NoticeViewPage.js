@@ -13,9 +13,14 @@ export default function AdminNoticeViewPage() {
     const { noticeId } = useParams();
     const [notice, setNotice] = useState([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [userRole, setUserRole] = useState("");
     const BASE_URL = "http://127.0.0.1:8000";
     const navigate = useNavigate();
 
+    useEffect(() => {
+            const role = localStorage.getItem("role");
+            setUserRole(role);
+        }, []);
     useEffect(() => {
         fetchNotice(noticeId);
     }, []);
@@ -75,6 +80,7 @@ export default function AdminNoticeViewPage() {
                         </Typography>
                         </Box>
                         <Box>
+                            {userRole === "R03" && (
                             <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
                                 <button
                                     style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
@@ -89,11 +95,13 @@ export default function AdminNoticeViewPage() {
                                     삭제
                                 </button>
                             </Box>
+                            )}
                             <Box mt={1}>
                             <Typography variant="caption" color="text.secondary">
                                 {notice.create_dt?.slice(0, 10)}
                             </Typography>
                             </Box>
+                            
                         </Box>
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />

@@ -13,6 +13,8 @@ export default function AdminNoticeListPage() {
     const [searchKeyword, setSearchKeyword] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [userRole, setUserRole] = useState("");
+
     const itemsPerPage = 10;
     const navigate = useNavigate();
 
@@ -31,6 +33,10 @@ export default function AdminNoticeListPage() {
     };
 
     useEffect(() => {
+        const role = localStorage.getItem("role");
+        setUserRole(role);
+    }, []);
+    useEffect(() => {
         fetchNotices(currentPage);
     }, [currentPage]);
 
@@ -48,9 +54,11 @@ export default function AdminNoticeListPage() {
         <Box sx={{ p: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
+                {userRole === "R03" && (
                 <Button variant="contained" onClick={() => navigate("/admin/notice/create")}>
                     공지사항 등록
                 </Button>
+                )}
             </Stack>
 
             <Stack direction="row" spacing={1} my={2}>
@@ -76,7 +84,7 @@ export default function AdminNoticeListPage() {
                     </TableHead>
                     <TableBody>
                         {notices.map((notice) => (
-                            <TableRow key={notice.id} onClick={()=> navigate(`/admin/notice/${notice.notice_id}`)}>
+                            <TableRow key={notice.id} onClick={() => navigate(`/admin/notice/${notice.notice_id}`)}>
                                 <TableCell>
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>
