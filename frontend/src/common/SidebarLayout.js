@@ -10,7 +10,7 @@ export default function SidebarLayout({ role }) {
       { text: "사용자 관리", path: "/admin/users" },
       { text: "전체 프로젝트", path: "/admin/projects/all"},
       { text: "프로젝트 관리", path: "/admin/projects" },
-      { text: "공지사항", path: "/" },
+      { text: "공지사항", path: "/admin/notice/list" },
     ],
     pm: [
       { text: "대시보드", path: "/pm/dashboard" },

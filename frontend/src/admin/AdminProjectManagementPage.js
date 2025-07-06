@@ -118,6 +118,16 @@ export default function AdminProjectManagementPage() {
     U02: "긴급도: 보통",
     U03: "긴급도: 높음",
   }
+  const categoryMap = {
+    A01: "웹 개발",
+    A02: "앱 개발 ",
+    A03: "데이터 분석",
+    A04: "AI 솔루션",
+    A05: "전산 시스템 구축",
+    A06: "쇼핑몰 구축",
+    A07: "플랫폼 구축",
+    A08: "기타"
+  }
   const urgencyColor = (urgency) => {
     if (urgency === "U01") return "success";
     if (urgency === "U02") return "primary";
@@ -147,7 +157,9 @@ export default function AdminProjectManagementPage() {
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   {proj.title}
                 </Typography>
-
+                <Typography variant="body2" gutterBottom>
+                  <strong>카테고리:</strong>  {categoryMap[proj.category] || "없음"}
+                </Typography>
                 <Typography variant="body2" gutterBottom>
                   <strong>고객:</strong> {proj.client_id}
                 </Typography>
@@ -187,7 +199,7 @@ export default function AdminProjectManagementPage() {
                       },
                     }}
                   />
-                  <Typography sx={{fontSize:'14px'}}>{proj.progress}%</Typography>
+                  <Typography sx={{ fontSize: '14px' }}>{proj.progress}%</Typography>
                   <Slider
                     value={progressMap[proj.project_id] ?? proj.progress}
                     onChange={(e, newVal) => {
@@ -220,7 +232,7 @@ export default function AdminProjectManagementPage() {
                   />
                 </Box>
                 <Box sx={{ mt: 2 }}>
-                <Typography variant="body2" fontWeight="bold" gutterBottom>
+                  <Typography variant="body2" fontWeight="bold" gutterBottom>
                     멤버 리스트
                   </Typography>
                 </Box>

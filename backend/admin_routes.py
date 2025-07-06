@@ -284,3 +284,44 @@ def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+@router.get("/notices")
+def get_notices(page: int = 1, keyword: str = ""):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            page_size = 10
+            offset = (page - 1) * page_size
+
+            base_sql = "FROM notices WHERE del_yn = 'N'"
+            params = []
+
+            if keyword:
+                base_sql += " AND title LIKE %s"
+                params.append(f"%{keyword}%")
+
+            # 전체 개수
+            cursor.execute(f"SELECT COUNT(*) as count {base_sql}", params)
+            total = cursor.fetchone()["count"]
+
+            # 실제 데이터
+            cursor.execute(
+                f"""
+                SELECT notice_id, title, target_type, create_dt
+                {base_sql}
+                ORDER BY create_dt DESC
+                LIMIT %s OFFSET %s
+                """,
+                params + [page_size, offset]
+            )
+            items = cursor.fetchall()
+
+        return {
+            "items": items,
+            "totalPages": (total + page_size - 1) // page_size
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+

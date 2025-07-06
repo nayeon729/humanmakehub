@@ -32,7 +32,7 @@ export default function AdminNoticeCreatePage() {
                 },
             });
             alert("공지사항이 등록되었습니다.");
-            navigate("/admin/notices"); // 공지사항 목록 페이지로 이동
+            navigate("/admin/notice/list"); // 공지사항 목록 페이지로 이동
         } catch (error) {
             console.error("공지사항 등록 실패", error);
             alert("공지사항 등록 중 오류가 발생했습니다.");
