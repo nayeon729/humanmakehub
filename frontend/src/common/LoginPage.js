@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, TextField, Container, Paper } from "@mui/material";
+import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -109,6 +109,23 @@ export default function LoginPage() {
         >
           아직 계정이 없으신가요? 회원가입
         </Typography>
+        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+          <Typography
+            variant="body2"
+            sx={{ mt: 2, textAlign: "center", cursor: "pointer", color: "primary.main" }}
+            onClick={() => navigate("/idFind")}
+          >
+            아이디찾기 
+          </Typography>
+           &nbsp; | 
+          <Typography
+            variant="body2"
+            sx={{ mt: 2, textAlign: "center", cursor: "pointer", color: "primary.main" }}
+            onClick={() => navigate("/pwFind")}
+          >
+            비밀번호재설정
+          </Typography>
+        </Stack>
       </Paper>
     </Container>
   );

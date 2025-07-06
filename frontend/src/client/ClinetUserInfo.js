@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
-import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
+
 
 
 const BASE_URL = "http://127.0.0.1:8000";
@@ -19,7 +19,6 @@ export default function ClientUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [projectType, setProjectType] = useState("");
 
 
 
@@ -108,14 +107,7 @@ export default function ClientUserInfo() {
         </Box>
       </Card>
 
-      <Box>
-        <Combo
-          groupId="PROJECT_TYPE"                      // ✅ 이게 핵심!
-          defaultValue=""
-          onSelectionChange={(val) => setProjectType(val)}
-          sx={{ minWidth: 300 }}
-        />
-      </Box>
+
     </>
   );
 }

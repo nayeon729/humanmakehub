@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./common/HomePage";
 import LoginPage from "./common/LoginPage";
 import RegisterPage from "./common/RegisterPage";
+import IdFind from "./common/IdFind";
+import PwFind from "./common/PwFind";
+// import IdFindView from "./common/IdFindView";
+import PwReset from "./common/PwReset";
 
 import ClientDashBoard from "./client/ClientDashboard";
 import ClientNoticeBoard from "./client/ClientNoticeBoard";
@@ -25,6 +29,9 @@ import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
+import NoticeCreatePage from "./admin/NoticeCreatePage";
+import NoticeListPage from "./admin/NoticeListPage";
+import NoticeViewPage from "./admin/NoticeViewPage";
 
 import SidebarLayout from "./common/SidebarLayout";
 import TopNavbar from "./common/TopNavbar";
@@ -39,6 +46,10 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/idFind" element={<IdFind />} />
+        <Route path="/pwFind" element={<PwFind />} />
+        {/* <Route path="/idFindView" element={<IdFindView />} /> */}
+        <Route path="/pwReset" element={<PwReset />} />
 
         {/* 클라이언트 */}
         <Route element={<SidebarLayout role="client" />}>
@@ -73,6 +84,9 @@ function App() {
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />
+          <Route path="/admin/notice/create" element={<NoticeCreatePage />}/>
+          <Route path="/admin/notice/list" element={<NoticeListPage />}/>
+          <Route path="/admin/notice/:noticeId" element={<NoticeViewPage />}/>
         </Route>
 
       </Routes>

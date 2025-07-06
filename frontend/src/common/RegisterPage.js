@@ -27,6 +27,8 @@ export default function RegisterPage() {
   const [usernameChecked, setUsernameChecked] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
   const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [code, setCode] = useState("");
+  const [emailSend, setEmailSend] = useState(false);
 
   const BASE_URL = "http://127.0.0.1:8000";
 
@@ -80,7 +82,6 @@ export default function RegisterPage() {
     try {
       const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
         user_id: form.username,
-        email: form.email,
         nickname: form.nickname,
       });
 
@@ -98,12 +99,15 @@ export default function RegisterPage() {
       }
 
       if (field === "email") {
+        const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
+          email: form.email,
+        });
         if (res.data.emailExists) {
           alert("이미 등록된 이메일입니다.");
           setEmailChecked(false);
         } else {
           alert("사용 가능한 이메일입니다.");
-          setEmailChecked(true);
+          setEmailSend(true);
         }
       }
 
@@ -118,6 +122,23 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.error("중복 확인 실패", err);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!code.trim()) {
+      alert("인증 코드를 입력해주세요!");
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${BASE_URL}/user/verify-email`, {
+        params: { code: code }, // 👈 이렇게 code를 전달해!
+      });
+      alert(res.data.message);
+      setEmailChecked(true);
+    } catch (err) {
+      alert(err.response?.data?.detail || "인증 실패");
     }
   };
 
@@ -203,6 +224,23 @@ export default function RegisterPage() {
                   />
                   <Button variant="outlined" onClick={() => checkDuplicate("email")}>중복확인</Button>
                 </Stack>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  { emailSend && (
+                      <>
+                        <TextField
+                          label="인증 코드"
+                          variant="outlined"
+                          fullWidth
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                          sx={{ mb: 2, width:"140%"}}
+                        />
+                        <Button variant="contained" color="primary" fullWidth onClick={handleVerify} disabled={emailChecked}>
+                          인증 확인
+                        </Button>
+                      </>
+                    )}
+                  </Stack>
 
                 <TextField type="password" label="비밀번호" name="password" value={form.password} onChange={handleFormChange} />
                 <TextField type="password" label="비밀번호 확인" name="confirmPassword" value={form.confirmPassword} onChange={handleFormChange} />
