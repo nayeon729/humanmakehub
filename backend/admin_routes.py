@@ -212,7 +212,7 @@ def get_pm_projects(user: dict = Depends(get_current_user)):
                     u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
                 LEFT JOIN user u ON p.client_id = u.user_id
-                WHERE p.pm_id = %s
+                WHERE p.pm_id = %s AND p.del_yn='n'
                 ORDER BY p.project_id DESC
             """
             cursor.execute(sql, (user["user_id"],))
@@ -260,6 +260,20 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
         import traceback
         print("❌ 예외 발생:", e)
         traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/projects/{project_id}/delete")
+def delete_project(project_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE project SET del_yn = 'Y' WHERE project_id = %s", (project_id,))
+        conn.commit()
+        return {"message": "프로젝트가 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Paper, LinearProgress, Select, MenuItem,
-  Slider, Grid, Chip, Stack, Button
+  Slider, Grid, Chip, Stack, Button,Dialog, DialogTitle,
+    DialogContent, DialogContentText, DialogActions,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,8 @@ export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [projectStatus, setProjectStatus] = useState("");
   const [progressMap, setProgressMap] = useState({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId]=useState({});
   const BASE_URL = "http://127.0.0.1:8000"
   const navigate = useNavigate();
 
@@ -113,6 +116,22 @@ export default function AdminProjectManagementPage() {
     }
   };
 
+
+  const handleDeleteProject = async(project_id) =>{
+    try{
+      const token= localStorage.getItem("token");
+      await axios.delete(`${BASE_URL}/admin/projects/${project_id}/delete`,{
+        headers:{Authorization: `Bearer ${token}`}
+      });
+      fetchProjects();
+      setDeleteDialogOpen(false);
+      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+    } catch (error) {
+      console.error("❌ 프로젝트 삭제 실패", error);
+      alert("❌ 프로젝트 삭제에 실패했습니다.");
+    }
+  };
+
   const urgencyMap = {
     U01: "긴급도: 여유",
     U02: "긴급도: 보통",
@@ -147,11 +166,31 @@ export default function AdminProjectManagementPage() {
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
-                  <Typography variant="caption" color="text.secondary">
+                <Box  mb={1}
+                  sx={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                    <Box sx={{display:"flex", flex:'4'}}>
+                  <Typography variant="caption" color="text.secondary" sx={{display:'flex'}}>
                     접수일: {formattedDate}
                   </Typography>
+                  </Box>
+                  <Box sx={{display:"flex",flex:'1', flexDirection:"row", marginLeft:"10px"}}>
+                    <button 
+                      style={{background:"none", width:'35px', border:'none', padding:'0px', color:'blue'}}
+                      onClick={() => navigate(`/`)}
+                    >
+                      수정
+                    </button>
+                    <button 
+                       style={{background:"none", width:'35px', border:'none', padding:'0px', color:'red'}}
+                      onClick={() => handleDeleteProject(proj.project_id)}
+                    >
+                      삭제
+                    </button>
+                  </Box>
+                </Box>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
+
                 </Stack>
 
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
@@ -249,6 +288,22 @@ export default function AdminProjectManagementPage() {
           );
         })}
       </Grid>
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+              <DialogTitle>프로젝트 삭제 확인</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  정말로 이 프로젝트를 삭제하시겠습니까?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
+                <Button onClick={handleDeleteProject} color="error" variant="contained">
+                  삭제 확인
+                </Button>
+              </DialogActions>
+            </Dialog>
     </Box>
+
+    
   );
 }
