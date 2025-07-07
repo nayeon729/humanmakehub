@@ -61,7 +61,7 @@ function App() {
         <Route
           path="/client"
           element={
-            <PrivateRoute allowedRoles={["client"]}>
+            <PrivateRoute allowedRoles={["R01"]}>
               <SidebarLayout role="client" />
             </PrivateRoute>
           }
@@ -82,7 +82,7 @@ function App() {
         <Route
           path="/member"
           element={
-            <PrivateRoute allowedRoles={["member"]}>
+            <PrivateRoute allowedRoles={["R02"]}>
               <SidebarLayout role="member" />
             </PrivateRoute>
           }
