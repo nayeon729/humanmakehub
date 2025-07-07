@@ -128,6 +128,12 @@ export default function HomePage() {
     );
   };
 
+  const askSend = () => {
+    // e?.preventDefault?.(); // 새로고침 방지
+    console.log("askSend ");
+    alert("askSend");
+  }
+
   return (
     <Box className="homePage">
       {/* Fixed Top Navigation */}
@@ -1092,6 +1098,7 @@ export default function HomePage() {
                 {/* 제출 버튼 */}
                 <Grid item xs={12}>
                   <Button
+                    type="button"  // ✅ 새로고침 방지!
                     fullWidth
                     variant="contained"
                     size="large"
@@ -1102,6 +1109,7 @@ export default function HomePage() {
                       padding: "12px 0",
                       '&:hover': { backgroundColor: "#1565c0" }
                     }}
+                    onClick={() => askSend()}
                   >
                     문의하기
                   </Button>

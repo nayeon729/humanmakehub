@@ -19,7 +19,7 @@ export default function RegisterPage() {
   const [role, setRole] = useState("");
   const [form, setForm] = useState({
     username: "", email: "", password: "", confirmPassword: "",
-    phone: "", company: "", portfolio: "", nickname: "", agreeTerms: false
+    phone: "", company: "", portfolio: "", github: "", nickname: "", agreeTerms: false
   });
   const [techStacks, setTechStacks] = useState({});
   const [selectedTechs, setSelectedTechs] = useState([]);
@@ -278,6 +278,8 @@ export default function RegisterPage() {
                       </Paper>
                     ))}
                     <TextField label="포트폴리오 링크 (선택)" name="portfolio" value={form.portfolio} onChange={handleFormChange} />
+
+                    <TextField label="깃허브 링크 (선택)" name="github" value={form.github} onChange={handleFormChange} />
                   </>
                 )}
                 <Box
