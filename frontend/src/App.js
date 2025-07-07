@@ -34,7 +34,11 @@ import NoticeListPage from "./admin/NoticeListPage";
 import NoticeViewPage from "./admin/NoticeViewPage";
 import NoticeUpdatePage from "./admin/NoticeUpdatePage";
 
+import ProjectChannelCommon from "./admin/ProjectChannelCommon";
+
+import PrivateRoute from "./common/PrivateRoute";
 import SidebarLayout from "./common/SidebarLayout";
+import ProjectChannel from "./common/ProjectChannel";
 import TopNavbar from "./common/TopNavbar";
 
 function App() {
@@ -43,7 +47,7 @@ function App() {
       <TopNavbar />
       <Routes>
 
-        
+
         {/* 공통 */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -54,36 +58,64 @@ function App() {
         <Route path="/pwReset" element={<PwReset />} />
 
         {/* 클라이언트 */}
-        <Route element={<SidebarLayout role="client" />}>
-          <Route path="/client/dashboard" element={<ClientDashBoard />} />
-          <Route path="/client/notice" element={<ClientNoticeBoard />} />
-          <Route path="/client/create" element={<ClientProjectCreatePage />} />
-          <Route path="/client/projects" element={<ClientProjectList />} />
-          <Route path="/client/project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
-          <Route path="/client/userinfo" element={<ClientUserInfo />} />
-          <Route path="/client/userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
-          
+        <Route
+          path="/client"
+          element={
+            <PrivateRoute allowedRoles={["client"]}>
+              <SidebarLayout role="client" />
+            </PrivateRoute>
+          }
+        >
+          <Route path="dashboard" element={<ClientDashBoard />} />
+          <Route path="notice" element={<ClientNoticeBoard />} />
+          <Route path="create" element={<ClientProjectCreatePage />} />
+          <Route path="projects" element={<ClientProjectList />} />
+          <Route path="project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
+          <Route path="userinfo" element={<ClientUserInfo />} />
+          <Route path="userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
+          <Route path="notice/list" element={<NoticeListPage />} />
+
         </Route>
 
 
         {/* 팀원 */}
-        <Route element={<SidebarLayout role="member" />}>
-          <Route path="/member/tasks" element={<MemberTaskPage />} />
+        <Route
+          path="/member"
+          element={
+            <PrivateRoute allowedRoles={["member"]}>
+              <SidebarLayout role="member" />
+            </PrivateRoute>
+          }
+        >
+          <Route path="tasks" element={<MemberTaskPage />} />
           {/* <Route path="/member/portfolio" element={<MyPortfolioPage />} /> */}
+          <Route path="notice/list" element={<NoticeListPage />} />
         </Route>
 
         {/* 관리자 */}
-        <Route element={<SidebarLayout role="admin" />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUserManagementPage />} />
-          <Route path="/admin/projects/all" element={<AdminAllProjectsPage/>}/>
-          <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
-          <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
-          <Route path="/admin/agreements" element={<AdminAgreementPage />} />
-          <Route path="/notice/create" element={<NoticeCreatePage />}/>
-          <Route path="/notice/list" element={<NoticeListPage />}/>
-          <Route path="/notice/:noticeId" element={<NoticeViewPage />}/>
-          <Route path="/notice/:noticeId/update" element={<NoticeUpdatePage />}/>
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute allowedRoles={["admin"]}>
+              <SidebarLayout role="admin" />
+            </PrivateRoute>
+          }
+        >
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUserManagementPage />} />
+          <Route path="projects/all" element={<AdminAllProjectsPage />} />
+          <Route path="projects" element={<AdminProjectManagementPage />} />
+          <Route path="project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
+          <Route path="agreements" element={<AdminAgreementPage />} />
+          <Route path="notice/create" element={<NoticeCreatePage />} />
+          <Route path="notice/list" element={<NoticeListPage />} />
+          <Route path="notice/:noticeId" element={<NoticeViewPage />} />
+          <Route path="notice/:noticeId/update" element={<NoticeUpdatePage />} />
+
+        </Route>
+        <Route element={<ProjectChannel role="admin" />}>
+          <Route path="/channel/:project_id/common" element={<ProjectChannelCommon />} />
+          {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
         </Route>
 
       </Routes>
