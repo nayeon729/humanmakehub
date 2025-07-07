@@ -22,7 +22,7 @@ export default function ClientUserInfo() {
   const [portfolio, setPortfolio] = useState("");
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [projectType, setProjectType] = useState(""); //콤보 수정
+  const [myId, setMyId] = useState("");
 
 
 
@@ -30,12 +30,12 @@ export default function ClientUserInfo() {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("📦 토큰 확인:", token);
         const res = await axios.get(`${BASE_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("🎯 사용자 정보:", res.data);
         setUserInfo(res.data);
+        setMyId(res.data.user_id); 
       } catch (err) {
         console.error("회원 정보 조회 실패", err);
       }
@@ -72,9 +72,9 @@ export default function ClientUserInfo() {
   };
   return (
     <>
-    <Typography variant="h4" fontWeight="bold" gutterBottom>
-             👤 회원정보
-          </Typography>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        👤 회원정보
+      </Typography>
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           안녕하세요! <strong>{userInfo.nickname}</strong> 님
@@ -175,23 +175,26 @@ export default function ClientUserInfo() {
           </Box>
 
           {/* 버튼들 */}
-          <Box sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mt: 4,
-            justifyContent: "center", // 가운데 정렬
-            gap: 1,
-          }}>
-            <Button
-              variant="contained"
-              onClick={() => navigate("/member/userupdate")}
+          {userInfo && myId === userInfo.user_id && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 4,
+                gap: 1,
+              }}
             >
-              회원정보 수정
-            </Button>
-            <Button variant="contained" onClick={() => setDialogOpen(true)}>
-              회원탈퇴
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                onClick={() => navigate("/member/userupdate")}
+              >
+                회원정보 수정
+              </Button>
+              <Button variant="contained" onClick={() => setDialogOpen(true)}>
+                회원탈퇴
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Card>
 
