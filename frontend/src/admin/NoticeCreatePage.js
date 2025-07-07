@@ -8,7 +8,7 @@ import Combo from "../components/Combo";
 
 export default function AdminNoticeCreatePage() {
     const [title, setTitle] = useState("");
-    const [targetType, setTargetType] = useState("공지");
+    const [targetType, setTargetType] = useState("");
     const [content, setContent] = useState("");
     const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export default function AdminNoticeCreatePage() {
                 },
             });
             alert("공지사항이 등록되었습니다.");
-            navigate("/admin/notices"); // 공지사항 목록 페이지로 이동
+            navigate("/admin/notice/list"); // 공지사항 목록 페이지로 이동
         } catch (error) {
             console.error("공지사항 등록 실패", error);
             alert("공지사항 등록 중 오류가 발생했습니다.");
@@ -46,14 +46,16 @@ export default function AdminNoticeCreatePage() {
             </Typography>
 
             <Paper sx={{ p: 3, mt: 2 }}>
+                <Box sx={{mb: 2}}>
+                <Typography variant="body2">제목</Typography>
                 <TextField
-                    label="제목 *"
                     fullWidth
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     sx={{ mb: 2 }}
                 />
-                <Box>
+                </Box>
+                <Box sx={{mb: 5}}>
                     <Typography variant="body2">분류</Typography>
                     <Combo
                         groupId="NOTICE_TYPE"
@@ -63,8 +65,9 @@ export default function AdminNoticeCreatePage() {
                         sx={{ minWidth: 50 }}
                     />
                 </Box>
+                <Box sx={{mb: 2}}>
+                <Typography variant="body2">내용</Typography>
                 <TextField
-                    label="내용 *"
                     multiline
                     rows={8}
                     fullWidth
@@ -72,6 +75,7 @@ export default function AdminNoticeCreatePage() {
                     onChange={(e) => setContent(e.target.value)}
                     sx={{ mb: 2 }}
                 />
+                </Box>
 
                 <Button variant="contained" fullWidth onClick={handleSubmit}>
                     글 등록

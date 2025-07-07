@@ -27,10 +27,11 @@ class ProjectFlexibleUpdate(BaseModel):
     status: Optional[str] = None
     progress: Optional[int] = None
 
-class NoticeCreate(BaseModel):
+class Notice(BaseModel):
     title: str
     target_type: str
     content: str
+
 
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
@@ -186,6 +187,7 @@ def get_all_projects(user: dict = Depends(get_current_user)):
                 FROM project p
                 LEFT JOIN user u 
                     ON p.client_id = u.user_id
+                WHERE p.del_yn='n'
                 ORDER BY p.project_id DESC
             """
             cursor.execute(sql)
@@ -212,7 +214,7 @@ def get_pm_projects(user: dict = Depends(get_current_user)):
                     u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
                 LEFT JOIN user u ON p.client_id = u.user_id
-                WHERE p.pm_id = %s
+                WHERE p.pm_id = %s AND p.del_yn='n'
                 ORDER BY p.project_id DESC
             """
             cursor.execute(sql, (user["user_id"],))
@@ -264,8 +266,22 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
     finally:
         conn.close()
 
+@router.delete("/projects/{project_id}/delete")
+def delete_project(project_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE project SET del_yn = 'Y' WHERE project_id = %s", (project_id,))
+        conn.commit()
+        return {"message": "프로젝트가 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
 @router.post("/notices")
-def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
+def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
     if user["role"] != "R03":  # 관리자만 작성
         raise HTTPException(status_code=403, detail="관리자 권한 필요")
     
@@ -284,3 +300,119 @@ def create_notice(notice: NoticeCreate, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+@router.get("/notices")
+def get_notices(page: int = 1, keyword: str = ""):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            page_size = 10
+            offset = (page - 1) * page_size
+
+            base_sql = "FROM notices WHERE del_yn = 'N'"
+            params = []
+
+            if keyword:
+                base_sql += " AND title LIKE %s"
+                params.append(f"%{keyword}%")
+
+            # 전체 개수
+            cursor.execute(f"SELECT COUNT(*) as count {base_sql}", params)
+            total = cursor.fetchone()["count"]
+
+            # 실제 데이터
+            cursor.execute(
+                f"""
+                SELECT notice_id, title, target_type, create_dt
+                {base_sql}
+                ORDER BY create_dt DESC
+                LIMIT %s OFFSET %s
+                """,
+                params + [page_size, offset]
+            )
+            items = cursor.fetchall()
+
+        return {
+            "items": items,
+            "totalPages": (total + page_size - 1) // page_size
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+@router.get("/notices/{notice_id}")
+def get_notice_detail(notice_id: int, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("SELECT notice_id, title, target_type, content, create_dt FROM notices WHERE notice_id = %s", (notice_id,))
+            result = cursor.fetchone()
+        if not result:
+            raise HTTPException(status_code=404, detail="공지사항을 찾을 수 없습니다.")
+        return result
+    finally:
+        conn.close()
+
+@router.delete("/notices/{notice_id}/delete")
+def delete_notice(notice_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE notices SET del_yn = 'Y' WHERE notice_id = %s", (notice_id,))
+        conn.commit()
+        return {"message": "공지가 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.put("/notices/{notice_id}/update")
+def update_project(notice_id: int, notice: Notice, user:dict = Depends(get_current_user)):    
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                 UPDATE notices
+                SET title = %s,
+                    target_type = %s,
+                    content = %s,
+                    update_dt = %s,
+                    update_id = %s
+                WHERE notice_id = %s
+            """
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"], notice_id))
+        conn.commit()
+        return {"message": "공지사항이 수정되었습니다."}
+    except Exception as e:
+        import traceback
+        print("❌ 예외 발생:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.get("/project/{project_id}/members")
+def get_project_members(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 조회 가능")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM team_member r
+                JOIN user u ON r.user_id = u.user_id
+                WHERE r.project_id = %s
+            """, (project_id,))
+            return cursor.fetchall()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+         

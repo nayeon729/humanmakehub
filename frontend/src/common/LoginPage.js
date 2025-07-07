@@ -37,13 +37,11 @@ export default function LoginPage() {
       localStorage.setItem("username", userRes.data.username || "");
 
       // 3. ✅ 역할별 메인 화면 리다이렉트
-      if (role === "admin") {
+      if (role === "R03") {
         navigate("/admin/dashboard");
-      } else if (role === "client") {
+      } else if (role === "R01") {
         navigate("/client/dashboard");
-      } else if (role === "pm") {
-        navigate("/pm/dashboard");
-      } else if (role === "member") {
+      } else if (role === "R02") {
         navigate("/member/tasks");
       } else {
         alert("알 수 없는 사용자 역할입니다.");

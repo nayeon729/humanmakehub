@@ -1,22 +1,19 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Box, Typography, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import AdminAgreementPage from "../admin/AdminAgreementPage";
 
 export default function SidebarLayout({ role }) {
   // 역할별 메뉴 설정
   const menuItems = {
-    admin: [
+    'PM(Admin)': [
       { text: "대시보드", path: "/admin/dashboard" },
       { text: "사용자 관리", path: "/admin/users" },
       { text: "전체 프로젝트", path: "/admin/projects/all"},
       { text: "프로젝트 관리", path: "/admin/projects" },
-      { text: "공지사항", path: "/" },
+      { text: "공지사항", path: "/admin/notice/list" },
     ],
-    pm: [
-      { text: "대시보드", path: "/pm/dashboard" },
-      { text: "팀 빌더", path: "/pm/team" },
-      { text: "프로젝트 관리", path: "/pm/projects" },
-    ],
+
     member: [
       { text: "작업 목록", path: "/member/tasks" },
       { text: "포트폴리오 작성", path: "/member/portfolio" },
@@ -25,8 +22,8 @@ export default function SidebarLayout({ role }) {
       { text: "대시보드", path: "/client/dashboard" },
       { text: "회원정보", path: "/client/userinfo" },
       { text: "프로젝트 생성", path: "/client/create" },
-      { text: "프로젝트 목록", path: "/client/project_list" },
-      { text: "공지사항", path: "/client/noticeboard" },
+      { text: "프로젝트 목록", path: "/client/list" },
+      { text: "공지사항", path: "/client/notice/list" },
     ],
   };
 

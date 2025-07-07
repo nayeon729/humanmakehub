@@ -8,6 +8,7 @@ export default function CommonComboBox ({ options, value, onChange, placeholder 
   return (
     
     <FormControl fullWidth disabled={disabled}>
+       <InputLabel shrink={Boolean(value)} htmlFor="select-box">{label}</InputLabel>
       <Select
         value={value}
         onChange={(e) => onChange(e.target.value)}

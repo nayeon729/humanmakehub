@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tinymce/tinymce-react": "^6.2.1",
     "axios": "^1.10.0",
+    "qrcode.react": "^4.2.0",
     "react-daum-postcode": "^3.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.59.0",
