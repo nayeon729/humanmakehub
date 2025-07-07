@@ -86,7 +86,7 @@ function App() {
           path="/member"
           element={
             <PrivateRoute allowedRoles={["R02"]}>
-              <SidebarLayout role="member" />
+              <SidebarLayout role="Developer" />
             </PrivateRoute>
           }
         >

@@ -72,8 +72,22 @@ def get_member_user_info(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
     finally:
         conn.close()
+# ------------------------ 회원탈퇴 ------------------------
 
-
+@router.put("/withdraw")
+def withdraw_user(user: dict = Depends(get_current_user)):
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE user
+                SET del_yn = 'Y', update_dt = NOW()
+                WHERE user_id = %s AND del_yn = 'N'
+            """, (user["user_id"],))
+        conn.commit()
+        return {"message": "회원탈퇴 처리 완료"}
+    finally:
+        conn.close()
 # ------------------------ 비밀번호 확인 ------------------------
 @router.post("/verify-password")
 def verify_password(data: dict = Body(...), user: dict = Depends(get_current_user)):
@@ -91,8 +105,7 @@ def verify_password(data: dict = Body(...), user: dict = Depends(get_current_use
         conn.close()
 
 # ------------------------ 회원 정보 수정 ------------------------
-        
-#회원정보 수정        
+     
 @router.put("/userupdate")
 def update_user_info(payload: dict = Body(...), user: dict = Depends(get_current_user)):
     print("📦 받은 payload:", payload)  # ✅ 추가!
