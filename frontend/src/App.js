@@ -98,6 +98,7 @@ function App() {
           element={
             <PrivateRoute allowedRoles={["R03"]}>
               <SidebarLayout role="PM(Admin)" />
+              
             </PrivateRoute>
           }
         >
@@ -113,10 +114,23 @@ function App() {
           <Route path="notice/:noticeId/update" element={<NoticeUpdatePage />} />
 
         </Route>
-        <Route element={<ProjectChannel role="admin" />}>
-          <Route path="/channel/:project_id/common" element={<ProjectChannelCommon />} />
+        <Route path="admin/channel/:project_id" element={
+          <PrivateRoute allowedRoles={["R03"]}>
+            <ProjectChannel role="R03" />
+          </PrivateRoute>
+        }>    
+          <Route path="common" element={<ProjectChannelCommon />} />
           {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
         </Route>
+         <Route path="member/channel/:project_id" element={
+          <PrivateRoute allowedRoles={["R02"]}>
+            <ProjectChannel role="R02" />
+          </PrivateRoute>
+        }>    
+          <Route path="common" element={<ProjectChannelCommon />} />
+          {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
+        </Route>
+
 
       </Routes>
     </Router>
