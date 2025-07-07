@@ -13,6 +13,9 @@ import "swiper/css/navigation";
 import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
+import FloatingQRCode  from "../common/FloatingQRCode";
+
+
 
 export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -127,6 +130,12 @@ export default function HomePage() {
         : [...prev, item]               // 선택 추가
     );
   };
+
+  const askSend = () => {
+    // e?.preventDefault?.(); // 새로고침 방지
+    console.log("askSend ");
+    alert("askSend");
+  }
 
   return (
     <Box className="homePage">
@@ -1092,6 +1101,7 @@ export default function HomePage() {
                 {/* 제출 버튼 */}
                 <Grid item xs={12}>
                   <Button
+                    type="button"  // ✅ 새로고침 방지!
                     fullWidth
                     variant="contained"
                     size="large"
@@ -1102,11 +1112,13 @@ export default function HomePage() {
                       padding: "12px 0",
                       '&:hover': { backgroundColor: "#1565c0" }
                     }}
+                    onClick={() => askSend()}
                   >
                     문의하기
                   </Button>
                 </Grid>
               </Grid>
+              <FloatingQRCode />
             </form>
           </div>
         </div>
