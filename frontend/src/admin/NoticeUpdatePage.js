@@ -52,7 +52,7 @@ export default function AdminNoticeCreatePage() {
                 },
             });
             alert("✅ 공지사항이 수정되었습니다.");
-            navigate(`/notice/${noticeId}`);
+            navigate(`/admin/notice/${noticeId}`);
         } catch (error) {
             console.error("❌ 공지사항 수정 실패", error);
             alert("공지사항 수정에 실패했습니다.");
@@ -98,7 +98,7 @@ export default function AdminNoticeCreatePage() {
                 </Box>
 
                 <Button variant="contained" fullWidth onClick={handleUpdate}>
-                    글 등록
+                    글 수정 
                 </Button>
             </Paper>
         </Box>

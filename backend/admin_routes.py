@@ -187,6 +187,7 @@ def get_all_projects(user: dict = Depends(get_current_user)):
                 FROM project p
                 LEFT JOIN user u 
                     ON p.client_id = u.user_id
+                WHERE p.del_yn='n'
                 ORDER BY p.project_id DESC
             """
             cursor.execute(sql)

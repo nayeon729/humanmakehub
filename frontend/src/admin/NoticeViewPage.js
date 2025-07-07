@@ -84,7 +84,7 @@ export default function AdminNoticeViewPage() {
                             <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
                                 <button
                                     style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
-                                    onClick={() => navigate(`/notice/${notice.notice_id}/update`)}
+                                    onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
                                 >
                                     수정
                                 </button>
