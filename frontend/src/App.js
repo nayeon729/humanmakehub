@@ -69,7 +69,7 @@ function App() {
           <Route path="dashboard" element={<ClientDashBoard />} />
           <Route path="notice" element={<ClientNoticeBoard />} />
           <Route path="create" element={<ClientProjectCreatePage />} />
-          <Route path="projects" element={<ClientProjectList />} />
+          <Route path="list" element={<ClientProjectList />} />
           <Route path="project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
           <Route path="userinfo" element={<ClientUserInfo />} />
           <Route path="userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
