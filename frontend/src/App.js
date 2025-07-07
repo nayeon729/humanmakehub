@@ -21,7 +21,10 @@ import ClientUserUpdate from "./client/ClinetUserUpdate"; // 회원 정보 수�
 // import PMProjectDetailPage from "./src/PMProjectDetailPage";
 
 import MemberTaskPage from "./member/MemberTaskPage";
-// import MyPortfolioPage from "./MyPortfolioPage";
+import MemberUserInfo from "./member/MemberUserInfo";
+import MemberUserUpdate from "./member/MemberUserUpdate";
+import MemberProjectList from "./member/MemberProjectList";
+import MemberNoticeBoard from "./member/MemberNoticeBoard";
 
 import AdminDashboard from './admin/AdminDashboard';
 import AdminProjectManagementPage from "./admin/AdminProjectManagementPage";
@@ -88,8 +91,10 @@ function App() {
           }
         >
           <Route path="tasks" element={<MemberTaskPage />} />
-          {/* <Route path="/member/portfolio" element={<MyPortfolioPage />} /> */}
-          <Route path="notice/list" element={<NoticeListPage />} />
+          <Route path="userinfo" element={<MemberUserInfo />} />
+          <Route path="userupdate" element={<MemberUserUpdate />} />
+          <Route path="projectlist" element={<MemberProjectList />} />
+          <Route path="notice" element={<MemberNoticeBoard />} />
         </Route>
 
         {/* 관리자 */}

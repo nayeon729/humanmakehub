@@ -13,10 +13,11 @@ export default function SidebarLayout({ role }) {
       { text: "프로젝트 관리", path: "/admin/projects" },
       { text: "공지사항", path: "/admin/notice/list" },
     ],
-
     member: [
-      { text: "작업 목록", path: "/member/tasks" },
-      { text: "포트폴리오 작성", path: "/member/portfolio" },
+      { text: "대시보드", path: "/member/tasks" },
+      { text: "회원정보", path: "/member/userinfo" },
+      { text: "프로젝트 목록", path: "/member/projectlist" },
+      { text: "공지사항", path: "/member/notice" },
     ],
     client: [
       { text: "대시보드", path: "/client/dashboard" },
