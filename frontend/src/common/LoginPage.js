@@ -34,7 +34,7 @@ export default function LoginPage() {
       const role = userRes.data.role;
       localStorage.setItem("role", role);
       localStorage.setItem("nickname", userRes.data.nickname || "");
-      localStorage.setItem("username", userRes.data.username || "");
+      localStorage.setItem("user_id", userRes.data.user_id || "");
 
       // 3. ✅ 역할별 메인 화면 리다이렉트
       if (role === "R03") {

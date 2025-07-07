@@ -5,6 +5,7 @@ import pymysql
 from database import db_config
 from jwt_auth import get_current_user
 from typing import Optional
+from typing import List
 
 router = APIRouter( tags=["Admin"])
 
@@ -266,6 +267,59 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
     finally:
         conn.close()
 
+
+@router.post("/members/filter")
+def filter_member_users(
+    ranks: List[str] = Body(default=[]),
+    positions: List[str] = Body(default=[]),
+    keyword: str = Body(default=""),
+    user: dict = Depends(get_current_user)
+):
+    if str(user["role"]) != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT
+                    u.user_id,
+                    u.nickname,
+                    u.grade,
+                    grade.code_name AS user_grade,
+                    GROUP_CONCAT(DISTINCT cc.code_name) AS skills
+                FROM user u
+                LEFT JOIN user_skills us ON u.user_id = us.user_id AND us.del_yn = 'N'
+                LEFT JOIN common_code cc ON us.code_id = cc.code_id AND cc.del_yn = 'N'
+                LEFT JOIN common_code grade ON u.grade = grade.code_id AND grade.group_id = 'USER_GRADE'
+                WHERE u.role = 'R02' AND u.del_yn = 'N'
+            """
+            params = []
+
+            if ranks:
+                placeholders = ','.join(['%s'] * len(ranks))
+                sql += f" AND u.grade IN ({placeholders})"   # ✅ 여기만 user.grade 로!
+                params.extend(ranks)
+
+            if positions:
+                placeholders = ','.join(['%s'] * len(positions))
+                sql += f" AND cc.parent_code IN ({placeholders})"
+                params.extend(positions)
+
+            if keyword:
+                sql += " AND u.nickname LIKE %s"
+                params.append(f"%{keyword}%")
+
+            sql += " GROUP BY u.user_id"
+            
+            cursor.execute(sql, params)
+            return cursor.fetchall()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
 @router.delete("/projects/{project_id}/delete")
 def delete_project(project_id: str):
     try:
@@ -415,4 +469,74 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
-         
+
+# @router.post("/projectchannel/create")
+# def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
+#     if user["role"] != "R03":  # 관리자만 작성
+#         raise HTTPException(status_code=403, detail="관리자 권한 필요")
+    
+#     try:
+#         conn = pymysql.connect(**db_config)
+#         with conn.cursor() as cursor:
+#             sql = """
+#                 INSERT INTO project_chennal (title, target_type, content, create_dt, create_id)
+#                 VALUES (%s, %s, %s, %s, %s)
+#             """
+#             now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#             cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"]))
+#         conn.commit()
+#         return {"message": "공지사항이 등록되었습니다."}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#     finally:
+#         conn.close()
+
+
+
+@router.get("/project/common/{project_id}")
+def get_project_common(project_id: int):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT 
+                    pc.channel_id, 
+                    pc.title, 
+                    pc.content, 
+                    pc.user_id, 
+                    u.nickname,
+                    pc.create_dt
+                FROM project_channel pc
+                JOIN user u ON pc.user_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND u.role = 'R03'
+                  AND pc.project_id = %s
+                ORDER BY pc.create_dt DESC
+            """
+            cursor.execute(sql, (project_id,))
+            items = cursor.fetchall()
+
+            return {
+                "items": items,
+                "total": len(items)
+            }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.post("/project/{project_id}/invite")
+def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO join_requests (project_id, user_id, pm_id, status, checking, create_dt, del_yn)
+                VALUES (%s, %s, %s, '대기', 'N', NOW(), 'N')
+            """, (project_id, body["member_id"], user["user_id"]))
+        conn.commit()
+        return {"message": "초대 요청이 생성되었습니다."}
+    finally:
+        conn.close()

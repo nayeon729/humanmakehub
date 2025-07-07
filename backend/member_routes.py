@@ -72,8 +72,22 @@ def get_member_user_info(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
     finally:
         conn.close()
+# ------------------------ 회원탈퇴 ------------------------
 
-
+@router.put("/withdraw")
+def withdraw_user(user: dict = Depends(get_current_user)):
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE user
+                SET del_yn = 'Y', update_dt = NOW()
+                WHERE user_id = %s AND del_yn = 'N'
+            """, (user["user_id"],))
+        conn.commit()
+        return {"message": "회원탈퇴 처리 완료"}
+    finally:
+        conn.close()
 # ------------------------ 비밀번호 확인 ------------------------
 @router.post("/verify-password")
 def verify_password(data: dict = Body(...), user: dict = Depends(get_current_user)):
@@ -91,8 +105,7 @@ def verify_password(data: dict = Body(...), user: dict = Depends(get_current_use
         conn.close()
 
 # ------------------------ 회원 정보 수정 ------------------------
-        
-#회원정보 수정        
+     
 @router.put("/userupdate")
 def update_user_info(payload: dict = Body(...), user: dict = Depends(get_current_user)):
     print("📦 받은 payload:", payload)  # ✅ 추가!
@@ -181,3 +194,64 @@ def get_my_projects(user: dict = Depends(get_current_user)):
         return projects
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+    
+    
+@router.post("/list")
+def project_list(payload: dict = Body(...), user: dict = Depends(get_current_user)):
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # ✅ 1. 팀원으로 내가 포함된 프로젝트들 조회
+            cursor.execute("""
+                SELECT 
+                    p.project_id,
+                    p.title,
+                    p.category,
+                    p.description,
+                    p.estimated_duration,
+                    p.budget,
+                    p.urgency,
+                    p.progress,
+                    DATE(p.create_dt) AS create_date,
+                    p.del_yn
+                FROM project p
+                JOIN team_member tm ON p.project_id = tm.project_id
+                WHERE tm.user_id = %s
+                  AND tm.del_yn = 'N'
+                  AND p.del_yn = 'N'
+            """, (user["user_id"],))
+
+            projects = cursor.fetchall()
+
+            if not projects:
+                raise HTTPException(status_code=404, detail="참여한 프로젝트가 없습니다.")
+
+            # ✅ 2. 공통 코드 변환
+            for project in projects:
+                # 긴급도
+                cursor.execute("""
+                    SELECT code_name FROM common_code
+                    WHERE group_id = 'URGENCY_LEVEL'
+                    AND code_id = %s
+                    AND del_yn = 'N'
+                """, (project['urgency'],))
+                urgency = cursor.fetchone()
+                project['urgency_level'] = urgency['code_name'] if urgency else '-'
+
+                # 카테고리
+                cursor.execute("""
+                    SELECT code_name FROM common_code
+                    WHERE group_id = 'PROJECT_TYPE'
+                    AND code_id = %s
+                    AND del_yn = 'N'
+                """, (project['category'],))
+                category = cursor.fetchone()
+                project['category_name'] = category['code_name'] if category else '-'
+
+            return {"projects": projects}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()

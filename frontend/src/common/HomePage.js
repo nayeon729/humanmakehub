@@ -14,6 +14,7 @@ import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "axios";
+import FloatingQRCode  from "../common/FloatingQRCode";
 
 export default function HomePage() {
   const BASE_URL = "http://127.0.0.1:8000";
@@ -1154,6 +1155,7 @@ export default function HomePage() {
                   </Button>
                 </Grid>
               </Grid>
+              <FloatingQRCode />
             </form>
           </div>
         </div>

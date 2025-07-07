@@ -6,7 +6,7 @@ import {
   Typography,
   Stack,
   Divider,
-  TextField,
+  Grid,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ export default function ClientUserInfo() {
   const [portfolio, setPortfolio] = useState("");
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [projectType, setProjectType] = useState(""); //콤보 수정
+  const [myId, setMyId] = useState("");
 
 
 
@@ -30,12 +30,12 @@ export default function ClientUserInfo() {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("📦 토큰 확인:", token);
         const res = await axios.get(`${BASE_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("🎯 사용자 정보:", res.data);
         setUserInfo(res.data);
+        setMyId(res.data.user_id); 
       } catch (err) {
         console.error("회원 정보 조회 실패", err);
       }
@@ -46,12 +46,6 @@ export default function ClientUserInfo() {
 
   if (!userInfo) return <Typography>로딩중...</Typography>;
 
-  const infoItems = [
-    { label: "아이디", value: userInfo.user_id },
-    { label: "이메일", value: userInfo.email },
-    { label: "휴대전화", value: userInfo.phone || "-" },
-    { label: "회사명", value: userInfo.company || "-" },
-  ];
 
   const handleWithdraw = async (password) => {
 
@@ -78,9 +72,15 @@ export default function ClientUserInfo() {
   };
   return (
     <>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        👤 회원정보
+      </Typography>
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
-          안녕하세요! <strong>{userInfo.nickname}</strong> 님 {userInfo.user_id}
+          안녕하세요! <strong>{userInfo.nickname}</strong> 님
+          <span style={{ fontSize: "0.9rem", color: "#888", marginLeft: "8px" }}>
+            {userInfo.user_id}
+          </span>
         </Typography>
 
         {/* 연락처 */}
@@ -126,39 +126,75 @@ export default function ClientUserInfo() {
         <Divider sx={{ borderBottomWidth: 2, borderColor: "black", mb: 3 }} />
 
         <Stack spacing={2}>
-          {/* 주요 기술 */}
-          <Typography>
-            <strong>주요 기술:</strong> {userInfo.tech || "-"}
-          </Typography>
+          <Grid container spacing={30} justifyContent="center">
+            {/* 주요 기술 */}
+            <Grid item xs={12} sm={6} md={5} sx={{ textAlign: "center" }}>
+              <Typography fontWeight="bold" mb={1}>
+                주요 기술
+              </Typography>
+              <Typography sx={{ whiteSpace: "pre-line" }}>
+                {userInfo.tech || "-"}
+              </Typography>
+            </Grid>
 
-          {/* 경험 */}
-          <Typography>
-            <strong>경험:</strong> {userInfo.experience || "-"}
-          </Typography>
+            {/* 경험 */}
+            <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
+              <Typography fontWeight="bold" mb={1}>
+                경험
+              </Typography>
+              <Typography sx={{ whiteSpace: "pre-line" }}>
+                {userInfo.experience || "-"}
+              </Typography>
+            </Grid>
+          </Grid>
 
           {/* Git 주소 */}
-          <Typography>
-            <strong>Git 주소:</strong> {userInfo.git || "-"}
-          </Typography>
+          <Box sx={{ textAlign: "center", mt: 4, }}>
+            <Typography sx={{ mb: 10, mt: 10, }}>
+              <strong>Git 주소</strong>{" "}
+              {userInfo.git ? (
+                <a href={userInfo.git} target="_blank" rel="noopener noreferrer">
+                  {userInfo.git}
+                </a>
+              ) : (
+                "-"
+              )}
+            </Typography>
 
-          {/* 포트폴리오 주소 */}
-          <Typography>
-            <strong>포트폴리오:</strong> {userInfo.portfolio || "-"}
-          </Typography>
-
+            {/* 포트폴리오 주소 */}
+            <Typography sx={{ mb: 5 }}>
+              <strong>포트폴리오 주소</strong>{" "}
+              {userInfo.portfolio ? (
+                <a href={userInfo.portfolio} target="_blank" rel="noopener noreferrer">
+                  {userInfo.portfolio}
+                </a>
+              ) : (
+                "-"
+              )}
+            </Typography>
+          </Box>
 
           {/* 버튼들 */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-            <Button
-              variant="contained"
-              onClick={() => navigate("/member/userupdate")}
+          {userInfo && myId === userInfo.user_id && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 4,
+                gap: 1,
+              }}
             >
-              회원정보 수정
-            </Button>
-            <Button variant="outlined" color="error" onClick={() => setDialogOpen(true)}>
-              회원탈퇴
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                onClick={() => navigate("/member/userupdate")}
+              >
+                회원정보 수정
+              </Button>
+              <Button variant="contained" onClick={() => setDialogOpen(true)}>
+                회원탈퇴
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Card>
 

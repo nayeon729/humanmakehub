@@ -12,20 +12,20 @@ export default function ProjectChannel({ role }) {
     const BASE_URL = "http://127.0.0.1:8000";
 
     const menuItems = {
-        admin: [
-            { text: "공용", path: `/channel/${project_id}/common` },
+        R03: [
+            { text: "공용", path: `/admin/channel/${project_id}/common` },
 
         ],
-        member: [
-            { text: "공용", path: `/channel/${project_id}/common` },
-            { text: "PM", path: `/channel/${project_id}/pm` }
+        R02: [
+            { text: "공용", path: `/member/channel/${project_id}/common` },
+            { text: "PM", path: `/member/channel/${project_id}/pm` }
         ]
     };
 
     const menus = menuItems[role] || [];
 
     useEffect(() => {
-        if (role === "admin") {
+        if (role === "R03") {
             axios.get(`${BASE_URL}/admin/project/${project_id}/members`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -55,7 +55,7 @@ export default function ProjectChannel({ role }) {
                         </ListItem>
                     ))}
                 </List>
-                {role === "admin" && members.length > 0 && (
+                {role === "R03" && members.length > 0 && (
                     <>
                         <Divider sx={{ my: 2 }} />
                         <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>

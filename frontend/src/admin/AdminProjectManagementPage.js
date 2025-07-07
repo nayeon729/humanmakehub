@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Paper, LinearProgress, Select, MenuItem,
-  Slider, Grid, Chip, Stack, Button,Dialog, DialogTitle,
-    DialogContent, DialogContentText, DialogActions,
+  Slider, Grid, Chip, Stack, Button, Dialog, DialogTitle,
+  DialogContent, DialogContentText, DialogActions,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,16 @@ export default function AdminProjectManagementPage() {
   const [projectStatus, setProjectStatus] = useState("");
   const [progressMap, setProgressMap] = useState({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedProjectId, setSelectedProjectId]=useState({});
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedRanks, setSelectedRanks] = useState([]);
+  const [selectedPositions, setSelectedPositions] = useState([]);
+  const [filteredDevelopers, setFilteredDevelopers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+
   const BASE_URL = "http://127.0.0.1:8000"
   const navigate = useNavigate();
 
@@ -22,10 +31,15 @@ export default function AdminProjectManagementPage() {
     fetchProjects();
   }, []);
 
-
+  useEffect(() => {
+    if (inviteModalOpen) {
+      handleSearch();
+    }
+  }, [inviteModalOpen]);
 
   const fetchProjects = async () => {
     try {
+      const pm_id = localStorage.getItem("user_id");
       const token = localStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/my-projects`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -117,11 +131,11 @@ export default function AdminProjectManagementPage() {
   };
 
 
-  const handleDeleteProject = async(project_id) =>{
-    try{
-      const token= localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/admin/projects/${project_id}/delete`,{
-        headers:{Authorization: `Bearer ${token}`}
+  const handleDeleteProject = async (project_id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${BASE_URL}/admin/projects/${project_id}/delete`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       fetchProjects();
       setDeleteDialogOpen(false);
@@ -153,6 +167,53 @@ export default function AdminProjectManagementPage() {
     if (urgency === "U03") return "warning";
     return "default";
   }
+  const handleCheckboxChange = (state, setState, value) => {
+    setState((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
+  const rankMap = { S: "H01", A: "H02", B: "H03", C: "H04" };
+  const positionMap = { 프론트: "T01", 백엔드: "T02", 모바일: "T03" };
+  const convertedRanks = selectedRanks.map((r) => rankMap[r]);
+  const convertedPositions = selectedPositions.map((p) => positionMap[p]);
+  const handleSearch = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(`${BASE_URL}/admin/members/filter`, {
+        ranks: convertedRanks,
+        positions: convertedPositions,
+        keyword: searchKeyword
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setFilteredDevelopers(res.data);
+    } catch (error) {
+      console.error("개발자 검색 실패", error);
+      alert("개발자 목록을 불러오지 못했습니다.");
+    }
+  };
+
+  const handleAddMember = async (member_id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const pm_id = localStorage.getItem("user_id");
+      await axios.post(`${BASE_URL}/admin/project/${selectedProjectId}/invite`, {
+        member_id: member_id,
+        pm_id: pm_id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      alert("초대 완료!");
+    } catch (err) {
+      console.error("초대 실패", err);
+      alert("초대에 실패했습니다.");
+    }
+  };
+
+
+
 
   return (
     <Box sx={{ p: 3 }}>
@@ -166,22 +227,22 @@ export default function AdminProjectManagementPage() {
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-                <Box  mb={1}
-                  sx={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
-                    <Box sx={{display:"flex", flex:'4'}}>
-                  <Typography variant="caption" color="text.secondary" sx={{display:'flex'}}>
-                    접수일: {formattedDate}
-                  </Typography>
+                <Box mb={1}
+                  sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <Box sx={{ display: "flex", flex: '4' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'flex' }}>
+                      접수일: {formattedDate}
+                    </Typography>
                   </Box>
-                  <Box sx={{display:"flex",flex:'1', flexDirection:"row", marginLeft:"10px"}}>
-                    <button 
-                      style={{background:"none", width:'35px', border:'none', padding:'0px', color:'blue'}}
+                  <Box sx={{ display: "flex", flex: '1', flexDirection: "row", marginLeft: "10px" }}>
+                    <button
+                      style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
                       onClick={() => navigate(`/`)}
                     >
                       수정
                     </button>
-                    <button 
-                       style={{background:"none", width:'35px', border:'none', padding:'0px', color:'red'}}
+                    <button
+                      style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'red' }}
                       onClick={() => handleDeleteProject(proj.project_id)}
                     >
                       삭제
@@ -273,13 +334,24 @@ export default function AdminProjectManagementPage() {
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" fontWeight="bold" gutterBottom>
                     멤버 리스트
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      sx={{ ml: 1 }}
+                      onClick={() => {
+                        setInviteModalOpen(true)
+                        setSelectedProjectId(proj.project_id)
+                      }}
+                    >
+                      + 개발자 초대
+                    </Button>
                   </Typography>
                 </Box>
                 <Button
                   variant="contained"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={() => navigate(`/channel/${proj.project_id}/common`)}
+                  onClick={() => navigate(`/admin/channel/${proj.project_id}/common`)}
                 >
                   프로젝트 채널
                 </Button>
@@ -289,21 +361,103 @@ export default function AdminProjectManagementPage() {
         })}
       </Grid>
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-              <DialogTitle>프로젝트 삭제 확인</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  정말로 이 프로젝트를 삭제하시겠습니까?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
-                <Button onClick={handleDeleteProject} color="error" variant="contained">
-                  삭제 확인
-                </Button>
-              </DialogActions>
-            </Dialog>
+        <DialogTitle>프로젝트 삭제 확인</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            정말로 이 프로젝트를 삭제하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
+          <Button onClick={handleDeleteProject} color="error" variant="contained">
+            삭제 확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={inviteModalOpen} onClose={() => setInviteModalOpen(false)}>
+        <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          개발자 초대
+          <button onClick={() => setInviteModalOpen(false)} style={{ color: "red", width: "30px", p: 0, m: 0, border: 'none', backgroundColor: 'transparent' }}>
+            ❌
+          </button>
+        </DialogTitle>
+        <DialogContent>
+          {/* 🔍 검색 영역 */}
+          <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+            <input
+              type="text"
+              placeholder="닉네임 검색"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              style={{ flex: 1, padding: 8, border: "1px solid #ccc", borderRadius: 4 }}
+            />
+            <Button variant="contained" onClick={() => handleSearch()}>검색</Button>
+          </Box>
+
+          {/* ✅ 필터링 옵션 */}
+          <Box sx={{ display: "flex", gap: 5, mb: 2 }}>
+            <Box>
+              <Typography fontWeight="bold">등급</Typography>
+              {["S", "A", "B", "C"].map((rank) => (
+                <label key={rank}>
+                  <input
+                    type="checkbox"
+                    value={rank}
+                    onChange={(e) =>
+                      handleCheckboxChange(selectedRanks, setSelectedRanks, e.target.value)
+                    }
+                  />{" "}
+                  {rank}
+                </label>
+              ))}
+            </Box>
+            <Box>
+              <Typography fontWeight="bold">포지션</Typography>
+              {["프론트", "백엔드", "모바일"].map((pos) => (
+                <label key={pos}>
+                  <input
+                    type="checkbox"
+                    value={pos}
+                    onChange={(e) =>
+                      handleCheckboxChange(selectedPositions, setSelectedPositions, e.target.value)
+                    }
+                  />{" "}
+                  {pos}
+                </label>
+              ))}
+            </Box>
+          </Box>
+
+          {/* 👤 개발자 리스트 */}
+          <Box sx={{ maxHeight: "310px", overflowY: "auto", mb: 2 }}>
+            {filteredDevelopers.map((dev) => (
+              <Box
+                key={dev.user_id}
+                sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}
+              >
+                <Typography>{dev.nickname}</Typography>
+                <Button variant="outlined" size="small" onClick={() => handleAddMember(dev.user_id)}>초대하기</Button>
+              </Box>
+            ))}
+          </Box>
+
+          {/* 페이지네이션 (가라용) */}
+          <Box display="flex" justifyContent="center" gap={1}>
+            {[1].map((num) => (
+              <Button
+                key={num}
+                size="small"
+                variant={currentPage === num ? "contained" : "outlined"}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </Button>
+            ))}
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Box>
 
-    
+
   );
 }
