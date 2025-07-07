@@ -29,6 +29,10 @@ import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
 import AdminAgreementPage from "./admin/AdminAgreementPage";
+import NoticeCreatePage from "./admin/NoticeCreatePage";
+import NoticeListPage from "./admin/NoticeListPage";
+import NoticeViewPage from "./admin/NoticeViewPage";
+import NoticeUpdatePage from "./admin/NoticeUpdatePage";
 
 import SidebarLayout from "./common/SidebarLayout";
 import TopNavbar from "./common/TopNavbar";
@@ -39,6 +43,7 @@ function App() {
       <TopNavbar />
       <Routes>
 
+        
         {/* 공통 */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -57,15 +62,9 @@ function App() {
           <Route path="/client/project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
           <Route path="/client/userinfo" element={<ClientUserInfo />} />
           <Route path="/client/userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
+          
         </Route>
 
-        {/* PM */}
-        <Route element={<SidebarLayout role="pm" />}>
-          {/* <Route path="/pm/dashboard" element={<PMDashboard />} /> */}
-          {/* <Route path="/pm/team" element={<TeamBuilderPage />} /> */}
-          {/* <Route path="/pm/project/:projectId" element={<PMProjectDetailPage />} /> */}
-          {/* <Route path="/pm/project/:projectId/tasks" element={<TaskManagementPage />} //> */}
-        </Route>
 
         {/* 팀원 */}
         <Route element={<SidebarLayout role="member" />}>
@@ -81,6 +80,10 @@ function App() {
           <Route path="/admin/projects" element={<AdminProjectManagementPage />} />
           <Route path="/admin/project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
           <Route path="/admin/agreements" element={<AdminAgreementPage />} />
+          <Route path="/notice/create" element={<NoticeCreatePage />}/>
+          <Route path="/notice/list" element={<NoticeListPage />}/>
+          <Route path="/notice/:noticeId" element={<NoticeViewPage />}/>
+          <Route path="/notice/:noticeId/update" element={<NoticeUpdatePage />}/>
         </Route>
 
       </Routes>

@@ -10,7 +10,7 @@ export default function SidebarLayout({ role }) {
       { text: "사용자 관리", path: "/admin/users" },
       { text: "전체 프로젝트", path: "/admin/projects/all"},
       { text: "프로젝트 관리", path: "/admin/projects" },
-      { text: "공지사항", path: "/" },
+      { text: "공지사항", path: "/notice/list" },
     ],
     pm: [
       { text: "대시보드", path: "/pm/dashboard" },
@@ -20,13 +20,14 @@ export default function SidebarLayout({ role }) {
     member: [
       { text: "작업 목록", path: "/member/tasks" },
       { text: "포트폴리오 작성", path: "/member/portfolio" },
+      
     ],
     client: [
       { text: "대시보드", path: "/client/dashboard" },
       { text: "회원정보", path: "/client/userinfo" },
       { text: "프로젝트 생성", path: "/client/create" },
       { text: "프로젝트 목록", path: "/client/list" },
-      { text: "공지사항", path: "/client/noticeboard" },
+      { text: "공지사항", path: "/notice/list" },
     ],
   };
 

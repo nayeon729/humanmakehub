@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Paper, LinearProgress, Select, MenuItem,
-  Slider, Grid, Chip, Stack, Button
+  Slider, Grid, Chip, Stack, Button,Dialog, DialogTitle,
+    DialogContent, DialogContentText, DialogActions,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +13,8 @@ export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [projectStatus, setProjectStatus] = useState("");
   const [progressMap, setProgressMap] = useState({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId]=useState({});
   const BASE_URL = "http://127.0.0.1:8000"
   const navigate = useNavigate();
 
@@ -113,10 +116,36 @@ export default function AdminProjectManagementPage() {
     }
   };
 
+
+  const handleDeleteProject = async(project_id) =>{
+    try{
+      const token= localStorage.getItem("token");
+      await axios.delete(`${BASE_URL}/admin/projects/${project_id}/delete`,{
+        headers:{Authorization: `Bearer ${token}`}
+      });
+      fetchProjects();
+      setDeleteDialogOpen(false);
+      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+    } catch (error) {
+      console.error("❌ 프로젝트 삭제 실패", error);
+      alert("❌ 프로젝트 삭제에 실패했습니다.");
+    }
+  };
+
   const urgencyMap = {
     U01: "긴급도: 여유",
     U02: "긴급도: 보통",
     U03: "긴급도: 높음",
+  }
+  const categoryMap = {
+    A01: "웹 개발",
+    A02: "앱 개발 ",
+    A03: "데이터 분석",
+    A04: "AI 솔루션",
+    A05: "전산 시스템 구축",
+    A06: "쇼핑몰 구축",
+    A07: "플랫폼 구축",
+    A08: "기타"
   }
   const urgencyColor = (urgency) => {
     if (urgency === "U01") return "success";
@@ -137,17 +166,39 @@ export default function AdminProjectManagementPage() {
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
               <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
-                  <Typography variant="caption" color="text.secondary">
+                <Box  mb={1}
+                  sx={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                    <Box sx={{display:"flex", flex:'4'}}>
+                  <Typography variant="caption" color="text.secondary" sx={{display:'flex'}}>
                     접수일: {formattedDate}
                   </Typography>
+                  </Box>
+                  <Box sx={{display:"flex",flex:'1', flexDirection:"row", marginLeft:"10px"}}>
+                    <button 
+                      style={{background:"none", width:'35px', border:'none', padding:'0px', color:'blue'}}
+                      onClick={() => navigate(`/`)}
+                    >
+                      수정
+                    </button>
+                    <button 
+                       style={{background:"none", width:'35px', border:'none', padding:'0px', color:'red'}}
+                      onClick={() => handleDeleteProject(proj.project_id)}
+                    >
+                      삭제
+                    </button>
+                  </Box>
+                </Box>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
+
                 </Stack>
 
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
                   {proj.title}
                 </Typography>
-
+                <Typography variant="body2" gutterBottom>
+                  <strong>카테고리:</strong>  {categoryMap[proj.category] || "없음"}
+                </Typography>
                 <Typography variant="body2" gutterBottom>
                   <strong>고객:</strong> {proj.client_id}
                 </Typography>
@@ -187,7 +238,7 @@ export default function AdminProjectManagementPage() {
                       },
                     }}
                   />
-                  <Typography sx={{fontSize:'14px'}}>{proj.progress}%</Typography>
+                  <Typography sx={{ fontSize: '14px' }}>{proj.progress}%</Typography>
                   <Slider
                     value={progressMap[proj.project_id] ?? proj.progress}
                     onChange={(e, newVal) => {
@@ -220,7 +271,7 @@ export default function AdminProjectManagementPage() {
                   />
                 </Box>
                 <Box sx={{ mt: 2 }}>
-                <Typography variant="body2" fontWeight="bold" gutterBottom>
+                  <Typography variant="body2" fontWeight="bold" gutterBottom>
                     멤버 리스트
                   </Typography>
                 </Box>
@@ -237,6 +288,22 @@ export default function AdminProjectManagementPage() {
           );
         })}
       </Grid>
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+              <DialogTitle>프로젝트 삭제 확인</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  정말로 이 프로젝트를 삭제하시겠습니까?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
+                <Button onClick={handleDeleteProject} color="error" variant="contained">
+                  삭제 확인
+                </Button>
+              </DialogActions>
+            </Dialog>
     </Box>
+
+    
   );
 }
