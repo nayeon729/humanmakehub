@@ -13,8 +13,11 @@ import "swiper/css/navigation";
 import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
+import axios from "axios";
 
 export default function HomePage() {
+  const BASE_URL = "http://127.0.0.1:8000";
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
@@ -128,11 +131,47 @@ export default function HomePage() {
     );
   };
 
-  const askSend = () => {
-    // e?.preventDefault?.(); // 새로고침 방지
-    console.log("askSend ");
-    alert("askSend");
-  }
+  const askSend = async () => {
+    const form = document.querySelector("#askSend");
+    const privacyChecked = document.querySelector("#privacy").checked;
+
+    const formData = new FormData(form);
+    const requiredFields = ["username", "company", "phone", "email", "askMessage"];
+
+    for (let field of requiredFields) {
+      if (!formData.get(field)?.trim()) {
+        alert("⚠️ 필수 항목을 모두 입력해 주세요!");
+        return;
+      }
+    }
+
+    if (!privacyChecked) {
+      alert("⚠️ 개인정보 수집 및 이용에 동의해 주세요.");
+      return;
+    }
+
+    // 모든 조건 통과 시
+    alert("🎉 문의가 성공적으로 접수되었습니다!");
+    const formValues = {};
+    for (let [key, value] of formData.entries()) {
+      formValues[key] = value;
+    }
+    console.log("selectedItems", selectedItems);
+    formValues["category"] = JSON.stringify(selectedItems);  // ⭐ 핵심
+
+    console.log("formValues", formValues);
+    
+    try{
+      await axios.post(`${BASE_URL}/user/askSend`, 
+        formValues
+      );
+      
+      alert("문의사항 작성완료!");
+
+    } catch(err) {
+      console.log(err.response?.data?.detail || "문의사항전송중 오류");
+    }
+  };
 
   return (
     <Box className="homePage">
@@ -375,7 +414,7 @@ export default function HomePage() {
               <SwiperSlide
                 key={index}
                 style={{
-                  width: isMobile ? "100%" : "30%",
+                  width: isMobile ? "100%" : "340px",
                   backgroundColor: isActive ? activeBg : inactiveBg,
                   color: isActive ? activeText : inactiveText,
                   borderRadius: 12,
@@ -1018,23 +1057,23 @@ export default function HomePage() {
           </div>
 
           <div className="contact_main_wrap">
-            <form>
+            <form id="askSend">
               <Grid container spacing={3}>
                 {/* 고객정보 */}
                 <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="이름 *" name="name" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
+                  <TextField fullWidth label="이름" name="username" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="회사명 *" name="company" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
+                  <TextField fullWidth label="회사명" name="company" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="연락처 *" name="phone" placeholder="010-1234-5678" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
+                  <TextField fullWidth label="연락처" name="phone" placeholder="010-1234-5678" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField fullWidth label="소속/직책" name="position" variant="outlined" sx={{ backgroundColor: "#fff" }} />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="이메일 *" name="email" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
+                  <TextField fullWidth label="이메일" name="email" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
                 </Grid>
 
                 {/* 문의항목 체크 */}
@@ -1072,10 +1111,10 @@ export default function HomePage() {
                 {/* 내용 */}
                 <Grid item xs={12}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    문의 내용
+                    문의 내용 *
                   </Typography>
                   <TextField
-                    name="message"
+                    name="askMessage"
                     fullWidth
                     multiline
                     minRows={6}

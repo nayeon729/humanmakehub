@@ -42,6 +42,15 @@ class FindRequest(BaseModel):
     email: Optional[str] = None
     password: Optional[str] = None
 
+class askSend(BaseModel):
+    username: str
+    company: str
+    phone: str
+    position: Optional[str] = None
+    email: str
+    category: Optional[str] = None
+    askMessage: str
+
 # ---------- 로그인 ----------
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -423,3 +432,22 @@ def idFind(data: FindRequest):
             raise HTTPException(status_code=400, detail="비밀번호 재설정 실패")
 
     return {"message": "비밀번호 재설정 완료!"}
+
+@router.post("/askSend")
+def askSending(data: askSend):
+    try:
+        # DB 연결
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                INSERT INTO ask (username, company, phone, position, email, category, description, create_dt, del_yn)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), 'N')
+            """, (data.username, data.company, data.phone, data.position, data.email, data.category, data.askMessage,))
+
+            conn.commit()
+
+        return {"message": "문의사항 작성완료"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
