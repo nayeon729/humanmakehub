@@ -21,7 +21,6 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
           value: item.code_id,
           label: item.code_name,
         }));
-        console.log(formattedItems);  // 여기서 데이터 확인
         setItems(formattedItems);
       })
       .catch((err) => {
@@ -55,8 +54,12 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
     if (groupId === "USER_GRADE") return "등급";
     if (groupId === "USER_ROLE") return "역할";
     if (groupId === "NOTICE_TYPE") return "분류";
+    if (groupId === "PROJECT_TYPE") return "프로젝트 카테고리"
+    if (groupId === "URGENCY_LEVEL") return "긴급도"
     return "선택하세요";
   };
+
+   const shouldCreateLabel = groupId !== "USER_ROLE";  // 예시: USER_ROLE에선 라벨을 생성하지 않음
 
   return (
     <Box>
@@ -67,6 +70,7 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
         placeholder={getPlaceholder()}
         disabled={isLoading}
         sx={sx}
+        label={shouldCreateLabel ? getPlaceholder():""}
       />
     </Box>
   );

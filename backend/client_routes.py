@@ -170,7 +170,7 @@ def project_list(payload: dict = Body(...), user: dict = Depends(get_current_use
                 if urgency_level:
                     project['urgency_level'] = urgency_level['code_name']
                 else:
-                    project['urgency_level'] = '알 수 없음'  # 공통코드가 없는 경우 처리
+                    project['urgency_level'] = ' - '  # 공통코드가 없는 경우 처리
                 
                 # category 값을 공통 코드에서 가져오기
                 cursor.execute("""
@@ -185,7 +185,7 @@ def project_list(payload: dict = Body(...), user: dict = Depends(get_current_use
                 if project_type:
                     project['category_name'] = project_type['code_name']
                 else:
-                    project['category_name'] = '알 수 없음'  # 공통코드가 없는 경우 처리
+                    project['category_name'] = ' - '  # 공통코드가 없는 경우 처리
 
             return {"projects": projects}
 

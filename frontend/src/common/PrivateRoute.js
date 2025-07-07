@@ -8,7 +8,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   if (!token) return <Navigate to="/login" />; // 로그인 안 되어 있음
   if (!allowedRoles.includes(role)) return <Navigate to="/not-authorized" />; // 권한 없음
 
-  return children; // 접근 허용
+  return children;
 };
 
 export default PrivateRoute;
