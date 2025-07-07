@@ -22,7 +22,7 @@ export default function RegisterPage() {
     phone: "", company: "", portfolio: "", nickname: "", agreeTerms: false
   });
   const [techStacks, setTechStacks] = useState({});
-  const [selectedTechs, setSelectedTechs] = useState([]);
+  const [selectedTechs, setSelectedTechs] = useState([]); 
   const [experience, setExperience] = useState({});
   const [usernameChecked, setUsernameChecked] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
@@ -188,13 +188,13 @@ export default function RegisterPage() {
             <>
               <Typography variant="h5" align="center" fontWeight="bold">가입 유형 선택</Typography>
               <Stack spacing={2} mt={4}>
-                <Button variant="contained" size="large" onClick={() => setRole("client")}>클라이언트 가입</Button>
-                <Button variant="outlined" size="large" onClick={() => setRole("member")}>멤버 가입</Button>
+                <Button variant="contained" size="large" onClick={() => setRole("R01")}>클라이언트 가입</Button>
+                <Button variant="outlined" size="large" onClick={() => setRole("R02")}>멤버 가입</Button>
               </Stack>
             </>
           ) : (
             <>
-              <Typography variant="h5" align="center" fontWeight="bold">{role === "client" ? "클라이언트" : "멤버"} 회원가입</Typography>
+              <Typography variant="h5" align="center" fontWeight="bold">{role === "R01" ? "클라이언트" : "멤버"} 회원가입</Typography>
               <Stack spacing={2} mt={3}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <TextField fullWidth label="아이디" name="username" value={form.username} onChange={handleFormChange} />
@@ -252,11 +252,11 @@ export default function RegisterPage() {
                   onChange={handleFormChange}
                 />
 
-                {role === "client" && (
+                {role === "R01" && (
                   <TextField label="회사명 (선택)" name="company" value={form.company} onChange={handleFormChange} />
                 )}
 
-                {role === "member" && (
+                {role === "R02" && (
                   <>
                     {Object.entries(techStacks).map(([category, techs]) => (
                       <Box key={category} sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2 }}>

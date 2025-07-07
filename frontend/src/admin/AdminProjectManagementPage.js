@@ -279,7 +279,7 @@ export default function AdminProjectManagementPage() {
                   variant="contained"
                   fullWidth
                   sx={{ mt: 2 }}
-                  onClick={() => navigate(`/admin/project/${proj.project_id}`)}
+                  onClick={() => navigate(`/channel/${proj.project_id}/common`)}
                 >
                   프로젝트 채널
                 </Button>

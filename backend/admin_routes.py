@@ -396,5 +396,22 @@ def update_project(notice_id: int, notice: Notice, user:dict = Depends(get_curre
         conn.close()
 
 
-
+@router.get("/project/{project_id}/members")
+def get_project_members(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 조회 가능")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM team_member r
+                JOIN user u ON r.user_id = u.user_id
+                WHERE r.project_id = %s
+            """, (project_id,))
+            return cursor.fetchall()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
          
