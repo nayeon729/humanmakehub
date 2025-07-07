@@ -6,7 +6,7 @@ import AdminAgreementPage from "../admin/AdminAgreementPage";
 export default function SidebarLayout({ role }) {
   // 역할별 메뉴 설정
   const menuItems = {
-    Admin: [
+    'PM(Admin)': [
       { text: "대시보드", path: "/admin/dashboard" },
       { text: "사용자 관리", path: "/admin/users" },
       { text: "전체 프로젝트", path: "/admin/projects/all"},
@@ -23,7 +23,7 @@ export default function SidebarLayout({ role }) {
       { text: "회원정보", path: "/client/userinfo" },
       { text: "프로젝트 생성", path: "/client/create" },
       { text: "프로젝트 목록", path: "/client/list" },
-      { text: "공지사항", path: "/clinet/notice/list" },
+      { text: "공지사항", path: "/client/notice/list" },
     ],
   };
 
