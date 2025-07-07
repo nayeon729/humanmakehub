@@ -6,6 +6,7 @@ from database import db_config
 from jwt_auth import get_current_user
 from typing import Optional
 from typing import List
+import json
 
 router = APIRouter( tags=["Admin"])
 
@@ -538,5 +539,36 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
             """, (project_id, body["member_id"], user["user_id"]))
         conn.commit()
         return {"message": "초대 요청이 생성되었습니다."}
+    finally:
+        conn.close()
+
+
+@router.get("/askList")
+def get_askList(user: dict = Depends(get_current_user)):
+    if user.get("role") != "R03":
+        raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT 
+                   *
+                FROM ask
+                WHERE del_yn = 'N'
+                ORDER BY create_dt DESC
+            """
+            cursor.execute(sql)
+            items = cursor.fetchall()
+
+            # 🔁 category를 문자열 → 배열로 변환
+            for item in items:
+                try:
+                    item["category"] = json.loads(item["category"])
+                except Exception:
+                    item["category"] = []  # 혹시 JSON이 아니거나 오류 나면 빈 리스트
+
+            return items
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
