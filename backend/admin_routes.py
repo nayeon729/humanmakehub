@@ -36,6 +36,8 @@ class Notice(BaseModel):
 
 
 
+
+
 # --- 관리자(Admin, PM) 전용 라우터 ---
 
 @router.get("/users")
@@ -610,6 +612,80 @@ def create_project_as_admin(payload: dict = Body(...), user: dict = Depends(get_
         conn.commit()
         return {"message": "프로젝트가 등록되었습니다! (관리자 등록)"}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/projects/{project_id}")
+def get_project_by_id(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 조회할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT project_id, title, description, category,
+                       estimated_duration, budget, urgency, client_id
+                FROM project
+                WHERE project_id = %s AND del_yn = 'N'
+            """, (project_id,))
+            project = cursor.fetchone()
+
+            if not project:
+                raise HTTPException(status_code=404, detail="프로젝트를 찾을 수 없습니다.")
+            
+            return project
+
+    except Exception as e:
+        print("❌ 단건 조회 예외:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.put("/projects/{project_id}/update")
+def update_project(project_id: int, payload: dict = Body(...), user: dict = Depends(get_current_user)):    
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                UPDATE project
+                SET title = %s,
+                    description = %s,
+                    category = %s,
+                    estimated_duration = %s,
+                    budget = %s,
+                    urgency = %s,
+                    client_id = %s,
+                    update_dt = %s,
+                    update_id = %s
+                WHERE project_id = %s
+            """
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            cursor.execute(sql, (
+                payload.get("title"),
+                payload.get("description"),
+                payload.get("category"),
+                int(payload.get("estimated_duration", 0)),
+                int(payload.get("budget", 0)),
+                payload.get("urgency"),
+                payload.get("client_id"),
+                now,
+                user["user_id"],
+                project_id
+            ))
+
+        conn.commit()
+        return {"message": "프로젝트가 수정되었습니다."}
+
+    except Exception as e:
+        import traceback
+        print("❌ 예외 발생:", e)
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

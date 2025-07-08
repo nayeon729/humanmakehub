@@ -38,6 +38,7 @@ import NoticeViewPage from "./admin/NoticeViewPage";
 import NoticeUpdatePage from "./admin/NoticeUpdatePage";
 import AdminAskListPage from "./admin/AdminAskListPage"
 import AdminProjectCreatePage from "./admin/AdminProjectCreatePage";
+import AdminProjectUpdatePage from "./admin/AdminProjectUpdatePage";
 
 import ProjectChannelCommon from "./admin/ProjectChannelCommon";
 
@@ -120,8 +121,8 @@ function App() {
           <Route path="notice/:noticeId" element={<NoticeViewPage />} />
           <Route path="notice/:noticeId/update" element={<NoticeUpdatePage />} />
           <Route path="askList" element={<AdminAskListPage />} />
-          <Route path="create" element={<AdminProjectCreatePage />} />
-
+          <Route path="create" element={<AdminProjectCreatePage />} />AdminProjectUpdatePage
+          <Route path="update/:project_id" element={<AdminProjectUpdatePage />} />
 
         </Route>
         <Route path="admin/channel/:project_id" element={

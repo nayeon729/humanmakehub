@@ -237,7 +237,7 @@ export default function AdminProjectManagementPage() {
                   <Box sx={{ display: "flex", flex: '1', flexDirection: "row", marginLeft: "10px" }}>
                     <button
                       style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
-                      onClick={() => navigate(`/`)}
+                      onClick={() => navigate(`/admin/update/${proj.project_id}`)}
                     >
                       수정
                     </button>
