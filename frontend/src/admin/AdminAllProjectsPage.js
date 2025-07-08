@@ -85,7 +85,10 @@ export default function AdminProjectManagementPage() {
           <Stack direction="row" alignItems="center" spacing={1}>
             <Typography variant="h4" fontWeight="bold">📁 전체 프로젝트</Typography>
           </Stack>
-          <IconButton color="primary" size="large">
+          <IconButton 
+            color="primary" 
+            size="large"
+            onClick={()=>navigate("/admin/create")}>
             <AddIcon />
           </IconButton>
         </Stack>

@@ -572,3 +572,44 @@ def get_askList(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+
+
+
+@router.post("/projects")
+def create_project_as_admin(payload: dict = Body(...), user: dict = Depends(get_current_user)):
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO project (
+                    client_id,
+                    title,
+                    category,
+                    description,
+                    estimated_duration,
+                    budget,
+                    urgency,
+                    create_dt,
+                    create_id,
+                    del_yn
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s,
+                    %s, NOW(), %s, 'N'
+                )
+            """, (
+                payload.get("user_id"),          # ✅ 입력받은 클라이언트 ID
+                payload.get("projectName"),
+                payload.get("projectType"),
+                payload.get("projectContent"),
+                int(payload.get("estimatedDuration", 0)),
+                int(payload.get("budget", 0)),
+                payload.get("ugencyLevel"),
+                user["user_id"]                  # ✅ 현재 로그인한 관리자 ID
+            ))
+        conn.commit()
+        return {"message": "프로젝트가 등록되었습니다! (관리자 등록)"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()

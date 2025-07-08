@@ -10,7 +10,7 @@ export default function FloatingQRCode() {
                 position: "fixed",
                 bottom: 32,
                 right: 32,
-                width: 120,
+                width: 80,
                 zIndex: 9999,
                 backgroundColor: "#fff",
                 borderRadius: "12px",
@@ -21,7 +21,7 @@ export default function FloatingQRCode() {
             }}
         >
             <Typography variant="body2" sx={{ mb: 1, fontWeight: "bold" }}>
-                문의사항은 QR
+                문의사항
             </Typography>
             <img
                 src={qrImage}
