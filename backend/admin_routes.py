@@ -606,7 +606,7 @@ def create_project_as_admin(payload: dict = Body(...), user: dict = Depends(get_
                 payload.get("projectContent"),
                 int(payload.get("estimatedDuration", 0)),
                 int(payload.get("budget", 0)),
-                payload.get("ugencyLevel"),
+                payload.get("urgencyLevel"),
                 user["user_id"]                  # ✅ 현재 로그인한 관리자 ID
             ))
         conn.commit()

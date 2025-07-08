@@ -14,7 +14,7 @@ export default function AdminProjectCreatePage() {
     projectContent: "",
     estimatedDuration: "",
     budget: "",
-    ugencyLevel: "",
+    urgencyLevel: "",
     user_id: "", // ✅ 클라이언트 ID 입력 받기
   });
 
@@ -125,7 +125,7 @@ export default function AdminProjectCreatePage() {
           <Combo
             groupId="URGENCY_LEVEL"
             defaultValue=""
-            onSelectionChange={(val) => setFormData((prev) => ({ ...prev, ugencyLevel: val }))}
+            onSelectionChange={(val) => setFormData((prev) => ({ ...prev, urgencyLevel: val }))}
           />
 
           {/* 5. 제출 */}
