@@ -537,21 +537,46 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
     finally:
         conn.close()
 
-@router.put("/projectchannel/{project_id}/update")
-def update_project_channel(project_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):    
+@router.get("/projectchannel/{channel_id}")
+def get_channel_by_id(channel_id: int, user: dict = Depends(get_current_user)):
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT channel_id, title, user_id, content,
+                       create_dt, create_id, project_id
+                FROM project_channel
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
+            project = cursor.fetchone()
+
+            if not project:
+                raise HTTPException(status_code=404, detail="글을 찾을 수 없습니다.")
+            
+            return project
+
+    except Exception as e:
+        print("❌ 단건 조회 예외:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.put("/projectchannel/{channel_id}/update")
+def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):    
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             cursor.execute("""
                 SELECT create_id FROM project_channel
-                WHERE notice_id = %s AND del_yn = 'N'
-            """, (project_id,))
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
             row = cursor.fetchone()
 
             if not row:
-                raise HTTPException(status_code=404, detail="공지사항을 찾을 수 없습니다.")
-            if row[0] != user["user_id"]:
-                raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
+                raise HTTPException(status_code=404, detail="글-을 찾을 수 없습니다.")
+            # if row["create_id"] != user["create_id"]:
+            #     raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
 
             sql = """
                 UPDATE project_channel
@@ -560,7 +585,7 @@ def update_project_channel(project_id: int, projectChannel: ProjectChannel, user
                     content = %s,
                     update_dt = %s,
                     update_id = %s
-                WHERE notice_id = %s
+                WHERE channel_id = %s
             """
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute(sql, (
@@ -569,7 +594,7 @@ def update_project_channel(project_id: int, projectChannel: ProjectChannel, user
                 projectChannel.content,
                 now,
                 user["user_id"],
-                project_id
+                channel_id  
             ))
 
         conn.commit()
@@ -578,6 +603,21 @@ def update_project_channel(project_id: int, projectChannel: ProjectChannel, user
         import traceback
         print("❌ 예외 발생:", e)
         traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.delete("/projectchannel/{channel_id}/delete")
+def delete_notice(channel_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE project_channel SET del_yn = 'Y' WHERE channel_id = %s", (channel_id,))
+        conn.commit()
+        return {"message": "글이 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

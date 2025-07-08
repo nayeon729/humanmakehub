@@ -9,6 +9,7 @@ export default function ProjectChannel({ role }) {
     // 역할별 메뉴 설정
     const { project_id } = useParams();
     const [members, setMembers] = useState([]);
+    const [pmId, setPmId] = useState(null);
     const BASE_URL = "http://127.0.0.1:8000";
 
     const menuItems = {
@@ -23,6 +24,22 @@ export default function ProjectChannel({ role }) {
     };
 
     const menus = menuItems[role] || [];
+    useEffect(() => {
+        if (role === "R03") {
+            axios.get(`${BASE_URL}/admin/project/${project_id}/members`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+                .then(res => {
+                    setMembers(res.data.members ?? []);
+                    setPmId(res.data.pm_id);
+                })
+                .catch(err => {
+                    console.error("팀원 불러오기 실패", err);
+                });
+        }
+    }, [project_id, role]);
 
     useEffect(() => {
         if (role === "R03") {
@@ -31,7 +48,7 @@ export default function ProjectChannel({ role }) {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             })
-                .then(res => setMembers(res.data))
+                .then(res => setMembers(res.data.members ?? []))
                 .catch(err => {
                     console.error("팀원 불러오기 실패", err);
                 });
@@ -62,16 +79,18 @@ export default function ProjectChannel({ role }) {
                             팀원 목록
                         </Typography>
                         <List>
-                            {members.map((member) => (
-                                <ListItem key={member.user_id} disablePadding>
-                                    <ListItemButton
-                                        component={Link}
-                                        to={`/channel/${project_id}/member/${member.user_id}`}
-                                    >
-                                        <ListItemText primary={member.nickname} sx={{ pl: 1 }} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
+                            {members
+                                .filter((member) => member.user_id !== pmId)  // PM 제외
+                                .map((member) => (
+                                    <ListItem key={member.user_id} disablePadding>
+                                        <ListItemButton
+                                            component={Link}
+                                            to={`/admin/channel/${project_id}/member/${member.user_id}`}
+                                        >
+                                            <ListItemText primary={member.nickname} sx={{ pl: 1 }} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                ))}
                         </List>
                     </>
                 )}
