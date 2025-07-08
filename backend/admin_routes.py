@@ -473,26 +473,26 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
     finally:
         conn.close()
 
-# @router.post("/projectchannel/create")
-# def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
-#     if user["role"] != "R03":  # 관리자만 작성
-#         raise HTTPException(status_code=403, detail="관리자 권한 필요")
+@router.post("/projectchannel/{project_id}/create")
+def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":  # 관리자만 작성
+        raise HTTPException(status_code=403, detail="관리자 권한 필요")
     
-#     try:
-#         conn = pymysql.connect(**db_config)
-#         with conn.cursor() as cursor:
-#             sql = """
-#                 INSERT INTO project_chennal (title, target_type, content, create_dt, create_id)
-#                 VALUES (%s, %s, %s, %s, %s)
-#             """
-#             now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#             cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"]))
-#         conn.commit()
-#         return {"message": "공지사항이 등록되었습니다."}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-#     finally:
-#         conn.close()
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                INSERT INTO project_chennal (title, target_type, content, create_dt, create_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (notice.title, notice.target_type, notice.content, now, user["user_id"]))
+        conn.commit()
+        return {"message": "공지사항이 등록되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 
 
@@ -536,8 +536,8 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO join_requests (project_id, user_id, pm_id, status, checking, create_dt, del_yn)
-                VALUES (%s, %s, %s, '대기', 'N', NOW(), 'N')
+                INSERT INTO join_requests (project_id, user_id, pm_id, checking, create_dt, del_yn)
+                VALUES (%s, %s, %s, 'N', NOW(), 'N')
             """, (project_id, body["member_id"], user["user_id"]))
         conn.commit()
         return {"message": "초대 요청이 생성되었습니다."}
