@@ -152,7 +152,6 @@ export default function HomePage() {
     }
 
     // 모든 조건 통과 시
-    alert("🎉 문의가 성공적으로 접수되었습니다!");
     const formValues = {};
     for (let [key, value] of formData.entries()) {
       formValues[key] = value;
@@ -167,7 +166,7 @@ export default function HomePage() {
         formValues
       );
       
-      alert("문의사항 작성완료!");
+      alert("🎉 문의가 성공적으로 접수되었습니다!");
 
     } catch(err) {
       console.log(err.response?.data?.detail || "문의사항전송중 오류");

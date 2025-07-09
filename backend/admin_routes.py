@@ -40,7 +40,17 @@ class ProjectChannel(BaseModel):
     content:str
 
 
+class SkillItem(BaseModel):
+    code_id: str       # 기술 코드 (ex: B01, C02 등)
+    code_name: str    # 기술 이름 (ex: React, Python 등)
+    parent_code: str  # 부모코드 (ex: T01, T02 등)
 
+class Portfolio(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    estimated_dt: Optional[str] = None
+    budget: Optional[str] = None
+    skills: Optional[List[SkillItem]] = None
 
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
@@ -792,7 +802,7 @@ def get_askList(user: dict = Depends(get_current_user)):
                    *
                 FROM ask
                 WHERE del_yn = 'N'
-                ORDER BY create_dt DESC
+                ORDER BY create_dt ASC
             """
             cursor.execute(sql)
             items = cursor.fetchall()
@@ -805,6 +815,30 @@ def get_askList(user: dict = Depends(get_current_user)):
                     item["category"] = []  # 혹시 JSON이 아니거나 오류 나면 빈 리스트
 
             return items
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/askCheck")
+def get_askCheck(payload: dict = Body(...) ,user: dict = Depends(get_current_user)):
+    if user.get("role") != "R03":
+        raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                UPDATE ask
+                SET update_dt = NOW(),
+                    update_id = %s,
+                    del_yn ='Y'
+                WHERE ask_id = %s
+            """
+            cursor.execute(sql, (user.get("user_id"), payload.get("ask_id")))
+
+            conn.commit()
+
+            return {"message": "문의사항이 확인되었습니다."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -921,6 +955,50 @@ def update_project(project_id: int, payload: dict = Body(...), user: dict = Depe
         import traceback
         print("❌ 예외 발생:", e)
         traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+# ---------- 포트폴리오작성 ----------
+@router.post("/portfolioCreate")
+def portfolio_Create(data:Portfolio ,user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+
+            sql = '''
+                INSERT INTO portfolio (title, content, estimated_dt, budget, create_dt, create_id, del_yn)
+                VALUES (%s, %s, %s, %s, NOW(), %s, 'N')
+            '''
+            cursor.execute(sql, (
+                data.title, data.content, data.estimated_dt, data.budget, user["user_id"],
+            ))
+
+            # ✅ 여기서 바로 ID 가져오기!
+            portfolio_id = cursor.lastrowid
+
+            # 기술 스택 등록
+            if data.skills:
+                sql_skill = '''
+                    INSERT INTO portfolio_skill (
+                        portfolio_id, code_id, code_name, parent_code, create_dt, create_id, del_yn
+                    ) VALUES (
+                        %s, %s, %s, %s, NOW(), %s, 'N'
+                    )
+                '''
+
+                for skill in data.skills:
+                    cursor.execute(sql_skill, (
+                        portfolio_id, skill.code_id, skill.code_name, skill.parent_code, user["user_id"],
+                    ))
+
+        conn.commit()
+        return {"message": "포트폴리오 작성완료"}
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
