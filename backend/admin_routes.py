@@ -851,14 +851,13 @@ def get_invited_members(project_id: int, user: dict = Depends(get_current_user))
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT u.user_id, u.nickname
+                SELECT r.request_id, u.user_id, u.nickname, r.status, r.checking
                 FROM join_requests r
                 JOIN user u ON r.user_id = u.user_id
                 WHERE r.project_id = %s
                   AND r.pm_id = %s
-                  AND r.status = 'N'
-                  AND r.checking = 'N'
                   AND r.del_yn = 'N'
+                  AND NOT (r.status = 'N' AND r.checking = 'Y')  -- ❌ 거절한 건 안 보이게
             """, (project_id, user["user_id"]))
             invited = cursor.fetchall()
             return {"invited": invited}
@@ -867,7 +866,76 @@ def get_invited_members(project_id: int, user: dict = Depends(get_current_user))
     finally:
         conn.close()
 
+@router.post("/project/{project_id}/approve/{request_id}")
+def approve_member(project_id: int, request_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 승인할 수 있습니다.")
 
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            # 초대 상태 확인
+            cursor.execute("""
+                SELECT user_id FROM join_requests
+                WHERE request_id = %s
+                  AND project_id = %s
+                  AND status = 'Y'
+                  AND checking = 'Y'
+                  AND del_yn = 'N'
+            """, (request_id, project_id))
+            row = cursor.fetchone()
+
+            if not row:
+                raise HTTPException(status_code=400, detail="수락된 요청이 아닙니다.")
+
+            user_id = row["user_id"]
+
+            # 이미 등록된 팀원인지 확인
+            cursor.execute("""
+                SELECT * FROM team_member
+                WHERE project_id = %s AND user_id = %s AND del_yn = 'N'
+            """, (project_id, user_id))
+            if cursor.fetchone():
+                raise HTTPException(status_code=400, detail="이미 팀원으로 등록됨")
+
+            # ✅ 팀원 등록
+            cursor.execute("""
+                INSERT INTO team_member (project_id, user_id, del_yn)
+                VALUES (%s, %s, 'N')
+            """, (project_id, user_id))
+
+            # ✅ join_requests 상태를 del_yn='Y'로 변경 (목록에서 안 보이게)
+            cursor.execute("""
+                UPDATE join_requests
+                SET del_yn = 'Y'
+                WHERE request_id = %s
+            """, (request_id,))
+
+        conn.commit()
+        return {"message": "팀원 등록 및 목록 제거 완료!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+@router.post("/project/{project_id}/reject/{request_id}")
+def reject_member(project_id: int, request_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE join_requests
+                SET del_yn = 'Y'
+                WHERE project_id = %s AND request_id = %s AND del_yn = 'N'
+            """, (project_id, request_id))
+            conn.commit()
+            return {"message": "요청이 거절되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 @router.get("/askList")
 def get_askList(user: dict = Depends(get_current_user)):
     if user.get("role") != "R03":

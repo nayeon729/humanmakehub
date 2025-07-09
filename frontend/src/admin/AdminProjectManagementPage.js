@@ -16,6 +16,7 @@ export default function AdminProjectManagementPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState("");
 
+  const [invitedMemberMap, setInvitedMemberMap] = useState({});
   const [memberMap, setMemberMap] = useState({});
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -55,10 +56,27 @@ export default function AdminProjectManagementPage() {
       }));
       setProjects(cleanedProjects);
       for (const proj of cleanedProjects) {
+        fetchInvitedMembers(proj.project_id);
         fetchProjectMembers(proj.project_id);
       }
     } catch (error) {
       console.error("프로젝트 불러오기 실패", error);
+    }
+  };
+
+  const fetchInvitedMembers = async (project_id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/invited-members`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setInvitedMemberMap((prev) => ({
+        ...prev,
+        [project_id]: res.data.invited || []
+      }));
+    } catch (err) {
+      console.error("❌ 초대 멤버 불러오기 실패", err);
     }
   };
 
@@ -248,6 +266,35 @@ export default function AdminProjectManagementPage() {
     }
   };
 
+  const handlePmApprove = async (projectId, requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(`${BASE_URL}/admin/project/${projectId}/approve/${requestId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert("✅ 승인 완료");
+      await fetchProjectMembers(projectId);       // 팀원 갱신
+      await fetchInvitedMembers(projectId);       // 대기 리스트 갱신
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.detail || "승인 중 오류 발생");
+    }
+  };
+
+  const handlePmReject = async (projectId, requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(`${BASE_URL}/admin/project/${projectId}/reject/${requestId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("❌ 미승인 처리 완료");
+      await fetchInvitedMembers(projectId);
+    } catch (err) {
+      console.error(err);
+      alert("미승인 처리 실패");
+    }
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -315,6 +362,50 @@ export default function AdminProjectManagementPage() {
                 </Typography>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" fontWeight="bold" gutterBottom>
+                    멤버 리스트
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      sx={{ ml: 1 }}
+                      onClick={() => {
+                        setInviteModalOpen(true)
+                        setSelectedProjectId(proj.project_id)
+                      }}
+                    >
+                      + 개발자 초대
+                    </Button>
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontWeight="bold">초대된 멤버 (대기 중)</Typography>
+                  <Box sx={{ maxHeight: 100,minHeight:100, overflowY: "auto", mt: 1 ,border: "1px solid #eee", borderRadius: 1,p:1}}>
+                    {invitedMemberMap[proj.project_id]?.map((member) => {
+                      if (member.status === 'N' && member.checking === 'N') {
+                        return (
+                          <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography>{member.nickname}</Typography>
+                            <Chip label="응답 대기" size="small" />
+                          </Box>
+                        );
+                      }
+
+                      if (member.status === 'Y' && member.checking === 'Y') {
+                        return (
+                          <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography>{member.nickname}</Typography>
+                            <Button size="small" onClick={() => handlePmApprove(proj.project_id, member.request_id)}>승인</Button>
+                            <Button size="small" color="error" onClick={() => handlePmReject(proj.project_id, member.request_id)}>미승인</Button>
+                          </Box>
+                        );
+                      }
+
+                      // status N + checking Y 는 거절된 상태 → 화면 표시 안함
+                      return null;
+                    })}
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontWeight="bold" gutterBottom>
                     참여 멤버
                   </Typography>
 
@@ -325,8 +416,7 @@ export default function AdminProjectManagementPage() {
                       overflowY: "auto",
                       border: "1px solid #eee",
                       borderRadius: 1,
-                      px: 1,
-                      py: 1,
+                      p:1,
                       backgroundColor: "#fafafa" // (선택) 배경 구분
                     }}
                   >
@@ -404,22 +494,7 @@ export default function AdminProjectManagementPage() {
                     sx={{ minWidth: 50 }}
                   />
                 </Box>
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" fontWeight="bold" gutterBottom>
-                    멤버 리스트
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      sx={{ ml: 1 }}
-                      onClick={() => {
-                        setInviteModalOpen(true)
-                        setSelectedProjectId(proj.project_id)
-                      }}
-                    >
-                      + 개발자 초대
-                    </Button>
-                  </Typography>
-                </Box>
+
                 <Button
                   variant="contained"
                   fullWidth
