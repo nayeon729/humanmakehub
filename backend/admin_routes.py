@@ -822,6 +822,13 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 VALUES (%s, %s, %s, 'N', NOW(), 'N')
             """, (project_id, body["member_id"], user["user_id"]))
 
+            cursor.execute("""
+                SELECT * FROM team_member
+                WHERE project_id = %s AND user_id = %s AND del_yn = 'N'
+            """, (project_id, body["member_id"]))
+            if cursor.fetchone():
+                raise HTTPException(status_code=400, detail="이미 팀원으로 등록된 사용자입니다.")
+
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
