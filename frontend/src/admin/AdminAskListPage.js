@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -8,26 +8,46 @@ export default function getAskList() {
   const navigate = useNavigate();
   const BASE_URL = "http://127.0.0.1:8000";
   const [askList, setAskList] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const getAskList = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${BASE_URL}/admin/askList`, {
+    getAskList();
+  }, []);
+
+  const getAskList = async () => {
+    try {
+    const response = await axios.get(`${BASE_URL}/admin/askList`, {
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+    });
+    console.log("response", response);
+    if(response?.request?.status == 200){
+        setAskList(response?.data);
+    }
+    } catch (error) {
+    console.error("문의사항목록 불러오기 실패", error);
+    }
+  };
+
+  const handleConfirm = async (ask_id) => {
+    try {
+      const payload = {
+        ask_id:ask_id,
+      };
+
+      await axios.post(`${BASE_URL}/admin/askCheck`, payload, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("response", response);
-        if(response?.request?.status == 200){
-            setAskList(response?.data);
-        }
-      } catch (error) {
-        console.error("문의사항목록 불러오기 실패", error);
-      }
-    };
-    getAskList();
-  }, []);
+      alert("문의사항 체크완료!");
+      getAskList();
+    } catch (error) {
+      console.error("문의사항 체크실패", error);
+      alert("문의사항 체크실패: " + (error.response?.data?.detail || "서버 오류"));
+    }
+  };
 
 
 
@@ -57,6 +77,7 @@ export default function getAskList() {
                     </List>
                     </Box>
                 )}
+                <Button onClick={() => handleConfirm(list.ask_id)}>확인완료</Button>
                 </Box>
             );
         })}

@@ -7,6 +7,7 @@ import IdFind from "./common/IdFind";
 import PwFind from "./common/PwFind";
 // import IdFindView from "./common/IdFindView";
 import PwReset from "./common/PwReset";
+import PortfolioListTest from "./common/PortfolioListTest"
 
 import ClientDashBoard from "./client/ClientDashboard";
 import ClientNoticeBoard from "./client/ClientNoticeBoard";
@@ -39,6 +40,8 @@ import NoticeUpdatePage from "./admin/NoticeUpdatePage";
 import AdminAskListPage from "./admin/AdminAskListPage"
 import AdminProjectCreatePage from "./admin/AdminProjectCreatePage";
 import AdminProjectUpdatePage from "./admin/AdminProjectUpdatePage";
+import AdminPortfolioList from "./admin/AdminPortfolioListPage"
+import AdminPortfolioCreatePage from "./admin/AdminPortfolioCreatePage"
 
 import ProjectChannelCommon from "./admin/ProjectChannelCommon";
 
@@ -62,6 +65,7 @@ function App() {
         <Route path="/pwFind" element={<PwFind />} />
         {/* <Route path="/idFindView" element={<IdFindView />} /> */}
         <Route path="/pwReset" element={<PwReset />} />
+        <Route path="/t" element={<PortfolioListTest />} />
 
         {/* 클라이언트 */}
         <Route
@@ -121,8 +125,10 @@ function App() {
           <Route path="notice/:noticeId" element={<NoticeViewPage />} />
           <Route path="notice/:noticeId/update" element={<NoticeUpdatePage />} />
           <Route path="askList" element={<AdminAskListPage />} />
-          <Route path="create" element={<AdminProjectCreatePage />} />AdminProjectUpdatePage
+          <Route path="create" element={<AdminProjectCreatePage />} />
           <Route path="update/:project_id" element={<AdminProjectUpdatePage />} />
+          <Route path="portfolioList" element={<AdminPortfolioList />} />
+          <Route path="portfolioCreate" element={<AdminPortfolioCreatePage />} />
 
         </Route>
         <Route path="admin/channel/:project_id" element={

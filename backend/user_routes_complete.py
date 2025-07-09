@@ -451,3 +451,49 @@ def askSending(data: askSend):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+
+@router.get("/portfoliotest")
+def get_portfolio():
+    # DB 연결
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 1. 포트폴리오 전체 조회
+            cursor.execute("""
+                SELECT * FROM portfolio
+                WHERE del_yn = 'N'
+                ORDER BY create_dt ASC
+            """, ())
+            portfolios = cursor.fetchall()
+
+            # 2. 포트폴리오 ID 목록 추출
+            portfolio_ids = [p["portfolio_id"] for p in portfolios]
+
+            if not portfolio_ids:
+                return {"portfolios": []}
+
+            # 3. 관련 기술 목록 가져오기
+            format_strings = ','.join(['%s'] * len(portfolio_ids))  # 조회된 포트폴리오 id 갯수만큼 %s, %s 만들어줌
+            cursor.execute(f"""
+                SELECT ps.portfolio_id, cc.code_name, cc.code_id, cc.parent_code
+                FROM portfolio_skill ps
+                JOIN common_code cc ON ps.code_id = cc.code_id
+                WHERE ps.portfolio_id IN ({format_strings}) AND ps.del_yn = 'N'
+            """, portfolio_ids)
+            skill_rows = cursor.fetchall()
+
+            # 4. 포트폴리오 ID별로 기술 이름 묶기
+            from collections import defaultdict
+            skills_map = defaultdict(list)
+            for row in skill_rows:
+                skills_map[row["portfolio_id"]].append(row["code_name"])
+
+            # 5. tags 추가해서 결과 조립
+            for portfolio in portfolios:
+                portfolio["tags"] = skills_map.get(portfolio["portfolio_id"], [])
+
+            return {"portfolios": portfolios}
+    finally:
+        conn.close()
+

@@ -11,6 +11,8 @@ export default function SidebarLayout({ role }) {
       { text: "사용자 관리", path: "/admin/users" },
       { text: "전체 프로젝트", path: "/admin/projects/all"},
       { text: "프로젝트 관리", path: "/admin/projects" },
+      { text: "문의사항 목록", path: "/admin/askList" },
+      { text: "포트폴리오 목록", path: "/admin/portfolioList" },
       { text: "공지사항", path: "/admin/notice/list" },
     ],
     Developer: [
