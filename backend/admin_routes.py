@@ -285,7 +285,7 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
                         SELECT
                             p.client_id,
                             '시스템 알람',
-                            '프로젝트가 완료되었습니다. 마이 프로젝트에서 결과물을 확인해보세요!',
+                            '프로젝트가 완료되었습니다.',
                             'http://localhost:3000/client/list',
                             NOW(),
                             %s
