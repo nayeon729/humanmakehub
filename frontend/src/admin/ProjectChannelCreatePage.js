@@ -53,11 +53,11 @@ export default function ProjectChannelCreatePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("공지사항이 등록되었습니다.");
+      alert("글이 등록되었습니다.");
       navigate(`/admin/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
     } catch (error) {
-      console.error("공지사항 등록 실패", error);
-      alert("공지사항 등록 중 오류가 발생했습니다.");
+      console.error("글 등록 실패", error);
+      alert("글 등록 중 오류가 발생했습니다.");
     }
   };
   useEffect(() => {
@@ -98,11 +98,16 @@ export default function ProjectChannelCreatePage() {
             <Select
               labelId="member-select-label"
               id="member-select"
+              displayEmpty
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-            > 
+            >
+              <MenuItem value="" disabled>
+                채널을 선택해주세요
+              </MenuItem>
+
               {pmId && (
-                <MenuItem value={pmId}>
+                <MenuItem value={pmId} >
                   공용
                 </MenuItem>
               )}

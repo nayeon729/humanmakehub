@@ -16,6 +16,8 @@ export default function AdminProjectManagementPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState("");
 
+  const [memberMap, setMemberMap] = useState({});
+
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedRanks, setSelectedRanks] = useState([]);
@@ -52,11 +54,29 @@ export default function AdminProjectManagementPage() {
         progress: proj.progress ?? 0
       }));
       setProjects(cleanedProjects);
+      for (const proj of cleanedProjects) {
+        fetchProjectMembers(proj.project_id);
+      }
     } catch (error) {
       console.error("프로젝트 불러오기 실패", error);
     }
   };
 
+  const fetchProjectMembers = async (project_id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/members/without-pm`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setMemberMap((prev) => ({
+        ...prev,
+        [project_id]: res.data.members || []
+      }));
+    } catch (err) {
+      console.error(`❌ 멤버 불러오기 실패 (project_id=${project_id})`, err);
+    }
+  };
 
   const handleProgressChange = async (project_id, newProgress) => {
     const token = localStorage.getItem("token");
@@ -212,7 +232,21 @@ export default function AdminProjectManagementPage() {
     }
   };
 
+  const handleRemoveMember = async (projectId, userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${BASE_URL}/admin/project/${projectId}/member/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("✅ 팀원 참여가 종료되었습니다.");
 
+      // 최신 멤버 리스트 다시 불러오기
+      await fetchProjectMembers(projectId);
+    } catch (err) {
+      console.error("❌ 팀원 삭제 실패", err);
+      alert("팀원 삭제에 실패했습니다.");
+    }
+  };
 
 
   return (
@@ -279,7 +313,46 @@ export default function AdminProjectManagementPage() {
                   <strong>요구사항:</strong> <br />
                   {proj.description}
                 </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2" fontWeight="bold" gutterBottom>
+                    참여 멤버
+                  </Typography>
 
+                  <Box
+                    sx={{
+                      minHeight: 100,
+                      maxHeight: 100,
+                      overflowY: "auto",
+                      border: "1px solid #eee",
+                      borderRadius: 1,
+                      px: 1,
+                      py: 1,
+                      backgroundColor: "#fafafa" // (선택) 배경 구분
+                    }}
+                  >
+                    {memberMap[proj.project_id]?.map((member) => (
+                      <Box
+                        key={member.user_id}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 1,
+                        }}
+                      >
+                        <Typography>{member.nickname}</Typography>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleRemoveMember(proj.project_id, member.user_id)}
+                        >
+                          참여 종료
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" fontWeight="bold" gutterBottom>
                     진행률

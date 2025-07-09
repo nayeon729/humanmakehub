@@ -318,7 +318,40 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
     finally:
         conn.close()
 
+@router.get("/project/{project_id}/members/without-pm")
+def get_members_exclude_pm(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 조회 가능")
 
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+
+            # 멤버 조회
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM team_member r
+                JOIN user u ON r.user_id = u.user_id
+                WHERE r.project_id = %s AND r.del_yn = 'N'
+            """, (project_id,))
+            members = cursor.fetchall()
+
+            # PM 조회
+            cursor.execute("""
+                SELECT pm_id FROM project WHERE project_id = %s
+            """, (project_id,))
+            row = cursor.fetchone()
+            pm_id = row["pm_id"] if row else None
+
+            # PM 제외
+            filtered_members = [m for m in members if m["user_id"] != pm_id]
+
+            return {"members": filtered_members}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 @router.post("/members/filter")
 def filter_member_users(
     ranks: List[str] = Body(default=[]),
@@ -536,7 +569,7 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
                 SELECT u.user_id, u.nickname
                 FROM team_member r
                 JOIN user u ON r.user_id = u.user_id
-                WHERE r.project_id = %s
+                WHERE r.project_id = %s AND r.del_yn='N'
             """, (project_id,))
             members= cursor.fetchall() or []
         
@@ -555,6 +588,26 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
 
             return {"members": members, "pm_id": pm_id}
         
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/project/{project_id}/member/{user_id}")
+def remove_member_from_project(project_id: int, user_id: str, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 삭제할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE team_member
+                SET del_yn = 'Y'
+                WHERE project_id = %s AND user_id = %s
+            """, (project_id, user_id))
+        conn.commit()
+        return {"message": "팀원 삭제 완료"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -786,6 +839,31 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
 
         conn.commit()
         return {"message": "초대 요청이 생성되었습니다."}
+    finally:
+        conn.close()
+
+@router.get("/project/{project_id}/invited-members")
+def get_invited_members(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 조회 가능")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM join_requests r
+                JOIN user u ON r.user_id = u.user_id
+                WHERE r.project_id = %s
+                  AND r.pm_id = %s
+                  AND r.status = 'N'
+                  AND r.checking = 'N'
+                  AND r.del_yn = 'N'
+            """, (project_id, user["user_id"]))
+            invited = cursor.fetchall()
+            return {"invited": invited}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
 

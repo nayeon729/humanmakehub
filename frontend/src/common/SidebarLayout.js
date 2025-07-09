@@ -37,7 +37,7 @@ export default function SidebarLayout({ role }) {
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       {/* 사이드바 */}
-      <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2 }}>
+      <Box sx={{ minWidth: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2 }}>
         <Typography variant="h6" fontWeight="bold" mb={2}>
           {role.toUpperCase()}
         </Typography>

@@ -1,11 +1,13 @@
 
-import { Outlet, Link, useParams } from "react-router-dom";
+import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Divider } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 
 export default function ProjectChannel({ role }) {
+    const location = useLocation();
+
     // 역할별 메뉴 설정
     const { project_id } = useParams();
     const [members, setMembers] = useState([]);
@@ -64,13 +66,20 @@ export default function ProjectChannel({ role }) {
                     PROJECT<br />CHANNEL
                 </Typography>
                 <List>
-                    {menus.map((item, index) => (
-                        <ListItem key={index} disablePadding>
-                            <ListItemButton component={Link} to={item.path}>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    {menus.map((item, index) => {
+                        const isActive = location.pathname.startsWith(item.path);
+                        return (
+                            <ListItem key={index} disablePadding>
+                                <ListItemButton component={Link} to={item.path}
+                                    sx={{
+                                        backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                                        fontWeight: isActive ? "bold" : "normal",
+                                    }}>
+                                    <ListItemText primary={item.text} />
+                                </ListItemButton>
+                            </ListItem>
+                        );
+                    })}
                 </List>
                 {role === "R03" && members.length > 0 && (
                     <>
@@ -81,16 +90,24 @@ export default function ProjectChannel({ role }) {
                         <List>
                             {members
                                 .filter((member) => member.user_id !== pmId)  // PM 제외
-                                .map((member) => (
-                                    <ListItem key={member.user_id} disablePadding>
-                                        <ListItemButton
-                                            component={Link}
-                                            to={`/admin/channel/${project_id}/member/${member.user_id}`}
-                                        >
-                                            <ListItemText primary={member.nickname} sx={{ pl: 1 }} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))}
+                                .map((member) => {
+                                    const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
+                                    const isActive = location.pathname === memberPath;
+                                    return (
+                                        <ListItem key={member.user_id} disablePadding>
+                                            <ListItemButton
+                                                component={Link}
+                                                to={memberPath}
+                                                sx={{
+                                                    backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                                                    fontWeight: isActive ? "bold" : "normal",
+                                                }}
+                                            >
+                                                <ListItemText primary={member.nickname} sx={{ pl: 1 }} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    );
+                                })}
                         </List>
                     </>
                 )}
