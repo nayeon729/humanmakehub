@@ -260,6 +260,39 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             if project.status is not None:
+
+                # ⭐ 상태가 '진행중' (W02)일 경우 클라이언트에게 알림 전송
+                if project.status == 'W02':
+                     cursor.execute("""
+                        INSERT INTO alerts (
+                            target_user, title, message, link, create_dt, create_id
+                        )
+                        SELECT
+                            p.client_id,
+                            '시스템 알람',
+                            '등록하신 프로젝트가 시작되었습니다.',
+                            'http://localhost:3000/client/list',
+                            NOW(),
+                            %s
+                        FROM project p
+                        WHERE p.project_id = %s
+                    """, (user["user_id"], project_id))
+                if project.status == 'W03':
+                    cursor.execute("""
+                        INSERT INTO alerts (
+                            target_user, title, message, link, create_dt, create_id
+                        )
+                        SELECT
+                            p.client_id,
+                            '시스템 알람',
+                            '프로젝트가 완료되었습니다. 마이 프로젝트에서 결과물을 확인해보세요!',
+                            'http://localhost:3000/client/list',
+                            NOW(),
+                            %s
+                        FROM project p
+                        WHERE p.project_id = %s
+                    """, (user["user_id"], project_id))
+                        
                 cursor.execute("UPDATE project SET status = %s WHERE project_id = %s", (project.status, project_id))
 
             if project.progress is not None:
@@ -724,6 +757,21 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 INSERT INTO join_requests (project_id, user_id, pm_id, checking, create_dt, del_yn)
                 VALUES (%s, %s, %s, 'N', NOW(), 'N')
             """, (project_id, body["member_id"], user["user_id"]))
+
+            # ✨ 알림 추가
+            cursor.execute("""
+                INSERT INTO alerts (
+                    target_user, title, message, link, answer_yn, create_dt, del_yn, create_id
+                ) VALUES (
+                    %s, %s, %s, %s, 'N', NOW(), 'N', %s
+                )
+            """, (
+                body["member_id"],  # 알림 받을 대상
+                "시스템 알람",
+                "PM이 프로젝트에 초대하였습니다. 프로젝트 목록에서 확인 후 수락 또는 거절할 수 있습니다.",
+                "http://localhost:3000/member/projectlist",
+                user["user_id"]  # 알림 보낸 사람
+            ))
 
         conn.commit()
         return {"message": "초대 요청이 생성되었습니다."}

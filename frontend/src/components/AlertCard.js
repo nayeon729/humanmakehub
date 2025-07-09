@@ -14,18 +14,18 @@ export default function AlertBox({
   title = "Alert",
   description = "Alert informs users about important changes or conditions in the interface.",
   confirmText = "Confirm",
-  cancelText = "Cancel",
   onConfirm,
-  onCancel,
   onClose,
 }) {
   return (
     <Paper
       elevation={3}
       sx={{
-        backgroundColor: "#1976d2", // 파란 배경
+        backgroundColor: "#1976d2",
         color: "white",
-        p: 3,
+        p: 2,
+        mt: 2,
+        mb: 2,
         borderRadius: 2,
         position: "relative",
       }}
@@ -57,17 +57,6 @@ export default function AlertBox({
               onClick={onConfirm}
             >
               {confirmText}
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                borderColor: "white",
-                color: "white",
-                "&:hover": { borderColor: "#ccc" },
-              }}
-              onClick={onCancel}
-            >
-              {cancelText}
             </Button>
           </Stack>
         </Box>
