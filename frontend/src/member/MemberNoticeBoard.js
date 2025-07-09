@@ -77,7 +77,10 @@ export default function AdminNoticeListPage() {
                                 <TableCell>
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>
-                                <TableCell>{notice.title}</TableCell>
+                                <TableCell
+                                    // onClick={() => navigate(`/member/notice/${notice.notice_id}`)}
+                                    // sx={{ cursor: "pointer", color: "blue", "&:hover": { textDecoration: "underline" } }}
+                                >{notice.title}</TableCell>
                                 <TableCell>{notice.create_dt.slice(0, 10)}</TableCell>
                             </TableRow>
                         ))}

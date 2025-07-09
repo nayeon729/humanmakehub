@@ -207,8 +207,8 @@ export default function AdminProjectManagementPage() {
       });
       alert("초대 완료!");
     } catch (err) {
-      console.error("초대 실패", err);
-      alert("초대에 실패했습니다.");
+      console.error(err.response?.data?.detail || "초대 실패");
+      alert(err.response?.data?.detail || "초대에 실패했습니다.");
     }
   };
 

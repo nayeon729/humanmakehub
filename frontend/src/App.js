@@ -44,6 +44,9 @@ import AdminPortfolioList from "./admin/AdminPortfolioListPage"
 import AdminPortfolioCreatePage from "./admin/AdminPortfolioCreatePage"
 
 import ProjectChannelCommon from "./admin/ProjectChannelCommon";
+import ProjectChannelMember from "./admin/ProjectChannelMemberPage";
+import ProjectChannelCreate from "./admin/ProjectChannelCreatePage";
+import ProjectChannelUpdate from "./admin/ProjectChannelUpdatePage";
 
 import PrivateRoute from "./common/PrivateRoute";
 import SidebarLayout from "./common/SidebarLayout";
@@ -110,7 +113,7 @@ function App() {
           element={
             <PrivateRoute allowedRoles={["R03"]}>
               <SidebarLayout role="PM(Admin)" />
-              
+
             </PrivateRoute>
           }
         >
@@ -135,15 +138,20 @@ function App() {
           <PrivateRoute allowedRoles={["R03"]}>
             <ProjectChannel role="R03" />
           </PrivateRoute>
-        }>    
+        }>
+          <Route path="create" element={<ProjectChannelCreate/>}/>
           <Route path="common" element={<ProjectChannelCommon />} />
-          {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
+          <Route path="member/:user_id" element={<ProjectChannelMember />} />
+          <Route path="update/:channel_id" element={<ProjectChannelUpdate/>}/>
+          
         </Route>
-         <Route path="member/channel/:project_id" element={
+        <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate/>}/>
+
+        <Route path="member/channel/:project_id" element={
           <PrivateRoute allowedRoles={["R02"]}>
             <ProjectChannel role="R02" />
           </PrivateRoute>
-        }>    
+        }>
           <Route path="common" element={<ProjectChannelCommon />} />
           {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
         </Route>

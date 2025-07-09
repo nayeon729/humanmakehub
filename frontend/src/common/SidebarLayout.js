@@ -1,9 +1,11 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Box, Typography, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import AdminAgreementPage from "../admin/AdminAgreementPage";
+import { useLocation } from "react-router-dom";
+
 
 export default function SidebarLayout({ role }) {
+  const location = useLocation();
   // 역할별 메뉴 설정
   const menuItems = {
     'PM(Admin)': [
@@ -40,13 +42,23 @@ export default function SidebarLayout({ role }) {
           {role.toUpperCase()}
         </Typography>
         <List>
-          {menus.map((item, index) => (
-            <ListItem key={index} disablePadding>
-              <ListItemButton component={Link} to={item.path}>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {menus.map((item, index) => {
+            const isActive = location.pathname.startsWith(item.path);
+            return (
+              <ListItem key={index} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={item.path}
+                  sx={{
+                    backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                    fontWeight: isActive ? "bold" : "normal",
+                  }}
+                >
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
         </List>
       </Box>
 

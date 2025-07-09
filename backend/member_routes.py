@@ -187,7 +187,7 @@ def get_my_projects(user: dict = Depends(get_current_user)):
                 SELECT p.* 
                 FROM project p
                 JOIN join_requests j ON p.project_id = j.project_id
-                WHERE j.user_id = %s AND j.status = '승인' AND p.del_yn = 'N'
+                WHERE j.user_id = %s AND j.status = 'Y' AND p.del_yn = 'N'
             """, (user["user_id"],))
             projects = cursor.fetchall()
         conn.close()
@@ -197,7 +197,7 @@ def get_my_projects(user: dict = Depends(get_current_user)):
     
     
     
-@router.post("/list")
+@router.post("/alllist")
 def project_list(payload: dict = Body(...), user: dict = Depends(get_current_user)):
     conn = pymysql.connect(**db_config)
     try:
@@ -207,12 +207,13 @@ def project_list(payload: dict = Body(...), user: dict = Depends(get_current_use
                 SELECT 
                     p.project_id,
                     p.title,
-                    p.category,
                     p.description,
+                    p.category,
                     p.estimated_duration,
                     p.budget,
                     p.urgency,
                     p.progress,
+                    p.status
                     DATE(p.create_dt) AS create_date,
                     p.del_yn
                 FROM project p
@@ -253,5 +254,123 @@ def project_list(payload: dict = Body(...), user: dict = Depends(get_current_use
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/invites")
+def get_my_invites(user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    jr.request_id,
+                    jr.project_id,
+                    p.title,
+                    p.description,
+                    p.estimated_duration,
+                    p.budget,
+                    p.create_dt,
+                    p.progress,
+                    jr.status,
+                    jr.checking,
+                    cat.code_name AS category_name,
+                    urg.code_name AS urgency_level
+                FROM join_requests jr
+                JOIN project p ON jr.project_id = p.project_id
+                LEFT JOIN common_code cat ON p.category = cat.code_id AND cat.group_id = 'PROJECT_TYPE'
+                LEFT JOIN common_code urg ON p.urgency = urg.code_id AND urg.group_id = 'URGENCY_LEVEL'
+                WHERE jr.user_id = %s
+                  AND jr.del_yn = 'N'
+                  AND p.del_yn = 'N'
+                  AND NOT (jr.status = 'N' AND jr.checking = 'Y')
+            """, (user["user_id"],))
+            rows = cursor.fetchall()
+            return {"invites": rows}
+    finally:
+        conn.close()
+
+
+#초대 응답
+@router.put("/invite/{request_id}/respond")
+def respond_to_invite(
+    request_id: int,
+    response: dict = Body(...),  # {"accept": true or false}
+    user: dict = Depends(get_current_user)
+):
+    is_accept = response.get("accept")
+    if is_accept not in [True, False]:
+        raise HTTPException(status_code=400, detail="accept 값은 true 또는 false여야 합니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            # 요청 유효성 체크 (내가 받은 요청인지)
+            cursor.execute("""
+                SELECT * FROM join_requests
+                WHERE request_id = %s AND user_id = %s AND del_yn = 'N'
+            """, (request_id, user["user_id"]))
+            request_row = cursor.fetchone()
+
+            if not request_row:
+                raise HTTPException(status_code=404, detail="초대 요청을 찾을 수 없습니다.")
+
+            # 응답 처리
+            cursor.execute("""
+                UPDATE join_requests
+                SET checking = 'Y',
+                    status = %s,
+                    update_dt = NOW()
+                WHERE request_id = %s
+            """, ('Y' if is_accept else 'N', request_id))
+        conn.commit()
+        return {"message": "초대 응답이 처리되었습니다."}
+    finally:
+        conn.close()
+
+@router.post("/list")
+def get_my_accepted_projects(user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT
+                    p.project_id,
+                    p.title,
+                    p.description,
+                    p.estimated_duration,
+                    p.budget,
+                    p.progress,
+                    p.create_dt AS create_date,
+                    cat.code_name AS category_name,
+                    urg.code_name AS urgency_level
+                FROM join_requests j
+                JOIN project p ON j.project_id = p.project_id
+                LEFT JOIN common_code cat ON p.category = cat.code_id
+                LEFT JOIN common_code urg ON p.urgency = urg.code_id
+                WHERE j.user_id = %s
+                  AND j.status = 'Y'
+                  AND j.checking = 'Y'
+                  AND j.del_yn = 'N'
+                  AND p.del_yn = 'N'
+            """, (user["user_id"],))
+            rows = cursor.fetchall()
+        return {"projects": rows}
+    finally:
+        conn.close()
+
+# 백엔드: 실제 참여 확정된 프로젝트 조회 (team_member 기준)
+@router.post("/confirmed-projects")
+def get_confirmed_projects(user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT project_id
+                FROM team_member
+                WHERE user_id = %s AND del_yn = 'N'
+            """, (user["user_id"],))
+            rows = cursor.fetchall()
+        return {"confirmed_projects": [r["project_id"] for r in rows]}
     finally:
         conn.close()
