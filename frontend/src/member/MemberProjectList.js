@@ -145,7 +145,7 @@ const MemberProjectList = () => {
                     fontSize: "16px",
                     py: 1.5,
                   }}
-                  onClick={() => navigate(`/member/project/${project.project_id}`)}
+                  onClick={() => navigate(`/member/channel/${project.project_id}/common`)}
                 >
                   📘 프로젝트 채널
                 </Button>

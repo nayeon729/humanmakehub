@@ -19,8 +19,12 @@ class MemberUpdateRequest(BaseModel):
     tech: str 
     experience: str 
     git: str 
-    portfolio: str 
-
+    portfolio: str
+    
+class ProjectChannel(BaseModel):
+    title: str
+    content: str
+    
 # ----------------------- 회원 정보 조회 -------------------------
 @router.get("/userinfo")
 def get_member_user_info(user: dict = Depends(get_current_user)):
@@ -391,5 +395,258 @@ def get_confirmed_projects(user: dict = Depends(get_current_user)):
             """, (user["user_id"],))
             rows = cursor.fetchall()
         return {"confirmed_projects": [r["project_id"] for r in rows]}
+    finally:
+        conn.close()
+
+@router.get("/project/common/{project_id}")
+def get_project_common(project_id: int):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT 
+                    pc.channel_id, 
+                    pc.title, 
+                    pc.content, 
+                    pc.user_id, 
+                    u.nickname,
+                    pc.create_id,
+                    pc.create_dt
+                FROM project_channel pc
+                JOIN user u ON pc.user_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND u.role = 'R03'
+                  AND pc.user_id = pc.create_id
+                  AND pc.project_id = %s
+                ORDER BY pc.create_dt DESC
+            """
+            cursor.execute(sql, (project_id,))
+            items = cursor.fetchall()
+
+            return {
+                "items": items,
+                "total": len(items)
+            }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+        
+@router.get("/project/{project_id}/projecttitle")
+def get_project_title(project_id: int, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT title
+                FROM project
+                WHERE project_id = %s
+                AND del_yn = 'N'
+            """, (project_id,))
+            row = cursor.fetchone()
+
+            if not row:
+                raise HTTPException(status_code=404, detail="프로젝트를 찾을 수 없습니다.")
+
+            return {"title": row["title"]}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        conn.close()
+        
+from datetime import datetime
+
+@router.post("/projectchannel/{project_id}/create")
+def create_project_channel(project_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+    if user["role"] != "R02": 
+        raise HTTPException(status_code=403, detail="관리자 권한 필요")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            sql = """
+                INSERT INTO project_channel 
+                (title, user_id, content, create_dt, create_id, update_id, update_dt, project_id, del_yn)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (
+                projectChannel.title,     # title
+                user["user_id"],          # user_id
+                projectChannel.content,   # content
+                now,                      # create_dt
+                user["user_id"],          # create_id
+                user["user_id"],          # update_id
+                now,                      # update_dt
+                project_id,               # project_id
+                "N"                       # del_yn
+            ))
+        conn.commit()
+        return {"message": "게시글이 등록되었습니다."}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/projectchannel/{channel_id}/delete")
+def delete_notice(channel_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE project_channel SET del_yn = 'Y' WHERE channel_id = %s", (channel_id,))
+        conn.commit()
+        return {"message": "글이 삭제되었습니다."}
+    except Exception as e:
+        print("❌ 삭제 중 오류 발생:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+from datetime import datetime
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+import pymysql
+
+class ProjectChannel(BaseModel):
+    title: str
+    content: str
+
+@router.put("/projectchannel/{channel_id}/update")
+def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT create_id FROM project_channel
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
+            row = cursor.fetchone()
+
+            if not row:
+                raise HTTPException(status_code=404, detail="글을 찾을 수 없습니다.")
+
+            # 작성자 체크 (필요 시 활성화)
+            # if row["create_id"] != user["user_id"]:
+            #     raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
+
+            sql = """
+                UPDATE project_channel
+                SET title = %s,
+                    content = %s,
+                    update_dt = %s,
+                    update_id = %s
+                WHERE channel_id = %s
+            """
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute(sql, (
+                projectChannel.title,
+                projectChannel.content,
+                now,
+                user["user_id"],  # 현재 로그인한 사용자
+                channel_id  
+            ))
+
+        conn.commit()
+        return {"message": "공지사항이 수정되었습니다."}
+    except Exception as e:
+        import traceback
+        print("❌ 예외 발생:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+        
+@router.get("/project/{project_id}/members")
+def get_project_members(project_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] not in ["R03", "R02"]:
+        raise HTTPException(status_code=403, detail="권한이 없습니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM team_member r
+                JOIN user u ON r.user_id = u.user_id
+                WHERE r.project_id = %s AND r.del_yn='N'
+            """, (project_id,))
+            members= cursor.fetchall() or []
+        
+            cursor.execute("""
+                SELECT u.user_id, u.nickname
+                FROM project p
+                JOIN user u ON p.pm_id = u.user_id
+                WHERE p.project_id = %s
+            """, (project_id,))
+            pm = cursor.fetchone()
+            pm_id = pm["user_id"] if pm and "user_id" in pm else None
+
+            
+            if pm and all(u["user_id"] != pm.get("user_id") for u in members):
+                members.append(pm)
+
+            return {"members": members, "pm_id": pm_id}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+        
+@router.get("/project/{project_id}/user/{user_id}")
+def get_user_project_channel(project_id: int, user_id: str, user: dict = Depends(get_current_user)):
+    if user["role"] == "R02" and user["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="해당 채널에 접근할 수 없습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 🔍 PM ID 조회
+            cursor.execute("SELECT pm_id FROM project WHERE project_id = %s", (project_id,))
+            pm_row = cursor.fetchone()
+            pm_id = pm_row["pm_id"] if pm_row else None
+
+            # 🔍 user_id 또는 pm_id가 작성한 글만 가져오기
+            cursor.execute("""
+                SELECT 
+                    c.channel_id, c.project_id, c.title, c.content,
+                    c.user_id, c.create_dt, c.create_id, u.nickname
+                FROM project_channel c
+                JOIN user u ON c.create_id = u.user_id
+                WHERE c.project_id = %s
+                  AND c.create_id IN (%s, %s)
+                  AND c.del_yn = 'N'
+                ORDER BY c.create_dt DESC
+            """, (project_id, user_id, pm_id))
+            channels = cursor.fetchall()
+
+            return {"items": channels, "pm_id": pm_id}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/projectchannel/{channel_id}")
+def get_project_channel(channel_id: int, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT 
+                    channel_id, project_id, title, content, user_id, create_dt, create_id
+                FROM project_channel
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
+            data = cursor.fetchone()
+            if not data:
+                raise HTTPException(status_code=404, detail="해당 글을 찾을 수 없습니다.")
+            return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

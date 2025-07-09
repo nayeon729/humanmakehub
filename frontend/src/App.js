@@ -26,6 +26,8 @@ import MemberUserInfo from "./member/MemberUserInfo";
 import MemberUserUpdate from "./member/MemberUserUpdate";
 import MemberProjectList from "./member/MemberProjectList";
 import MemberNoticeBoard from "./member/MemberNoticeBoard";
+import ProjectChannelPmCreatePage from "./member/ProjectChannelPmCreatePage";
+import ProjectChannelPmUpdatePage from "./member/ProjectChannelPmUpdatePage";
 
 import AdminDashboard from './admin/AdminDashboard';
 import AdminProjectManagementPage from "./admin/AdminProjectManagementPage";
@@ -52,6 +54,7 @@ import PrivateRoute from "./common/PrivateRoute";
 import SidebarLayout from "./common/SidebarLayout";
 import ProjectChannel from "./common/ProjectChannel";
 import TopNavbar from "./common/TopNavbar";
+import ProjectChannelMemberPage from "./member/ProjectChannelPmPage";
 
 function App() {
   return (
@@ -106,6 +109,16 @@ function App() {
           <Route path="projectlist" element={<MemberProjectList />} />
           <Route path="notice" element={<MemberNoticeBoard />} />
         </Route>
+        <Route path="member/channel/:project_id" element={
+          <PrivateRoute allowedRoles={["R02"]}>
+            <ProjectChannel role="R02" />
+          </PrivateRoute>
+        }>
+          <Route path="common" element={<ProjectChannelCommon />} />
+          <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
+          <Route path="create" element={<ProjectChannelPmCreatePage />} />
+          <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />
+        </Route>
 
         {/* 관리자 */}
         <Route
@@ -139,22 +152,15 @@ function App() {
             <ProjectChannel role="R03" />
           </PrivateRoute>
         }>
-          <Route path="create" element={<ProjectChannelCreate/>}/>
+          <Route path="create" element={<ProjectChannelCreate />} />
           <Route path="common" element={<ProjectChannelCommon />} />
           <Route path="member/:user_id" element={<ProjectChannelMember />} />
-          <Route path="update/:channel_id" element={<ProjectChannelUpdate/>}/>
-          
-        </Route>
-        <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate/>}/>
+          <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
 
-        <Route path="member/channel/:project_id" element={
-          <PrivateRoute allowedRoles={["R02"]}>
-            <ProjectChannel role="R02" />
-          </PrivateRoute>
-        }>
-          <Route path="common" element={<ProjectChannelCommon />} />
-          {/* <Route path="/channel/:project_id/member/:user_id" element={<MemberChannel />} /> */}
         </Route>
+        <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />
+
+
 
 
       </Routes>

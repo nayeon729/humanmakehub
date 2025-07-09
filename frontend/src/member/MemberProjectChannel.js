@@ -1,65 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Box,
   Typography,
-  Paper,
-  Stack,
-  Avatar,
+  List,
+  ListItem,
+  ListItemText,
   Divider,
   IconButton,
+  Stack,
+  Paper,
+  Chip,
   Button,
-  Chip
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function ProjectChannelMemberPage() {
-  const { project_id, user_id } = useParams();
-  const [messages, setMessages] = useState([]);
-  const [pmId, setPmId] = useState("");
+export default function ProjectChannelCommonPage() {
+  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+  const { project_id } = useParams();
   const [myUserId, setMyUserId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
-  const navigate = useNavigate();
+  console.log("프로젝트 id:" + project_id);
   const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
     const id = localStorage.getItem("user_id");
-    if (id) {
-      setMyUserId(id);
-    }
+    if (id) setMyUserId(id);
   }, []);
- const fetchMessages = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `${BASE_URL}/admin/project/${project_id}/user/${user_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setMessages(res.data.items);
-        setPmId(res.data.pm_id);
-        console.log("응답 확인 👉", res.data);
-      } catch (err) {
-        console.error("게시글 불러오기 실패", err);
-      }
-    };
+  const fetchPosts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${BASE_URL}/member/project/common/${project_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPosts(res.data.items);
+    } catch (error) {
+      console.error("공통 채널 게시글 불러오기 실패", error);
+    }
+  };
 
   useEffect(() => {
-    fetchMessages();
-  }, [project_id, user_id]);
-  console.log("pmId", pmId)
-  messages.map((msg) => {
-    console.log("user_id:", msg.user_id, "pmId:", pmId);
-    return null;
-  });
+    if (project_id) fetchPosts();
+  }, [project_id]);
+
   useEffect(() => {
     const fetchProjectTitle = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/projecttitle`, {
+        const res = await axios.get(`${BASE_URL}/member/project/${project_id}/projecttitle`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -72,16 +61,16 @@ export default function ProjectChannelMemberPage() {
 
     fetchProjectTitle();
   }, [project_id]);
-  
-  const handleDelete=async(channel_id)=>{
-     const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  if (!confirmed) return;
+
+  const handleDelete = async (channel_id) => {
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
+      await axios.delete(`${BASE_URL}/member/projectchannel/${channel_id}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchMessages();
+      fetchPosts();
       alert("✅ 프로젝트가 삭제(표시)되었습니다.")
     } catch (error) {
       console.error("❌ 프로젝트 삭제 실패", error);
@@ -95,43 +84,44 @@ export default function ProjectChannelMemberPage() {
         <Typography variant="h5" fontWeight="bold">
           💬 {projectTitle}
         </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
+        {/* <IconButton color="primary" onClick={() => navigate(`/member/channel/${project_id}/create`)}>
           <CreateIcon />
-        </IconButton>
+        </IconButton> */}
       </Stack>
-      <Divider sx={{ my: 2 }} />
 
-      <Stack spacing={2}>
-        {messages.map((msg) => (
-          <Paper key={msg.channel_id} sx={{ p: 2 }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Chip
-                color={msg.create_id === pmId ? "primary" : "warning"}
-                label={msg.create_id === pmId ? "PM" : msg.nickname}
-              />
-              <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>{msg.title}</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ ml: "auto" }}>
-                {msg.create_dt.slice(0, 10)}
+      {/* 📃 게시글 리스트 */}
+      <Box mt={2}>
+        {posts.map((post) => (
+          <Paper
+            key={post.channel_id}
+            sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
+          >
+            {/* <Chip label={post.nickname} size="small" /> */}
+            <Typography variant="subtitle1" fontWeight="bold">
+              {post.title}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "gray" }}>
+              {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
+            </Typography>
+            <Stack direction="row" justifyContent="space-between" mt={1}>
+
+              <Typography variant="caption" sx={{ color: "gray" }}>
+                {new Date(post.create_dt).toLocaleDateString("ko-KR")}
               </Typography>
             </Stack>
-
-            <Typography variant="body2" color="text.secondary">
-              {msg.content}
-            </Typography>
-            {msg.create_id === myUserId && (
-              <Stack direction="row" spacing={1} mt={1}>
-                <Button onClick={() => navigate(`/admin/channel/${project_id}/update/${msg.channel_id}`)}>
-                  수정
-                </Button>
-                <Button onClick={() => handleDelete(msg.channel_id)}>
-                  삭제
-                </Button>
-              </Stack>
-            )}
+            {/* {post.create_id === myUserId && (
+                          <Stack direction="row" spacing={1} mt={1}>
+                            <Button onClick={() => navigate(`/member/channel/${project_id}/update/${post.channel_id}`)}>
+                              수정
+                            </Button>
+                            <Button onClick={() => handleDelete(post.channel_id)}>
+                              삭제
+                            </Button>
+                          </Stack>
+                        )} */}
           </Paper>
         ))}
-      </Stack>
+      </Box>
     </Box>
   );
-};
-
+}
