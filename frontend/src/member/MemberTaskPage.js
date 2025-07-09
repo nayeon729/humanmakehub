@@ -40,8 +40,9 @@ export default function MemberDashboard() {
   return (
     <Box sx={{ p: 2 }}>
 
+
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ marginTop: 4 }} />
+        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
         개발자 대시보드
       </Typography>
 

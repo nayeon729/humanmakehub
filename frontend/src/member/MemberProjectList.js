@@ -4,6 +4,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Folder from "../assets/folder.png";
+
 
 const MemberProjectList = () => {
   const [invites, setInvites] = useState([]);
@@ -62,8 +64,9 @@ const MemberProjectList = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
-      <Typography variant="h4" mb={4} fontWeight="bold">
-        📁 프로젝트 목록
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        <img src={Folder} alt="폴더" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+        프로젝트 목록
       </Typography>
       <Grid container spacing={3}>
         {invites.map((project) => (
@@ -100,29 +103,29 @@ const MemberProjectList = () => {
                 border: "1px solid #ddd", borderRadius: 2
               }}>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="body2" fontWeight="bold">
-                  진행 상황
-                </Typography>
-                <Chip
-                  label={
-                    project.progress >= 100
-                      ? "완료"
-                      : project.progress >= 50
-                        ? "진행 중"
-                        : "대기 중"
-                  }
-                  size="small"
-                  sx={{
-                    bgcolor:
+                  <Typography variant="body2" fontWeight="bold">
+                    진행 상황
+                  </Typography>
+                  <Chip
+                    label={
                       project.progress >= 100
-                        ? "#4caf50" // 초록
+                        ? "완료"
                         : project.progress >= 50
-                          ? "#90caf9" // 파랑
-                          : "#90caf9", // 회색
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                />
+                          ? "진행 중"
+                          : "대기 중"
+                    }
+                    size="small"
+                    sx={{
+                      bgcolor:
+                        project.progress >= 100
+                          ? "#4caf50" // 초록
+                          : project.progress >= 50
+                            ? "#90caf9" // 파랑
+                            : "#90caf9", // 회색
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  />
                 </Stack>
                 <LinearProgress
                   variant="determinate"

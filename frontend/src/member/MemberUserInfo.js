@@ -12,6 +12,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
+import DevIcon from "../assets/dev-icon.png";
 
 
 const BASE_URL = "http://127.0.0.1:8000";
@@ -35,7 +36,7 @@ export default function ClientUserInfo() {
         });
         console.log("🎯 사용자 정보:", res.data);
         setUserInfo(res.data);
-        setMyId(res.data.user_id); 
+        setMyId(res.data.user_id);
       } catch (err) {
         console.error("회원 정보 조회 실패", err);
       }
@@ -73,8 +74,10 @@ export default function ClientUserInfo() {
   return (
     <>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        👤 회원정보
+        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+        회원정보
       </Typography>
+      
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           안녕하세요! <strong>{userInfo.nickname}</strong> 님

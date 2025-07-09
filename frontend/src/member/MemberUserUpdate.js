@@ -11,6 +11,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
+import DevIcon from "../assets/dev-icon.png";
+
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -120,7 +122,8 @@ export default function MemberUserEditPage() {
     return (
         <>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-                👤 회원정보 수정
+                <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+                회원정보 수정
             </Typography>
             <Card sx={{ p: 4 }}>
 

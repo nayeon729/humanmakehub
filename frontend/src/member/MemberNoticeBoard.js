@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Notice from "../assets/notice.png";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -47,20 +48,47 @@ export default function AdminNoticeListPage() {
     return (
         <Box sx={{ p: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                    <img src={Notice} alt="공지사항" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+                    공지사항
+                </Typography>
             </Stack>
-
-            <Stack direction="row" spacing={1} my={2}>
-                <TextField
-                    label="검색어를 입력하세요"
-                    variant="outlined"
-                    size="small"
-                    value={searchKeyword}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                    fullWidth
-                />
-                <Button variant="outlined" onClick={handleSearch}>검색</Button>
-            </Stack>
+            <Box display="flex" justifyContent="center">
+                <Stack direction="row" spacing={1} my={2}>
+                    <TextField
+                        label="검색어를 입력하세요"
+                        variant="outlined"
+                        size="small"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                        sx={{
+                            width: 450,
+                            borderRadius: 3,
+                            boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                            "& fieldset": {
+                                borderRadius: 3,
+                            },
+                        }}
+                    />
+                    <Button
+                        variant="contained"
+                        size="small"
+                        onClick={handleSearch}
+                        sx={{
+                            backgroundColor: "#1a73e8",
+                            borderRadius: 3,
+                            color: "#fff",
+                            fontWeight: "bold",
+                            px: 3,
+                            "&:hover": {
+                                backgroundColor: "#1669c1",
+                            },
+                        }}
+                    >
+                        검색
+                    </Button>
+                </Stack>
+            </Box>
 
             <Paper>
                 <Table>
@@ -78,8 +106,8 @@ export default function AdminNoticeListPage() {
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>
                                 <TableCell
-                                    // onClick={() => navigate(`/member/notice/${notice.notice_id}`)}
-                                    // sx={{ cursor: "pointer", color: "blue", "&:hover": { textDecoration: "underline" } }}
+                                // onClick={() => navigate(`/member/notice/${notice.notice_id}`)}
+                                // sx={{ cursor: "pointer", color: "blue", "&:hover": { textDecoration: "underline" } }}
                                 >{notice.title}</TableCell>
                                 <TableCell>{notice.create_dt.slice(0, 10)}</TableCell>
                             </TableRow>

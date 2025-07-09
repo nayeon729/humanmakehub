@@ -6,6 +6,7 @@ import PaidIcon from "@mui/icons-material/Paid";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import AlertCard from "../components/AlertCard";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -14,6 +15,7 @@ export default function AdminDashboard() {
   });
   const navigate = useNavigate();
   const BASE_URL = "http://127.0.0.1:8000";
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -33,6 +35,29 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
+      const res = await axios.get("http://127.0.0.1:8000/common/alerts", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAlerts(res.data);
+    };
+    fetchAlerts();
+  }, []);
+
+  const handleCloseAlert = async (alertId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(`${BASE_URL}/common/alerts/${alertId}/delete`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAlerts((prev) => prev.filter((a) => a.alert_id !== alertId)); // 상태에서 제거
+    } catch (error) {
+      console.error("알림 삭제 실패", error);
+    }
+  };
+
   const cards = [
     {
       icon: <GroupsIcon sx={{ fontSize: 40, color: "#1976d2" }} />,
@@ -44,7 +69,7 @@ export default function AdminDashboard() {
       title: "프로젝트 수",
       count: `${stats.project} 건`,
     },
-   
+
 
   ];
 
@@ -54,10 +79,12 @@ export default function AdminDashboard() {
         🛡️ 관리자 대시보드
       </Typography>
 
+
+
       <Grid container spacing={2} mt={1}>
         {cards.map((card, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
-            <Paper sx={{ p: 10, px:24, borderRadius: 2, textAlign: "center", boxShadow: 2 }}>
+            <Paper sx={{ p: 10, px: 24, borderRadius: 2, textAlign: "center", boxShadow: 2 }}>
               {card.icon}
               <Typography variant="subtitle1" fontWeight={600} mt={1}>
                 {card.title}
@@ -69,20 +96,16 @@ export default function AdminDashboard() {
           </Grid>
         ))}
       </Grid>
-
-      <Paper sx={{ mt: 4, p: 2, backgroundColor: "#f5f5f5", borderRadius: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          🔔 시스템 알림
-        </Typography>
-        <List>
-          <ListItem>
-            <ListItemText
-              primary="프로젝트 승인 대기"
-              secondary={`클라이언트가 신청한 승인 대기 프로젝트 ${stats.pendingProjects || 0} 건이 있습니다.`}
-            />
-          </ListItem>
-        </List>
-      </Paper>
+      {alerts.map((alert) => (
+        <AlertCard
+          key={alert.alert_id}
+          title={alert.title}
+          description={alert.message}
+          confirmText="바로가기"
+          onConfirm={() => window.location.href = alert.link}
+          onClose={() => handleCloseAlert(alert.alert_id)}
+        />
+      ))}
     </Box>
   );
 }

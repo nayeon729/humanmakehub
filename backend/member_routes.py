@@ -304,8 +304,8 @@ def respond_to_invite(
 
     try:
         conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
-            # 요청 유효성 체크 (내가 받은 요청인지)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:  # DictCursor 써야 user["nickname"] 사용 가능
+            # 1. 초대 요청 조회
             cursor.execute("""
                 SELECT * FROM join_requests
                 WHERE request_id = %s AND user_id = %s AND del_yn = 'N'
@@ -315,7 +315,7 @@ def respond_to_invite(
             if not request_row:
                 raise HTTPException(status_code=404, detail="초대 요청을 찾을 수 없습니다.")
 
-            # 응답 처리
+            # 2. 응답 처리
             cursor.execute("""
                 UPDATE join_requests
                 SET checking = 'Y',
@@ -323,10 +323,29 @@ def respond_to_invite(
                     update_dt = NOW()
                 WHERE request_id = %s
             """, ('Y' if is_accept else 'N', request_id))
+
+            # 3. 승인일 경우 알림 추가
+            if is_accept:
+                pm_id = request_row["pm_id"]
+                nickname = user.get("nickname", user["user_id"])  # 닉네임이 없으면 user_id 사용
+                message = f"{nickname}님이 프로젝트 참여를 승인 요청했습니다."
+
+                cursor.execute("""
+                    INSERT INTO alerts (target_user, title, message, link, create_dt, create_id)
+                    VALUES (%s, %s, %s, %s, NOW(), %s)
+                """, (
+                    pm_id,
+                    "시스템 알림",
+                    message,
+                    "http://localhost:3000/admin/projects",
+                    user["user_id"]
+                ))
+
         conn.commit()
         return {"message": "초대 응답이 처리되었습니다."}
     finally:
         conn.close()
+
 
 @router.post("/list")
 def get_my_accepted_projects(user: dict = Depends(get_current_user)):
