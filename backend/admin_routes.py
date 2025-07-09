@@ -528,7 +528,7 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
                 JOIN user u ON r.user_id = u.user_id
                 WHERE r.project_id = %s
             """, (project_id,))
-            members= cursor.fetchall()
+            members= cursor.fetchall() or []
         
             cursor.execute("""
                 SELECT u.user_id, u.nickname
@@ -537,12 +537,13 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
                 WHERE p.project_id = %s
             """, (project_id,))
             pm = cursor.fetchone()
+            pm_id = pm["user_id"] if pm and "user_id" in pm else None
 
-            all_users = members.copy()
-            if pm and all(u["user_id"] != pm["user_id"] for u in members):
-                all_users.append(pm)
+            
+            if pm and all(u["user_id"] != pm.get("user_id") for u in members):
+                members.append(pm)
 
-            return {"members": all_users,"pm_id": pm["user_id"] if pm else None}
+            return {"members": members, "pm_id": pm_id}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
