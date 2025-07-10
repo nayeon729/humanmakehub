@@ -24,6 +24,8 @@ class MemberUpdateRequest(BaseModel):
 class ProjectChannel(BaseModel):
     title: str
     content: str
+    pm_id: str
+    teamMemberId: int
     
 # ----------------------- 회원 정보 조회 -------------------------
 @router.get("/userinfo")
@@ -430,7 +432,8 @@ def get_project_common(project_id: int):
                 WHERE pc.del_yn = 'N'
                   AND u.role = 'R03'
                   AND pc.user_id = pc.create_id
-                  AND pc.project_id = %s
+                  AND pc.value_id = %s
+                  AND pc.category = "board01"
                 ORDER BY pc.create_dt DESC
             """
             cursor.execute(sql, (project_id,))
@@ -482,21 +485,33 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
         with conn.cursor() as cursor:
             sql = """
                 INSERT INTO project_channel 
-                (title, user_id, content, create_dt, create_id, update_id, update_dt, project_id, del_yn)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (title, user_id, content, create_dt, create_id, value_id, category, del_yn)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute(sql, (
-                projectChannel.title,     # title
-                user["user_id"],          # user_id
-                projectChannel.content,   # content
-                now,                      # create_dt
-                user["user_id"],          # create_id
-                user["user_id"],          # update_id
-                now,                      # update_dt
-                project_id,               # project_id
-                "N"                       # del_yn
+                projectChannel.title,             # title
+                projectChannel.pm_id,             # user_id
+                projectChannel.content,           # content
+                now,                              # create_dt
+                user["user_id"],                  # create_id
+                projectChannel.teamMemberId,      # value_id
+                "board02",                        # category
+                "N"                               # del_yn
             ))
+
+            cursor.execute("""
+                    INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+                """, (
+                    "",
+                    projectChannel.teamMemberId,
+                    "chat",
+                    "시스템 알림제목",
+                    "시스템 알림내용",
+                    "http://localhost:3000/admin/projects",
+                    user["user_id"]
+                ))
         conn.commit()
         return {"message": "게시글이 등록되었습니다."}
     except Exception as e:
@@ -527,6 +542,7 @@ import pymysql
 
 class ProjectChannel(BaseModel):
     title: str
+    user_id: str
     content: str
 
 @router.put("/projectchannel/{channel_id}/update")
@@ -610,8 +626,12 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
     finally:
         conn.close()
         
-@router.get("/project/{project_id}/user/{user_id}")
-def get_channel_messages(project_id: int, user_id: str):
+
+@router.get("/project/{project_id}/user/{user_id}/{teamMemberId}")
+def get_user_project_channel(project_id: int, user_id: str, teamMemberId: int, user: dict = Depends(get_current_user)):
+    if user["role"] == "R02" and user["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="해당 채널에 접근할 수 없습니다.")
+
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -645,11 +665,22 @@ def get_channel_messages(project_id: int, user_id: str):
             pm_row = cursor.fetchone()
             pm_id = pm_row["pm_id"] if pm_row else None
 
-            return {
-                "items": items,
-                "pm_id": pm_id,
-                "total": len(items)
-            }
+            # 🔍 user_id 또는 pm_id가 작성한 글만 가져오기
+            cursor.execute("""
+                SELECT 
+                    c.channel_id, c.value_id, c.title, c.content,
+                    c.user_id, c.create_dt, c.create_id, u.nickname
+                FROM project_channel c
+                JOIN user u ON c.create_id = u.user_id
+                WHERE c.value_id = %s
+                  AND c.create_id IN (%s, %s)
+                  AND c.del_yn = 'N'
+                  AND c.category = "board02"
+                ORDER BY c.create_dt DESC
+            """, (teamMemberId, user_id, pm_id))
+            channels = cursor.fetchall()
+
+            return {"items": channels, "pm_id": pm_id, "total": len(items)}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -663,7 +694,7 @@ def get_project_channel(channel_id: int, user: dict = Depends(get_current_user))
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
                 SELECT 
-                    channel_id, project_id, title, content, user_id, create_dt, create_id
+                    channel_id, value_id, title, content, user_id, create_dt, create_id
                 FROM project_channel
                 WHERE channel_id = %s AND del_yn = 'N'
             """, (channel_id,))

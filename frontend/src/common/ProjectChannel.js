@@ -1,5 +1,5 @@
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
-import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Divider } from "@mui/material";
+import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Divider, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -10,6 +10,9 @@ export default function ProjectChannel({ role }) {
   const [pmId, setPmId] = useState(null);
   const [menus, setMenus] = useState([]);
   const [myUserId, setMyUserId] = useState("");
+  const [teamMemberId, setTeamMemberId] = useState("");
+  const [alertsCount, setAlertCount] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
   const BASE_URL = "http://127.0.0.1:8000";
 
@@ -20,6 +23,71 @@ export default function ProjectChannel({ role }) {
       setMyUserId(id);
     }
   }, []);
+
+  useEffect(() => {
+    const getTeamMemberId = async () => {
+    if(myUserId != "" && project_id != null){
+        try {
+        const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${myUserId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("res : ", res);
+        console.log("project_id" , project_id);
+        console.log("userId", myUserId);
+        console.log("res.data.team_memeber_id", res.data.team_member_id);
+        console.log("type", typeof(res.data.team_member_id));
+        setTeamMemberId(res.data.team_member_id);
+        setPmId(res.data.pm_id);
+      } catch (err) {
+        console.error("프로젝트 팀멤버아이디 조회 실패", err);
+      }
+      }
+    }
+    getTeamMemberId();
+  },[project_id, myUserId])
+
+  useEffect(() => {
+    if (isChecked) {
+      getalertCount();  // ✅ 알림갯수 다시 불러와서세팅
+      setIsChecked(false); // 초기화
+    }
+  }, [isChecked]);
+
+  useEffect(() => {
+    getalertCount();
+  },[teamMemberId, pmId])
+
+  const getalertCount = async () => {
+    if(role === "R03") {
+      try {
+        const res = await axios.get(`${BASE_URL}/common/adminAlerts/${teamMemberId}/${pmId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("1대1 알림 갯수 : ", res.data.count);
+        setAlertCount(res.data.count);
+      } catch (err) {
+        console.error("알림 갯수 조회 실패", err);
+      }
+    }
+
+    if(myUserId != ""){
+        try {
+        const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("1대1 알림 갯수 : ", res.data.count);
+        setAlertCount(res.data.count);
+      } catch (err) {
+        console.error("알림 갯수 조회 실패", err);
+      }
+      }
+  }
 
   // 🔧 메뉴 경로 설정
   useEffect(() => {
@@ -71,9 +139,15 @@ export default function ProjectChannel({ role }) {
                   sx={{
                     backgroundColor: isActive ? "#D9D9D9" : "transparent",
                     fontWeight: isActive ? "bold" : "normal",
+                    width: "100%",
+                    display: "flex", // 👉 직접 flex 적용
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  <ListItemText primary={item.text} />
+                  <ListItemText primary={item.text} sx={{ pl: 1, width: "75%", }}/>
+                  <Typography>{item.text == "PM" ? alertsCount || "" : ""}</Typography>
                 </ListItemButton>
               </ListItem>
             );
@@ -95,16 +169,22 @@ export default function ProjectChannel({ role }) {
                   const isActive = location.pathname === memberPath;
                   return (
                     <ListItem key={member.user_id} disablePadding>
-                      <ListItemButton
-                        component={Link}
-                        to={memberPath}
-                        sx={{
-                          backgroundColor: isActive ? "#D9D9D9" : "transparent",
-                          fontWeight: isActive ? "bold" : "normal",
-                        }}
-                      >
-                        <ListItemText primary={member.nickname} sx={{ pl: 1 }} />
-                      </ListItemButton>
+                        <ListItemButton
+                          component={Link}
+                          to={memberPath}
+                          sx={{
+                            backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                            fontWeight: isActive ? "bold" : "normal",
+                            width: "100%",
+                            display: "flex", // 👉 직접 flex 적용
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
+                          <Typography> {member.count > 0 ? member.count : ""}</Typography>
+                        </ListItemButton>
                     </ListItem>
                   );
                 })}
@@ -115,7 +195,7 @@ export default function ProjectChannel({ role }) {
 
       {/* 본문 */}
       <Box sx={{ flexGrow: 1, p: 4 }}>
-        <Outlet />
+        <Outlet context={{ setIsChecked }}/>
       </Box>
     </Box>
   );

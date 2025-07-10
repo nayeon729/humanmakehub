@@ -21,6 +21,7 @@ export default function ProjectChannelMemberPage() {
   const [myUserId, setMyUserId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   const navigate = useNavigate();
+  const [teamMemberId, setTeamMemberId] = useState("");
   const BASE_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
@@ -29,11 +30,12 @@ export default function ProjectChannelMemberPage() {
       setMyUserId(id);
     }
   }, []);
+
  const fetchMessages = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `${BASE_URL}/admin/project/${project_id}/user/${user_id}`,
+          `${BASE_URL}/admin/project/${project_id}/user/${user_id}/${teamMemberId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,9 +50,31 @@ export default function ProjectChannelMemberPage() {
       }
     };
 
+    useEffect(() => {
+      if (!teamMemberId) return; // 값 없으면 무시
+      fetchMessages();
+    },[teamMemberId])
+
   useEffect(() => {
-    fetchMessages();
+    const getTeamMemberId = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${user_id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("project_id" , project_id);
+        console.log("userId", user_id);
+        console.log("res", res.data.team_member_id);
+        console.log("type", typeof(res.data.team_member_id));
+        setTeamMemberId(res.data.team_member_id);
+      } catch (err) {
+        console.error("프로젝트 팀멤버아이디 조회 실패", err);
+      }
+    }
+    getTeamMemberId();
   }, [project_id, user_id]);
+
   console.log("pmId", pmId)
   messages.map((msg) => {
     console.log("user_id:", msg.user_id, "pmId:", pmId);

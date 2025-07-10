@@ -35,6 +35,7 @@ export default function ProjectChannelCommonPage() {
       const res = await axios.get(`${BASE_URL}/admin/project/common/${project_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("공통 채널 게시글 :", res.data.items);
       setPosts(res.data.items);
     } catch (error) {
       console.error("공통 채널 게시글 불러오기 실패", error);

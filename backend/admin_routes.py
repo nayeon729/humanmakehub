@@ -38,6 +38,8 @@ class ProjectChannel(BaseModel):
     title: str
     user_id:str
     content:str
+    value_id:int
+    category:str
 
 
 class SkillItem(BaseModel):
@@ -586,6 +588,19 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
             if pm and all(u["user_id"] != pm.get("user_id") for u in members):
                 members.append(pm)
 
+            # ✅ 각 팀원별 알림 갯수 조회해서 count 필드 추가
+            for member in members:
+                cursor.execute("""
+                    SELECT COUNT(*) as count
+                    FROM alerts
+                    WHERE target_user = ''
+                      AND create_id = %s
+                      AND category = 'chat'
+                      AND del_yn = 'N'
+                """, (member["user_id"],))
+                count_result = cursor.fetchone()
+                member["count"] = count_result["count"] if count_result else 0
+
             return {"members": members, "pm_id": pm_id}
         
     except Exception as e:
@@ -621,12 +636,60 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            sql = """
-                INSERT INTO project_channel (title, user_id, content, create_dt, create_id, project_id)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """
-            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], project_id))
+            if projectChannel.category == "board01":
+                sql = """
+                    INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+                    VALUES (%s, %s, %s, %s, %s, %s, "board01")
+                """
+                now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], project_id))
+
+                # 프로젝트에 참가한 팀멤버아이디 조회
+                cursor.execute("""
+                    SELECT user_id
+                    FROM team_member 
+                    WHERE project_id = %s
+                    AND del_yn = 'N'
+                """, (project_id,))
+                team_members = cursor.fetchall()
+
+                # 각 팀원에게 알림 보내기
+                for member in team_members:
+                    target_user = member["user_id"]
+                    cursor.execute("""
+                        INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+                    """, (
+                        target_user,
+                        project_id,
+                        "chat",
+                        "시스템 알림제목",
+                        "프로젝트에서 PM이 공지사항을 작성하였습니다.",
+                        f"http://localhost:3000/member/channel/{project_id}/common",
+                        user["user_id"]
+                    ))
+
+            else:
+                sql = """
+                    INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+                    VALUES (%s, %s, %s, %s, %s, %s, "board02")
+                """
+                now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.value_id))
+
+                cursor.execute("""
+                        INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+                    """, (
+                        "",
+                        projectChannel.value_id,
+                        "chat",
+                        "시스템 알림제목",
+                        "시스템 알림내용",
+                        f"http://localhost:3000/member/channel/{project_id}/pm/{projectChannel.user_id}",
+                        user["user_id"]
+                    ))
+
         conn.commit()
         return {"message": "게시글이 등록되었습니다."}
     except Exception as e:
@@ -642,7 +705,7 @@ def get_channel_by_id(channel_id: int, user: dict = Depends(get_current_user)):
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
                 SELECT channel_id, title, user_id, content,
-                       create_dt, create_id, project_id
+                       create_dt, create_id, value_id
                 FROM project_channel
                 WHERE channel_id = %s AND del_yn = 'N'
             """, (channel_id,))
@@ -738,7 +801,8 @@ def get_project_common(project_id: int):
                 WHERE pc.del_yn = 'N'
                   AND u.role = 'R03'
                   AND pc.user_id = pc.create_id
-                  AND pc.project_id = %s
+                  AND pc.value_id = %s
+                  AND pc.category = "board01"
                 ORDER BY pc.create_dt DESC
             """
             cursor.execute(sql, (project_id,))
@@ -754,8 +818,8 @@ def get_project_common(project_id: int):
     finally:
         conn.close()
 
-@router.get("/project/{project_id}/user/{user_id}")
-def get_channel_messages(project_id: int, user_id: str):
+@router.get("/project/{project_id}/user/{user_id}/{teamMemberId}")
+def get_channel_messages(project_id: int, user_id: str, teamMemberId:int):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -771,15 +835,11 @@ def get_channel_messages(project_id: int, user_id: str):
                 FROM project_channel pc
                 JOIN user u ON pc.create_id = u.user_id
                 WHERE pc.del_yn = 'N'
-                  AND pc.project_id = %s
-                  AND pc.user_id = %s
-                  AND (
-                        pc.create_id = %s
-                        OR u.role = 'R03'
-                  )
+                  AND pc.value_id = %s
+                  AND pc.category = "board02"
                 ORDER BY pc.create_dt DESC
             """
-            cursor.execute(sql, (project_id, user_id, user_id))
+            cursor.execute(sql, (teamMemberId))
             items = cursor.fetchall()
 
             cursor.execute("""

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import {
   Box,
@@ -22,7 +22,10 @@ export default function ProjectChannelPmPage() {
   const [myUserId, setMyUserId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   const navigate = useNavigate();
+  const [teamMemberId, setTeamMemberId] = useState("");
   const BASE_URL = "http://127.0.0.1:8000";
+  const context = useOutletContext() || {};
+  const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
 
   useEffect(() => {
     const id = localStorage.getItem("user_id");
@@ -34,7 +37,7 @@ export default function ProjectChannelPmPage() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `${BASE_URL}/member/project/${project_id}/user/${user_id}`,
+        `${BASE_URL}/member/project/${project_id}/user/${user_id}/${teamMemberId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,7 +53,51 @@ export default function ProjectChannelPmPage() {
   };
 
   useEffect(() => {
+    if(messages != []) {
+      const messagesCheck = async () => {
+          try {
+            const token = localStorage.getItem("token");
+            await axios.post(`${BASE_URL}/common/alertsCheck`, {
+              pm_id: pmId,
+              teamMemberId: teamMemberId,
+            }, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            console.log("알람체크 성공");
+            setIsChecked(true);
+          } catch (error) {
+            console.error("알람체크 실패", error);
+          }
+      }
+      messagesCheck();
+    }
+  },[messages, pmId])
+
+  useEffect(() => {
+    if (!teamMemberId) return; // 값 없으면 무시
     fetchMessages();
+  },[teamMemberId])
+
+  useEffect(() => {
+    const getTeamMemberId = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${user_id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("project_id" , project_id);
+        console.log("userId", user_id);
+        console.log("res", res.data.team_member_id);
+        console.log("type", typeof(res.data.team_member_id));
+        setTeamMemberId(res.data.team_member_id);
+      } catch (err) {
+        console.error("프로젝트 팀멤버아이디 조회 실패", err);
+      }
+    }
+    getTeamMemberId();
   }, [project_id, user_id]);
   console.log("pmId", pmId)
   messages.map((msg) => {
