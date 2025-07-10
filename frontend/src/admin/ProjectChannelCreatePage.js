@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function ProjectChannelCreatePage() {
   const [title, setTitle] = useState("");
   const [userId, setUserId] = useState("");
+  const [teamMemberId, setTeamMemberId] = useState("");
   const [content, setContent] = useState("");
   const [members, setMembers] = useState([]);
   const [pmId, setPmId] = useState("");
@@ -25,10 +26,8 @@ export default function ProjectChannelCreatePage() {
         const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/members`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log("project_id:", project_id)
         setMembers(res.data.members ?? []);
         setPmId(res.data.pm_id);
-        console.log("members:", members);
       } catch (err) {
         console.error("멤버 불러오기 실패", err);
       }
@@ -48,18 +47,26 @@ export default function ProjectChannelCreatePage() {
         title,
         user_id: userId,
         content,
+        value_id: teamMemberId =="공용" ? Number(project_id) : Number(teamMemberId),
+        category: teamMemberId =="공용" ? "board01" : "board02",
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       alert("글이 등록되었습니다.");
-      navigate(`/admin/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
+
+      if(teamMemberId =="공용"){
+        navigate(`/admin/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
+      } else {
+        navigate(`/admin/channel/${project_id}/member/${userId}`)
+      }
     } catch (error) {
       console.error("글 등록 실패", error);
       alert("글 등록 중 오류가 발생했습니다.");
     }
   };
+
   useEffect(() => {
     const fetchProjectTitle = async () => {
       try {
@@ -76,6 +83,27 @@ export default function ProjectChannelCreatePage() {
 
     fetchProjectTitle();
   }, [project_id]);
+
+  useEffect(() => {
+    const getTeamMemberId = async () => {
+    try {
+        const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("project_id" , project_id);
+        console.log("userId", userId);
+        console.log("res", res.data.team_member_id);
+        console.log("type", typeof(res.data.team_member_id));
+        setTeamMemberId(res.data.team_member_id);
+      } catch (err) {
+        console.error("프로젝트 팀멤버아이디 조회 실패", err);
+      }
+    }
+    getTeamMemberId();
+  },[userId])
+
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
       <Typography variant="h5" gutterBottom fontWeight="bold">

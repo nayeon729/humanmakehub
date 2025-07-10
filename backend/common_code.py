@@ -123,3 +123,76 @@ def delete_alert(alert_id: int, user: dict = Depends(get_current_user)):
         return {"message": "알림이 삭제되었습니다."}
     finally:
         conn.close()
+
+
+@router.get("/teamMemberId/{project_id}/{user_id}")
+def get_teamMemberId(project_id: int, user_id: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT *
+                FROM team_member
+                WHERE project_id = %s AND user_id = %s AND del_yn = 'N'
+            """, (project_id, user_id))
+
+        data = cursor.fetchone()
+        if data:
+            return data
+        
+        return "공용"
+    finally:
+        conn.close()
+
+
+@router.get("/adminAlerts/{teamMemberId}/{pmId}")
+def get_adminAlertsList(teamMemberId: int, pmId: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT *
+                FROM alerts
+                WHERE value_id = %s AND target_user = "" AND create_id = %s AND del_yn = 'N'
+            """, (teamMemberId, pmId))
+
+        results = cursor.fetchall()
+        alert_count = len(results)
+        
+        return {"count": alert_count}
+    finally:
+        conn.close()
+
+
+@router.get("/alerts/{teamMemberId}/{pmId}")
+def get_alertsList(teamMemberId: int, pmId: str):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT *
+                FROM alerts
+                WHERE value_id = %s AND target_user = "" AND create_id = %s AND del_yn = 'N'
+            """, (teamMemberId, pmId))
+
+        results = cursor.fetchall()
+        alert_count = len(results)
+        
+        return {"count": alert_count}
+    finally:
+        conn.close()
+
+
+@router.post("/alertsCheck")
+def alertsCheck(body: dict = Body(...)):
+    # DB 연결
+    conn = pymysql.connect(**db_config)
+    with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+
+        cursor.execute("""
+            UPDATE alerts SET del_yn ='Y' WHERE target_user = "" AND create_id = %s AND value_id = %s AND category = "chat" AND del_yn ='N'
+        """, (body["pm_id"], body["teamMemberId"],))
+
+        conn.commit()
+
+    return {"message": "알람체크 완료!"}

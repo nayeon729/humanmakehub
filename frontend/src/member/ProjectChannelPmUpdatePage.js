@@ -35,7 +35,7 @@ export default function ProjectChannelUpdatePage() {
             });
             const data = res.data;
             setTitle(data.title);
-            setUserId(data.user_id);
+            setUserId(data.create_id);
             setContent(data.content);
         } catch (error) {
             console.error("글 불러오기 실패", error);
@@ -75,7 +75,7 @@ export default function ProjectChannelUpdatePage() {
                 },
             });
             alert("✅ 공지사항이 수정되었습니다.");
-            navigate(`/member/channel/${project_id}/common`);
+            navigate(`/member/channel/${project_id}/pm/${userId}`);
         } catch (error) {
             console.error("❌ 공지사항 수정 실패", error);
             alert("공지사항 수정에 실패했습니다.");

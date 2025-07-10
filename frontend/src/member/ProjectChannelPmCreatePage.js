@@ -13,6 +13,7 @@ export default function ProjectChannelCreatePage() {
   const [content, setContent] = useState("");
   const [members, setMembers] = useState([]);
   const [pmId, setPmId] = useState("");
+  const [teamMemberId, setTeamMemberId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   const { project_id } = useParams();
   const navigate = useNavigate();
@@ -29,20 +30,22 @@ export default function ProjectChannelCreatePage() {
       const token = localStorage.getItem("token");
       await axios.post(`${BASE_URL}/member/projectchannel/${project_id}/create`, {
         title,
-        user_id: userId,
         content,
+        pm_id: pmId,
+        teamMemberId: teamMemberId,
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       alert("글이 등록되었습니다.");
-      navigate(`/member/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
+      navigate(`/member/channel/${project_id}/pm/${userId}`); // 공지사항 목록 페이지로 이동
     } catch (error) {
       console.error("글 등록 실패", error);
       alert("글 등록 중 오류가 발생했습니다.");
     }
   };
+
   useEffect(() => {
     const fetchProjectTitle = async () => {
       try {
@@ -52,6 +55,7 @@ export default function ProjectChannelCreatePage() {
           },
         });
         setProjectTitle(res.data.title);
+        setUserId(localStorage.getItem("user_id"));
       } catch (err) {
         console.error("프로젝트 제목 불러오기 실패", err);
       }
@@ -59,6 +63,55 @@ export default function ProjectChannelCreatePage() {
 
     fetchProjectTitle();
   }, [project_id]);
+
+  useEffect(() => {
+    if(userId != ""){
+      const getTeamMemberId = async () => {
+        try {
+          const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          console.log("res", res);
+          console.log("project_id" , project_id);
+          console.log("userId", userId);
+          console.log("res.team_member_id", res.data.team_member_id);
+          console.log("type", typeof(res.data.team_member_id));
+          setTeamMemberId(res.data.team_member_id);
+        } catch (err) {
+          console.error("프로젝트 팀멤버아이디 조회 실패", err);
+        }
+      }
+      getTeamMemberId();
+    }
+  }, [project_id, userId]);
+
+  useEffect(() => {
+    if (!teamMemberId) return; // 값 없으면 무시
+    fetchMessages();
+  },[teamMemberId])
+
+
+  const fetchMessages = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `${BASE_URL}/member/project/${project_id}/user/${userId}/${teamMemberId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setPmId(res.data.pm_id);
+      console.log("응답 확인 👉", res.data);
+    } catch (err) {
+      console.error("pm_id 불러오기 실패", err);
+    }
+  };
+
+  
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
