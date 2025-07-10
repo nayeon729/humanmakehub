@@ -398,12 +398,16 @@ def get_confirmed_projects(user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT project_id
-                FROM team_member
-                WHERE user_id = %s AND del_yn = 'N'
+                SELECT p.project_id, p.title, p.description, c.code_name as category_name,
+                       u.code_name as urgency_level, p.estimated_duration, p.budget, p.progress, p.create_dt
+                FROM team_member tm
+                JOIN project p ON tm.project_id = p.project_id
+                LEFT JOIN common_code c ON p.category = c.code_id
+                LEFT JOIN common_code u ON p.urgency = u.code_id
+                WHERE tm.user_id = %s AND tm.del_yn = 'N'
             """, (user["user_id"],))
-            rows = cursor.fetchall()
-        return {"confirmed_projects": [r["project_id"] for r in rows]}
+            result = cursor.fetchall()
+            return {"confirmed_projects": result}
     finally:
         conn.close()
 

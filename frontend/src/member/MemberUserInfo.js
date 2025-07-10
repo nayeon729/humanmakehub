@@ -13,37 +13,53 @@ import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
 import DevIcon from "../assets/dev-icon.png";
+import { useParams, useSearchParams } from "react-router-dom";
 
 
 const BASE_URL = "http://127.0.0.1:8000";
 
-export default function ClientUserInfo() {
+export default function MemberUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const [git, setGit] = useState("");
   const [portfolio, setPortfolio] = useState("");
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [myId, setMyId] = useState("");
-
+  const { user_id } = useParams();
+  const [searchParams] = useSearchParams();
+  const isReadonly = searchParams.get("readonly") === "1";
 
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${BASE_URL}/user/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("🎯 사용자 정보:", res.data);
+        let res;
+
+        if (user_id && isReadonly) {
+          // 👉 관리자가 개발자 조회하는 경우
+          res = await axios.get(`${BASE_URL}/admin/users/${user_id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          console.log("🔍 가져온 데이터:", res.data);
+        } else {
+          // 👉 일반 사용자 본인 정보
+          res = await axios.get(`${BASE_URL}/user/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+
         setUserInfo(res.data);
         setMyId(res.data.user_id);
       } catch (err) {
         console.error("회원 정보 조회 실패", err);
+        alert("사용자 정보를 불러올 수 없습니다.");
       }
     };
 
     fetchUserInfo();
-  }, []);
+  }, [user_id, isReadonly]);
+
 
   if (!userInfo) return <Typography>로딩중...</Typography>;
 
@@ -77,7 +93,7 @@ export default function ClientUserInfo() {
         <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
         회원정보
       </Typography>
-      
+
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           안녕하세요! <strong>{userInfo.nickname}</strong> 님
@@ -178,7 +194,7 @@ export default function ClientUserInfo() {
           </Box>
 
           {/* 버튼들 */}
-          {userInfo && myId === userInfo.user_id && (
+          {userInfo && myId === userInfo.user_id && !isReadonly && (
             <Box
               sx={{
                 display: "flex",
