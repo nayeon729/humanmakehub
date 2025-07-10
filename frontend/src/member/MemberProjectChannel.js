@@ -15,8 +15,9 @@ import {
 import CreateIcon from "@mui/icons-material/Create";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import chatting from "../assets/chatting.png";
 
-export default function ProjectChannelCommonPage() {
+export default function MemberProjectChannel() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   const { project_id } = useParams();
@@ -62,31 +63,14 @@ export default function ProjectChannelCommonPage() {
     fetchProjectTitle();
   }, [project_id]);
 
-  const handleDelete = async (channel_id) => {
-    const confirmed = window.confirm("정말 삭제하시겠습니까?");
-    if (!confirmed) return;
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/member/projectchannel/${channel_id}/delete`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchPosts();
-      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
-    } catch (error) {
-      console.error("❌ 프로젝트 삭제 실패", error);
-      alert("❌ 프로젝트 삭제에 실패했습니다.");
-    }
-  };
 
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+          {projectTitle}
         </Typography>
-        {/* <IconButton color="primary" onClick={() => navigate(`/member/channel/${project_id}/create`)}>
-          <CreateIcon />
-        </IconButton> */}
       </Stack>
 
       {/* 📃 게시글 리스트 */}
@@ -94,31 +78,43 @@ export default function ProjectChannelCommonPage() {
         {posts.map((post) => (
           <Paper
             key={post.channel_id}
-            sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
+            sx={{
+              backgroundColor: "#fff",
+              p: 1.5,
+              mt: 2,
+              borderRadius: 2,
+              position: "relative",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            }}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
-            <Typography variant="subtitle1" fontWeight="bold">
+            <Typography variant="subtitle1" fontWeight="bold"
+              sx={{
+                fontSize: "25px",
+              }}>
               {post.title}
             </Typography>
-            <Typography variant="body2" sx={{ color: "gray" }}>
+            <Typography variant="body2"
+              sx={{
+                color: "black",
+                mt: 0.5,
+                whiteSpace: "pre-line",
+              }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
             <Stack direction="row" justifyContent="space-between" mt={1}>
 
-              <Typography variant="caption" sx={{ color: "gray" }}>
-                {new Date(post.create_dt).toLocaleDateString("ko-KR")}
+              <Typography variant="caption"
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 12,
+                  color: "black",
+                  fontSize: "0.75rem",
+                }}>
+                {post.create_dt.slice(0, 10).replace(/-/g, ".")}
               </Typography>
             </Stack>
-            {/* {post.create_id === myUserId && (
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Button onClick={() => navigate(`/member/channel/${project_id}/update/${post.channel_id}`)}>
-                              수정
-                            </Button>
-                            <Button onClick={() => handleDelete(post.channel_id)}>
-                              삭제
-                            </Button>
-                          </Stack>
-                        )} */}
           </Paper>
         ))}
       </Box>

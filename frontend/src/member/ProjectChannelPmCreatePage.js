@@ -4,6 +4,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import chatting from "../assets/chatting.png";
 
 
 export default function ProjectChannelCreatePage() {
@@ -59,35 +60,84 @@ export default function ProjectChannelCreatePage() {
     fetchProjectTitle();
   }, [project_id]);
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
-      <Typography variant="h5" gutterBottom fontWeight="bold">
-        💬 {projectTitle} 글 작성
+    <Box sx={{ flex: 1, p: 3 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+        {projectTitle} 글 작성
       </Typography>
 
-      <Paper sx={{ p: 3, mt: 2 }}>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">제목</Typography>
+      <Paper sx={{
+        p: 3, 
+        mt: 2, 
+        backgroundColor: "#fff",
+        mt: 2,
+        borderRadius: 2,
+        boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
+        "& fieldset": { border: "none" },
+        borderTop: "1px solid #ddd",
+        borderLeft: "1px solid #ddd",
+      }}>
+        <Box sx={{ mb: 5 }}>
+          <Typography variant="body2" fontWeight="bold">
+            제목*
+          </Typography>
           <TextField
             fullWidth
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-        </Box>
-        
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">내용</Typography>
-          <TextField
-            multiline
-            rows={8}
-            fullWidth
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            sx={{ mb: 2 }}
+            variant="outlined"
+            InputProps={{
+              notched: false,
+              sx: {
+                border: "none",
+              },
+            }}
+            sx={{
+              backgroundColor: "#fff",
+              mt: 2,
+              borderRadius: 2,
+              boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
+              "& fieldset": { border: "none" },
+              borderTop: "1px solid #ddd",
+              borderLeft: "1px solid #ddd",
+            }}
           />
         </Box>
 
-        <Button variant="contained" fullWidth onClick={handleSubmit}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" fontWeight="bold">
+            내용*
+          </Typography>
+          <TextField
+            multiline
+            rows={15}
+            fullWidth
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            variant="outlined"
+            InputProps={{
+              notched: false,
+              sx: {
+                border: "none",
+              },
+            }}
+            sx={{
+              backgroundColor: "#fff",
+              mt: 2,
+              borderRadius: 2,
+              boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
+              "& fieldset": { border: "none" },
+              borderTop: "1px solid #ddd",
+              borderLeft: "1px solid #ddd",
+            }}
+          />
+        </Box>
+
+        <Button variant="contained" fullWidth onClick={handleSubmit}
+          sx={{
+            borderRadius: "15px",
+            mt: 3,
+          }}>
           글 등록
         </Button>
       </Paper>

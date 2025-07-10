@@ -12,7 +12,8 @@ import {
   Button,
   Chip
 } from "@mui/material";
-import CreateIcon from "@mui/icons-material/Create";
+import chatting from "../assets/chatting.png";
+import create from "../assets/create.png";
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -29,24 +30,24 @@ export default function ProjectChannelPmPage() {
       setMyUserId(id);
     }
   }, []);
- const fetchMessages = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `${BASE_URL}/member/project/${project_id}/user/${user_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setMessages(res.data?.items ?? []);
-        setPmId(res.data.pm_id);
-        console.log("응답 확인 👉", res.data);
-      } catch (err) {
-        console.error("게시글 불러오기 실패", err);
-      }
-    };
+  const fetchMessages = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `${BASE_URL}/member/project/${project_id}/user/${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessages(res.data?.items ?? []);
+      setPmId(res.data.pm_id);
+      console.log("응답 확인 👉", res.data);
+    } catch (err) {
+      console.error("게시글 불러오기 실패", err);
+    }
+  };
 
   useEffect(() => {
     fetchMessages();
@@ -72,10 +73,10 @@ export default function ProjectChannelPmPage() {
 
     fetchProjectTitle();
   }, [project_id]);
-  
-  const handleDelete=async(channel_id)=>{
-     const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  if (!confirmed) return;
+
+  const handleDelete = async (channel_id) => {
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`${BASE_URL}/member/projectchannel/${channel_id}/delete`, {
@@ -92,38 +93,72 @@ export default function ProjectChannelPmPage() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+          {projectTitle}
         </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/member/channel/${project_id}/create`)}>
-          <CreateIcon />
+        <IconButton
+          onClick={() => navigate(`/member/channel/${project_id}/create`)}
+          sx={{ p: 0.5 }}
+        >
+          <img
+            src={create} alt="글쓰기" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
         </IconButton>
       </Stack>
-      <Divider sx={{ my: 2 }} />
 
       <Stack spacing={2}>
         {messages.map((msg) => (
-          <Paper key={msg.channel_id} sx={{ p: 2 }}>
+          <Paper key={msg.channel_id}
+            sx={{
+              backgroundColor: "#fff",
+              p: 1.5,
+              mt: 2,
+              borderRadius: 2,
+              position: "relative",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
                 label={msg.create_id === pmId ? "PM" : msg.nickname}
               />
-              <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>{msg.title}</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ ml: "auto" }}>
-                {msg.create_dt.slice(0, 10)}
+              <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
+                {msg.title}
+                </Typography>
+              <Typography variant="body2" color="text.secondary"
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 12,
+                  color: "black",
+                  fontSize: "0.75rem",
+                }}>
+                {msg.create_dt.slice(0, 10).replace(/-/g, ".")}
               </Typography>
             </Stack>
 
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2"
+              sx={{
+                color: "black",
+                mt: 0.5,
+                whiteSpace: "pre-line",
+              }}>
               {msg.content}
             </Typography>
             {msg.create_id === myUserId && (
-              <Stack direction="row" spacing={1} mt={1}>
+              <Stack direction="row" spacing={1} mt={1}
+                sx={{
+                  position: "absolute",
+                  bottom: 8,
+                  right: 12,
+                }}>
                 <Button onClick={() => navigate(`/member/channel/${project_id}/update/${msg.channel_id}`)}>
                   수정
                 </Button>
-                <Button onClick={() => handleDelete(msg.channel_id)}>
+                <Button onClick={() => handleDelete(msg.channel_id)}
+                  sx={{
+                    color: "red",
+                  }}>
                   삭제
                 </Button>
               </Stack>

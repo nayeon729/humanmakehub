@@ -55,6 +55,7 @@ import SidebarLayout from "./common/SidebarLayout";
 import ProjectChannel from "./common/ProjectChannel";
 import TopNavbar from "./common/TopNavbar";
 import ProjectChannelMemberPage from "./member/ProjectChannelPmPage";
+import MemberProjectChannel from "./member/MemberProjectChannel";
 
 function App() {
   return (
@@ -114,7 +115,7 @@ function App() {
             <ProjectChannel role="R02" />
           </PrivateRoute>
         }>
-          <Route path="common" element={<ProjectChannelCommon />} />
+          <Route path="common" element={<MemberProjectChannel />} />
           <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
           <Route path="create" element={<ProjectChannelPmCreatePage />} />
           <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />

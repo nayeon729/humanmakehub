@@ -77,7 +77,7 @@ const MemberProjectList = () => {
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="black">
                   접수일 : {new Date(project.create_dt).toLocaleDateString("ko-KR")}
                 </Typography>
               </Stack>
@@ -147,7 +147,7 @@ const MemberProjectList = () => {
                   }}
                   onClick={() => navigate(`/member/channel/${project.project_id}/common`)}
                 >
-                  📘 프로젝트 채널
+                  프로젝트 채널
                 </Button>
               ) : project.checking === "N" ? (
                 <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
