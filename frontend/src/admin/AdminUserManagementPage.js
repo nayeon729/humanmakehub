@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   Box, Typography, Table, TableHead, TableBody, TableRow, TableCell,
   Paper, Button, Select, MenuItem, Chip, Tabs, Tab, Dialog, DialogTitle,
-  DialogContent, DialogContentText, DialogActions, Stack, TextField, Pagination 
+  DialogContent, DialogContentText, DialogActions, Stack, TextField, Pagination
 } from "@mui/material";
 import axios from "axios";
 import Combo from "../components/Combo";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,7 @@ export default function AdminUserManagementPage() {
   const [userRole, setUserRole] = useState("");
   const itemsPerPage = 10;
   const BASE_URL = "http://127.0.0.1:8000";
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -202,10 +204,10 @@ export default function AdminUserManagementPage() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
           }}
-          sx={{width:'400px', boxShadow:'3px 3px 6px gray', borderRadius:'5px'}}
+          sx={{ width: '400px', boxShadow: '3px 3px 6px gray', borderRadius: '5px' }}
           size="small"
         />
-        <Button variant="outlined" onClick={handleSearch} sx={{backgroundColor:'#2879E3', color:'white', height:'35px', }}>
+        <Button variant="outlined" onClick={handleSearch} sx={{ backgroundColor: '#2879E3', color: 'white', height: '35px', }}>
           검색
         </Button>
       </Stack>
@@ -213,20 +215,30 @@ export default function AdminUserManagementPage() {
         <Table>
           <TableHead>
             <TableRow >
-              <TableCell sx={{textAlign:'center'}}>아이디</TableCell>
-              <TableCell sx={{textAlign:'center'}}>닉네임</TableCell>
-              <TableCell sx={{textAlign:'center'}}>등급</TableCell>
-              <TableCell sx={{textAlign:'center'}}>역할</TableCell>
-              <TableCell sx={{textAlign:'center'}}>이메일</TableCell>
-              <TableCell sx={{textAlign:'center'}}>관리</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>아이디</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>닉네임</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>등급</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>역할</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>이메일</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>관리</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedUsers.map((user) => (
               <TableRow key={user.user_id}>
-                <TableCell sx={{textAlign:'center'}}>{user.user_id}</TableCell>
-                <TableCell sx={{textAlign:'center'}}>{user.nickname}</TableCell>
-                <TableCell sx={{textAlign:'center'}}>
+                <TableCell>{user.user_id}</TableCell>
+                <TableCell><Typography
+                  sx={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    color: "primary.main",
+                    "&:hover": { color: "primary.dark" }
+                  }}
+                  onClick={() => navigate(`/admin/users/${user.user_id}?readonly=1`)}
+                >
+                  {user.nickname}
+                </Typography></TableCell>
+                <TableCell>
                   {user.role === "R02" ? (  // R02는 member
                     <Box>
                       <Combo
@@ -241,7 +253,7 @@ export default function AdminUserManagementPage() {
                     <Typography />
                   )}
                 </TableCell>
-                <TableCell sx={{textAlign:'center'}}>
+                <TableCell sx={{ textAlign: 'center' }}>
                   <Box>
                     <Combo
                       groupId="USER_ROLE"
@@ -251,7 +263,7 @@ export default function AdminUserManagementPage() {
                     />
                   </Box>
                 </TableCell >
-                <TableCell sx={{textAlign:'center'}}>{user.email}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
                 <TableCell align="center">
                   {user.del_yn === 'Y' ? (
                     <Button
@@ -285,16 +297,16 @@ export default function AdminUserManagementPage() {
         </Table>
       </Paper>
       <Box mt={2} display="flex" justifyContent="center">
-  <Pagination
-    count={totalPages}
-    page={currentPage}
-    onChange={(e, value) => setCurrentPage(value)}
-    shape="rounded"        // ● 동그란 스타일
-    color="primary"        // ● 파란색 강조
-    siblingCount={1}       // ● 현재 페이지 주변 1개씩
-    boundaryCount={1}      // ● 양 끝 페이지 1개씩
-  />
-</Box>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(e, value) => setCurrentPage(value)}
+          shape="rounded"        // ● 동그란 스타일
+          color="primary"        // ● 파란색 강조
+          siblingCount={1}       // ● 현재 페이지 주변 1개씩
+          boundaryCount={1}      // ● 양 끝 페이지 1개씩
+        />
+      </Box>
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>사용자 삭제 확인</DialogTitle>
         <DialogContent>

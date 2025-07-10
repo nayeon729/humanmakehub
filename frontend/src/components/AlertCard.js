@@ -16,12 +16,13 @@ export default function AlertBox({
   confirmText = "Confirm",
   onConfirm,
   onClose,
+  color,
 }) {
   return (
     <Paper
       elevation={3}
       sx={{
-        backgroundColor: "#1976d2",
+        backgroundColor: color,
         color: "white",
         p: 0.7,
         mt: 2,

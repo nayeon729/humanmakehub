@@ -97,6 +97,15 @@ function App() {
 
         {/* 팀원 */}
         <Route
+          path="/admin/users/:user_id"
+          element={
+            <PrivateRoute allowedRoles={["R03"]}>  {/* 관리자 전용 */}
+              <MemberUserInfo />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
           path="/member"
           element={
             <PrivateRoute allowedRoles={["R02"]}>

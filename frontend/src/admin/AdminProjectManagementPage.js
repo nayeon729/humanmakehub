@@ -378,7 +378,7 @@ export default function AdminProjectManagementPage() {
                 </Box>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" fontWeight="bold">초대된 멤버 (대기 중)</Typography>
-                  <Box sx={{ maxHeight: 100,minHeight:100, overflowY: "auto", mt: 1 ,border: "1px solid #eee", borderRadius: 1,p:1}}>
+                  <Box sx={{ maxHeight: 100, minHeight: 100, overflowY: "auto", mt: 1, border: "1px solid #eee", borderRadius: 1, p: 1 }}>
                     {invitedMemberMap[proj.project_id]?.map((member) => {
                       if (member.status === 'N' && member.checking === 'N') {
                         return (
@@ -416,7 +416,7 @@ export default function AdminProjectManagementPage() {
                       overflowY: "auto",
                       border: "1px solid #eee",
                       borderRadius: 1,
-                      p:1,
+                      p: 1,
                       backgroundColor: "#fafafa" // (선택) 배경 구분
                     }}
                   >
@@ -583,7 +583,17 @@ export default function AdminProjectManagementPage() {
                 key={dev.user_id}
                 sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}
               >
-                <Typography>{dev.nickname}</Typography>
+                <Typography
+                  sx={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    color: "primary.main",
+                    "&:hover": { color: "primary.dark" }
+                  }}
+                  onClick={() => window.open(`/admin/users/${dev.user_id}?readonly=1`, "_blank")}
+                >
+                  {dev.nickname}
+                </Typography>
                 <Button variant="outlined" size="small" onClick={() => handleAddMember(dev.user_id)}>초대하기</Button>
               </Box>
             ))}

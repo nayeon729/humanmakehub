@@ -328,6 +328,13 @@ def respond_to_invite(
                 WHERE request_id = %s
             """, ('Y' if is_accept else 'N', request_id))
 
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
+
             # 3. 승인일 경우 알림 추가
             if is_accept:
                 pm_id = request_row["pm_id"]
@@ -335,10 +342,12 @@ def respond_to_invite(
                 message = f"{nickname}님이 프로젝트 참여를 승인 요청했습니다."
 
                 cursor.execute("""
-                    INSERT INTO alerts (target_user, title, message, link, create_dt, create_id)
-                    VALUES (%s, %s, %s, %s, NOW(), %s)
+                    INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
                 """, (
                     pm_id,
+                    request_id,
+                    "project",
                     "시스템 알림",
                     message,
                     "http://localhost:3000/admin/projects",
@@ -389,12 +398,16 @@ def get_confirmed_projects(user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT project_id
-                FROM team_member
-                WHERE user_id = %s AND del_yn = 'N'
+                SELECT p.project_id, p.title, p.description, c.code_name as category_name,
+                       u.code_name as urgency_level, p.estimated_duration, p.budget, p.progress, p.create_dt
+                FROM team_member tm
+                JOIN project p ON tm.project_id = p.project_id
+                LEFT JOIN common_code c ON p.category = c.code_id
+                LEFT JOIN common_code u ON p.urgency = u.code_id
+                WHERE tm.user_id = %s AND tm.del_yn = 'N'
             """, (user["user_id"],))
-            rows = cursor.fetchall()
-        return {"confirmed_projects": [r["project_id"] for r in rows]}
+            result = cursor.fetchall()
+            return {"confirmed_projects": result}
     finally:
         conn.close()
 
@@ -598,33 +611,45 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
         conn.close()
         
 @router.get("/project/{project_id}/user/{user_id}")
-def get_user_project_channel(project_id: int, user_id: str, user: dict = Depends(get_current_user)):
-    if user["role"] == "R02" and user["user_id"] != user_id:
-        raise HTTPException(status_code=403, detail="해당 채널에 접근할 수 없습니다.")
-
+def get_channel_messages(project_id: int, user_id: str):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            # 🔍 PM ID 조회
-            cursor.execute("SELECT pm_id FROM project WHERE project_id = %s", (project_id,))
+            sql = """
+                SELECT 
+                    pc.channel_id,
+                    pc.title,
+                    pc.content,
+                    pc.user_id,
+                    u.nickname,
+                    pc.create_id,
+                    pc.create_dt
+                FROM project_channel pc
+                JOIN user u ON pc.create_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND pc.project_id = %s
+                  AND pc.user_id = %s
+                  AND (
+                        pc.create_id = %s
+                        OR u.role = 'R03'
+                  )
+                ORDER BY pc.create_dt DESC
+            """
+            cursor.execute(sql, (project_id, user_id, user_id))
+            items = cursor.fetchall()
+
+            cursor.execute("""
+                SELECT pm_id FROM project
+                WHERE project_id = %s
+            """, (project_id,))
             pm_row = cursor.fetchone()
             pm_id = pm_row["pm_id"] if pm_row else None
 
-            # 🔍 user_id 또는 pm_id가 작성한 글만 가져오기
-            cursor.execute("""
-                SELECT 
-                    c.channel_id, c.project_id, c.title, c.content,
-                    c.user_id, c.create_dt, c.create_id, u.nickname
-                FROM project_channel c
-                JOIN user u ON c.create_id = u.user_id
-                WHERE c.project_id = %s
-                  AND c.create_id IN (%s, %s)
-                  AND c.del_yn = 'N'
-                ORDER BY c.create_dt DESC
-            """, (project_id, user_id, pm_id))
-            channels = cursor.fetchall()
-
-            return {"items": channels, "pm_id": pm_id}
+            return {
+                "items": items,
+                "pm_id": pm_id,
+                "total": len(items)
+            }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

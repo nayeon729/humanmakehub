@@ -821,6 +821,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 INSERT INTO join_requests (project_id, user_id, pm_id, checking, create_dt, del_yn)
                 VALUES (%s, %s, %s, 'N', NOW(), 'N')
             """, (project_id, body["member_id"], user["user_id"]))
+            request_id = cursor.lastrowid
 
             cursor.execute("""
                 SELECT * FROM team_member
@@ -832,12 +833,14 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
-                    target_user, title, message, link, answer_yn, create_dt, del_yn, create_id
+                    target_user, value_id, category, title, message, link, answer_yn, create_dt, del_yn, create_id
                 ) VALUES (
-                    %s, %s, %s, %s, 'N', NOW(), 'N', %s
+                    %s, %s, %s, %s, %s, %s, 'N', NOW(), 'N', %s
                 )
             """, (
                 body["member_id"],  # 알림 받을 대상
+                request_id,
+                "project",
                 "시스템 알람",
                 "PM이 프로젝트에 초대하였습니다. 프로젝트 목록에서 확인 후 수락 또는 거절할 수 있습니다.",
                 "http://localhost:3000/member/projectlist",
@@ -907,9 +910,9 @@ def approve_member(project_id: int, request_id: int, user: dict = Depends(get_cu
 
             # ✅ 팀원 등록
             cursor.execute("""
-                INSERT INTO team_member (project_id, user_id, del_yn)
-                VALUES (%s, %s, 'N')
-            """, (project_id, user_id))
+                INSERT INTO team_member (project_id, user_id, pm_id, del_yn)
+                VALUES (%s, %s, %s, 'N')
+            """, (project_id, user_id, user["user_id"]))
 
             # ✅ join_requests 상태를 del_yn='Y'로 변경 (목록에서 안 보이게)
             cursor.execute("""
@@ -917,6 +920,13 @@ def approve_member(project_id: int, request_id: int, user: dict = Depends(get_cu
                 SET del_yn = 'Y'
                 WHERE request_id = %s
             """, (request_id,))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
 
         conn.commit()
         return {"message": "팀원 등록 및 목록 제거 완료!"}
@@ -937,6 +947,14 @@ def reject_member(project_id: int, request_id: int, user: dict = Depends(get_cur
                 SET del_yn = 'Y'
                 WHERE project_id = %s AND request_id = %s AND del_yn = 'N'
             """, (project_id, request_id))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
+
             conn.commit()
             return {"message": "요청이 거절되었습니다."}
     except Exception as e:
@@ -954,7 +972,6 @@ def get_askList(user: dict = Depends(get_current_user)):
                 SELECT 
                    *
                 FROM ask
-                WHERE del_yn = 'N'
                 ORDER BY create_dt ASC
             """
             cursor.execute(sql)
@@ -988,6 +1005,13 @@ def get_askCheck(payload: dict = Body(...) ,user: dict = Depends(get_current_use
                 WHERE ask_id = %s
             """
             cursor.execute(sql, (user.get("user_id"), payload.get("ask_id")))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="ask"
+            """, (user["user_id"], payload.get("ask_id")))
 
             conn.commit()
 
@@ -1153,5 +1177,38 @@ def portfolio_Create(data:Portfolio ,user: dict = Depends(get_current_user)):
         return {"message": "포트폴리오 작성완료"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+        
+@router.get("/users/{user_id}")
+def get_user_info(user_id: str, user: dict = Depends(get_current_user)):
+    print("📌 요청된 user_id:", user_id)  # 이거 추가!
+    print("📌 요청한 사람의 권한:", user["role"])  # 이거도!
+    if user["role"] != "R03":  # 관리자만 접근 허용
+        raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname, u.email, u.phone, u.tech, u.experience, u.git, u.portfolio
+                FROM user u
+                WHERE u.user_id = %s AND del_yn = 'N'
+            """, (user_id,))
+            user_info = cursor.fetchone()
+
+            if not user_info:
+                raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
+            # 기술스택 추가 조회 (예: user_skills 테이블)
+            cursor.execute("""
+                SELECT s.code_id, c.code_name AS skill_name, s.years, s.is_fresher
+                FROM user_skills s
+                JOIN common_code c ON s.code_id = c.code_id
+                WHERE s.user_id = %s AND s.del_yn = 'N'
+            """, (user_id,))
+            user_info["skills"] = cursor.fetchall()
+
+        return user_info
     finally:
         conn.close()

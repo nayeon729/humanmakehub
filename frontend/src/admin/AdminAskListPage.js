@@ -78,6 +78,7 @@ export default function getAskList() {
                     </Box>
                 )}
                 <Button onClick={() => handleConfirm(list.ask_id)}>확인완료</Button>
+                <Typography variant="subtitle1" fontWeight="bold">{list.del_yn == 'Y' ? "확인완료" : "보류"}</Typography>
                 </Box>
             );
         })}

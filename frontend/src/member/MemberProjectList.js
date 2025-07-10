@@ -27,14 +27,23 @@ const MemberProjectList = () => {
         axios.post(`${BASE_URL}/member/confirmed-projects`, {}, config),
       ]);
 
-      const confirmedIds = confirmedRes.data.confirmed_projects;
+      const inviteProjects = invRes.data.invites;
+      const confirmedProjects = confirmedRes.data.confirmed_projects;
       // 초대 목록에 확정 여부 추가
-      const combined = invRes.data.invites.map(invite => ({
+      const inviteWithConfirmed = inviteProjects.map(invite => ({
         ...invite,
-        isConfirmed: confirmedIds.includes(invite.project_id),
+        isConfirmed: confirmedProjects.some(cp => cp.project_id === invite.project_id)
       }));
 
-      setInvites(combined);
+      // 확정된 프로젝트 중 invite에 없는 것들 추가
+      const extraConfirmed = confirmedProjects.filter(cp =>
+        !inviteProjects.some(ip => ip.project_id === cp.project_id)
+      ).map(cp => ({
+        ...cp,
+        isConfirmed: true
+      }));
+
+      setInvites([...inviteWithConfirmed, ...extraConfirmed]);
       setLoading(false);
     } catch (error) {
       console.error("프로젝트 목록 불러오기 실패", error);
@@ -73,7 +82,7 @@ const MemberProjectList = () => {
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>
             <Paper elevation={4} sx={{
               p: 2, borderRadius: 3, display: "flex", flexDirection: "column", justifyContent: "space-between",
-              gap: 1, width: 265, height: 520, overflow: "hidden",
+              gap: 1, width: 250, height: 520, overflow: "hidden",
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />

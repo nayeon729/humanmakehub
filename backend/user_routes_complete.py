@@ -444,6 +444,24 @@ def askSending(data: askSend):
                 VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), 'N')
             """, (data.username, data.company, data.phone, data.position, data.email, data.category, data.askMessage,))
 
+            ask_id = cursor.lastrowid
+
+            # ✨ 알림 추가
+            cursor.execute("""
+                INSERT INTO alerts (
+                    target_user, value_id, category, title, message, link, answer_yn, create_dt, del_yn, create_id
+                ) VALUES (
+                    %s, %s, %s, %s, %s, %s, 'N', NOW(), 'N', %s
+                )
+            """, (
+                "R03",  # 알림 받을 대상
+                ask_id,
+                "ask",
+                "시스템 알람",
+                "새로운 문의사항이 등록되었습니다.",
+                "http://localhost:3000/admin/askList",
+                "client"  # 알림 보낸 사람
+            ))
             conn.commit()
 
         return {"message": "문의사항 작성완료"}
