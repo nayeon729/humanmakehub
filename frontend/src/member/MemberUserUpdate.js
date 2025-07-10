@@ -125,7 +125,7 @@ export default function MemberUserEditPage() {
                 <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
                 회원정보 수정
             </Typography>
-            <Card sx={{ p: 4 }}>
+            <Card sx={{ p: 4, height: 650, }}>
 
                 <Typography variant="h6" gutterBottom>
                     안녕하세요! <strong>{userInfo.nickname}</strong>님 {userInfo.user_id}

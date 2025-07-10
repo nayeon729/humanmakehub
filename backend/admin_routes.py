@@ -1179,3 +1179,36 @@ def portfolio_Create(data:Portfolio ,user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+        
+@router.get("/users/{user_id}")
+def get_user_info(user_id: str, user: dict = Depends(get_current_user)):
+    print("📌 요청된 user_id:", user_id)  # 이거 추가!
+    print("📌 요청한 사람의 권한:", user["role"])  # 이거도!
+    if user["role"] != "R03":  # 관리자만 접근 허용
+        raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("""
+                SELECT u.user_id, u.nickname, u.email, u.phone, u.tech, u.experience, u.git, u.portfolio
+                FROM user u
+                WHERE u.user_id = %s AND del_yn = 'N'
+            """, (user_id,))
+            user_info = cursor.fetchone()
+
+            if not user_info:
+                raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
+            # 기술스택 추가 조회 (예: user_skills 테이블)
+            cursor.execute("""
+                SELECT s.code_id, c.code_name AS skill_name, s.years, s.is_fresher
+                FROM user_skills s
+                JOIN common_code c ON s.code_id = c.code_id
+                WHERE s.user_id = %s AND s.del_yn = 'N'
+            """, (user_id,))
+            user_info["skills"] = cursor.fetchall()
+
+        return user_info
+    finally:
+        conn.close()
