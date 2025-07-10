@@ -194,7 +194,7 @@ export default function AdminUserManagementPage() {
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
       </Tabs>
-      <Stack direction="row" spacing={1} mb={2}>
+      <Stack direction="row" spacing={1} mb={2} mx={29} alignItems={"center"}>
         <TextField
           placeholder="아이디 또는 닉네임 검색"
           value={searchKeyword}
@@ -202,31 +202,31 @@ export default function AdminUserManagementPage() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
           }}
-          fullWidth
+          sx={{width:'400px', boxShadow:'3px 3px 6px gray', borderRadius:'5px'}}
           size="small"
         />
-        <Button variant="outlined" onClick={handleSearch}>
+        <Button variant="outlined" onClick={handleSearch} sx={{backgroundColor:'#2879E3', color:'white', height:'35px', }}>
           검색
         </Button>
       </Stack>
       <Paper sx={{ mt: 2, p: 2 }}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>아이디</TableCell>
-              <TableCell>닉네임</TableCell>
-              <TableCell>등급</TableCell>
-              <TableCell>역할</TableCell>
-              <TableCell>이메일</TableCell>
-              <TableCell align="center">관리</TableCell>
+            <TableRow >
+              <TableCell sx={{textAlign:'center'}}>아이디</TableCell>
+              <TableCell sx={{textAlign:'center'}}>닉네임</TableCell>
+              <TableCell sx={{textAlign:'center'}}>등급</TableCell>
+              <TableCell sx={{textAlign:'center'}}>역할</TableCell>
+              <TableCell sx={{textAlign:'center'}}>이메일</TableCell>
+              <TableCell sx={{textAlign:'center'}}>관리</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedUsers.map((user) => (
               <TableRow key={user.user_id}>
-                <TableCell>{user.user_id}</TableCell>
-                <TableCell>{user.nickname}</TableCell>
-                <TableCell>
+                <TableCell sx={{textAlign:'center'}}>{user.user_id}</TableCell>
+                <TableCell sx={{textAlign:'center'}}>{user.nickname}</TableCell>
+                <TableCell sx={{textAlign:'center'}}>
                   {user.role === "R02" ? (  // R02는 member
                     <Box>
                       <Combo
@@ -241,7 +241,7 @@ export default function AdminUserManagementPage() {
                     <Typography />
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{textAlign:'center'}}>
                   <Box>
                     <Combo
                       groupId="USER_ROLE"
@@ -250,8 +250,8 @@ export default function AdminUserManagementPage() {
                       sx={{ minWidth: 50 }}
                     />
                   </Box>
-                </TableCell>
-                <TableCell>{user.email}</TableCell>
+                </TableCell >
+                <TableCell sx={{textAlign:'center'}}>{user.email}</TableCell>
                 <TableCell align="center">
                   {user.del_yn === 'Y' ? (
                     <Button
@@ -275,7 +275,7 @@ export default function AdminUserManagementPage() {
                         setDeleteDialogOpen(true); // 삭제 확인 다이얼로그
                       }}
                     >
-                      삭제
+                      정지
                     </Button>
                   )}
                 </TableCell>

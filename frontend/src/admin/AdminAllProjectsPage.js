@@ -6,7 +6,8 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
-
+import pjadd from '../icon/pjadd.png';
+import folder from'../icon/folder.png';
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [pmDialogOpen, setPmDialogOpen] = useState(false);
@@ -72,9 +73,9 @@ export default function AdminProjectManagementPage() {
   }
 
   const urgencyColor = (urgency) => {
-    if (urgency === "U01") return "success";
-    if (urgency === "U02") return "primary";
-    if (urgency === "U03") return "warning";
+    if (urgency === "U01") return "#46D828";
+    if (urgency === "U02") return "#FFBD52";
+    if (urgency === "U03") return "#E53434";
     return "default";
   };
 
@@ -82,26 +83,27 @@ export default function AdminProjectManagementPage() {
     <>
       <Box sx={{ p: 2 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="h4" fontWeight="bold">📁 전체 프로젝트</Typography>
+          <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
+            <img src={folder} style={{width:'50px', height:'50px'}}/>
+            <Typography variant="h4" fontWeight="bold"> 전체 프로젝트</Typography>
           </Stack>
-          <IconButton 
-            color="primary" 
-            size="large"
-            onClick={()=>navigate("/admin/create")}>
-            <AddIcon />
+          <IconButton onClick={() => navigate("/admin/create")}>
+            <img src={pjadd} alt="추가" style={{ width: 35, height: 30}} />
           </IconButton>
         </Stack>
 
         <Grid container spacing={3}>
           {projects.map((proj) => {
-            const formattedDate = new Date(proj.create_dt).toLocaleDateString("ko-KR");
+            const dateObj = new Date(proj.create_dt);
+            const formattedDate = `${dateObj.getFullYear()}.${(dateObj.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
             const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
             return (
               <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 248 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                    <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} size="small" />
+                    <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{backgroundColor:urgencyColor(proj.urgency), color:'white'}} size="small" />
                     <Typography variant="caption" color="text.secondary">
                       접수일: {formattedDate}
                     </Typography>
@@ -123,19 +125,24 @@ export default function AdminProjectManagementPage() {
                     <strong>Email:</strong> {proj.client_email}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
+                    <strong>Phone:</strong> {proj.client_phone}
+                  </Typography>
+                  <Typography variant="body2" gutterBottom>
                     <strong>예상 기간:</strong> {proj.estimated_duration}일
                   </Typography>
                   <Typography variant="body2" gutterBottom>
-                    <strong>예산:</strong> {proj.budget}원
+                    <strong>예상 예산:</strong> {proj.budget.toLocaleString()}원
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
-                    {proj.description}
+                    <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '227px', height: '100px' }}>
+                      {proj.description}
+                    </Box>
                   </Typography>
                   <Button
                     variant="contained"
                     fullWidth
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 2, borderRadius:'13px'}}
                     onClick={() => {
                       setSelectedProjectId(proj.project_id);
                       setPmDialogOpen(true);
