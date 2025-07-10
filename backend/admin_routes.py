@@ -821,6 +821,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 INSERT INTO join_requests (project_id, user_id, pm_id, checking, create_dt, del_yn)
                 VALUES (%s, %s, %s, 'N', NOW(), 'N')
             """, (project_id, body["member_id"], user["user_id"]))
+            request_id = cursor.lastrowid
 
             cursor.execute("""
                 SELECT * FROM team_member
@@ -832,12 +833,14 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
-                    target_user, title, message, link, answer_yn, create_dt, del_yn, create_id
+                    target_user, value_id, category, title, message, link, answer_yn, create_dt, del_yn, create_id
                 ) VALUES (
-                    %s, %s, %s, %s, 'N', NOW(), 'N', %s
+                    %s, %s, %s, %s, %s, %s, 'N', NOW(), 'N', %s
                 )
             """, (
                 body["member_id"],  # 알림 받을 대상
+                request_id,
+                "project",
                 "시스템 알람",
                 "PM이 프로젝트에 초대하였습니다. 프로젝트 목록에서 확인 후 수락 또는 거절할 수 있습니다.",
                 "http://localhost:3000/member/projectlist",
@@ -907,9 +910,9 @@ def approve_member(project_id: int, request_id: int, user: dict = Depends(get_cu
 
             # ✅ 팀원 등록
             cursor.execute("""
-                INSERT INTO team_member (project_id, user_id, del_yn)
-                VALUES (%s, %s, 'N')
-            """, (project_id, user_id))
+                INSERT INTO team_member (project_id, user_id, pm_id, del_yn)
+                VALUES (%s, %s, %s, 'N')
+            """, (project_id, user_id, user["user_id"]))
 
             # ✅ join_requests 상태를 del_yn='Y'로 변경 (목록에서 안 보이게)
             cursor.execute("""
@@ -917,6 +920,13 @@ def approve_member(project_id: int, request_id: int, user: dict = Depends(get_cu
                 SET del_yn = 'Y'
                 WHERE request_id = %s
             """, (request_id,))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
 
         conn.commit()
         return {"message": "팀원 등록 및 목록 제거 완료!"}
@@ -937,6 +947,14 @@ def reject_member(project_id: int, request_id: int, user: dict = Depends(get_cur
                 SET del_yn = 'Y'
                 WHERE project_id = %s AND request_id = %s AND del_yn = 'N'
             """, (project_id, request_id))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
+
             conn.commit()
             return {"message": "요청이 거절되었습니다."}
     except Exception as e:
@@ -954,7 +972,6 @@ def get_askList(user: dict = Depends(get_current_user)):
                 SELECT 
                    *
                 FROM ask
-                WHERE del_yn = 'N'
                 ORDER BY create_dt ASC
             """
             cursor.execute(sql)
@@ -988,6 +1005,13 @@ def get_askCheck(payload: dict = Body(...) ,user: dict = Depends(get_current_use
                 WHERE ask_id = %s
             """
             cursor.execute(sql, (user.get("user_id"), payload.get("ask_id")))
+
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="ask"
+            """, (user["user_id"], payload.get("ask_id")))
 
             conn.commit()
 

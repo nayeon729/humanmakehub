@@ -34,6 +34,7 @@ const MemberProjectList = () => {
         isConfirmed: confirmedIds.includes(invite.project_id),
       }));
 
+      console.log(combined);
       setInvites(combined);
       setLoading(false);
     } catch (error) {

@@ -76,12 +76,25 @@ def get_alerts(user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT alert_id, title, message, link
+                SELECT *
                 FROM alerts
                 WHERE target_user = %s AND del_yn = 'N'
                 ORDER BY create_dt DESC
             """, (user["user_id"],))
-            return cursor.fetchall()
+            row1 = list(cursor.fetchall())
+            print("row1 type:", type(row1))  # 👈 이거 찍어보면 확실
+
+            if user["role"] == "R03":
+                cursor.execute("""
+                    SELECT *
+                    FROM alerts
+                    WHERE target_user = "R03" AND del_yn = 'N'
+                    ORDER BY create_dt DESC
+                """)
+                row2 = cursor.fetchall()
+                row1.extend(row2)
+
+        return row1
     finally:
         conn.close()
 
@@ -97,6 +110,15 @@ def delete_alert(alert_id: int, user: dict = Depends(get_current_user)):
                 SET del_yn = 'Y', update_dt = NOW(), update_id = %s
                 WHERE alert_id = %s AND target_user = %s
             """, (user["user_id"], alert_id, user["user_id"]))
+
+            if user["role"] == "R03":
+            # 관리자면 target_user가 "R03" 인것도 delyn
+                cursor.execute("""
+                    UPDATE alerts
+                    SET del_yn = 'Y', update_dt = NOW(), update_id = %s
+                    WHERE alert_id = %s AND target_user = "R03"
+                """, (user["user_id"], alert_id))
+
         conn.commit()
         return {"message": "알림이 삭제되었습니다."}
     finally:

@@ -328,6 +328,13 @@ def respond_to_invite(
                 WHERE request_id = %s
             """, ('Y' if is_accept else 'N', request_id))
 
+            # 나에게 보낸 alerts 알람지우기
+            cursor.execute("""
+                UPDATE alerts
+                SET del_yn ='Y', update_dt = NOW(), update_id = %s
+                WHERE value_id = %s AND category="project"
+            """, (user["user_id"], request_id))
+
             # 3. 승인일 경우 알림 추가
             if is_accept:
                 pm_id = request_row["pm_id"]
@@ -335,10 +342,12 @@ def respond_to_invite(
                 message = f"{nickname}님이 프로젝트 참여를 승인 요청했습니다."
 
                 cursor.execute("""
-                    INSERT INTO alerts (target_user, title, message, link, create_dt, create_id)
-                    VALUES (%s, %s, %s, %s, NOW(), %s)
+                    INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
                 """, (
                     pm_id,
+                    request_id,
+                    "project",
                     "시스템 알림",
                     message,
                     "http://localhost:3000/admin/projects",

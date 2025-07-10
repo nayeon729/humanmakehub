@@ -10,6 +10,12 @@ export default function MemberDashboard() {
     user: 0,
     project: 0,
   });
+  const categoryColors = {
+    project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
+    ask: "#ff9800",   // 주황 (예: 문의사항 알림)
+    chat: "#89d665",   // 주황 (예: 문의사항 알림)
+    default: "#9e9e9e",   // 회색 (기본)
+  };
   const navigate = useNavigate();
   const BASE_URL = "http://127.0.0.1:8000";
   const [alerts, setAlerts] = useState([]);
@@ -21,6 +27,7 @@ export default function MemberDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlerts(res.data);
+      console.log("alerts :", res.data);
     };
     fetchAlerts();
   }, []);
@@ -46,7 +53,10 @@ export default function MemberDashboard() {
         개발자 대시보드
       </Typography>
 
-      {alerts.map((alert) => (
+      {alerts.map((alert) => {
+        const color = categoryColors[alert.category] || categoryColors.default;
+
+        return (
         <AlertCard
           key={alert.alert_id}
           title={alert.title}
@@ -54,8 +64,10 @@ export default function MemberDashboard() {
           confirmText="바로가기"
           onConfirm={() => window.location.href = alert.link}
           onClose={() => handleCloseAlert(alert.alert_id)}
+          color={color}
         />
-      ))}
+        )
+      })}
 
       <ListItem>
       </ListItem>
