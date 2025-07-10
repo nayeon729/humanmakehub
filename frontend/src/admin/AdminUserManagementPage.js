@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Combo from "../components/Combo";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,7 @@ export default function AdminUserManagementPage() {
   const [userRole, setUserRole] = useState("");
   const itemsPerPage = 10;
   const BASE_URL = "http://127.0.0.1:8000";
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();

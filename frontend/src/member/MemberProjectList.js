@@ -82,7 +82,7 @@ const MemberProjectList = () => {
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>
             <Paper elevation={4} sx={{
               p: 2, borderRadius: 3, display: "flex", flexDirection: "column", justifyContent: "space-between",
-              gap: 1, width: 265, height: 520, overflow: "hidden",
+              gap: 1, width: 250, height: 520, overflow: "hidden",
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />
