@@ -1,18 +1,11 @@
+// 프로젝트 채널 공용
 import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  IconButton,
   Stack,
   Paper,
-  Chip,
-  Button,
 } from "@mui/material";
-import CreateIcon from "@mui/icons-material/Create";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";

@@ -46,7 +46,7 @@ export default function AdminNoticeListPage() {
     }
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ flex: 1, p: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
                     <img src={Notice} alt="공지사항" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
@@ -90,26 +90,34 @@ export default function AdminNoticeListPage() {
                 </Stack>
             </Box>
 
-            <Paper>
+            <Paper
+                sx={{
+                    backgroundColor: "#fff",
+                    p: 1.5,
+                    mt: 2,
+                    borderRadius: 2,
+                    position: "relative",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>분류</TableCell>
-                            <TableCell>제목</TableCell>
-                            <TableCell>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
+                            <TableCell
+                                sx={{ pr: 5 }}>분류</TableCell>
+                            <TableCell
+                                sx={{ pr: 20 }}>제목</TableCell>
+                            <TableCell
+                                sx={{ pr: 5 }}>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {notices.map((notice) => (
-                            <TableRow key={notice.id}>
+                            <TableRow key={notice.id} onClick={() => navigate(`/member/notice/${notice.notice_id}`)}>
                                 <TableCell>
                                     <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
                                 </TableCell>
-                                <TableCell
-                                // onClick={() => navigate(`/member/notice/${notice.notice_id}`)}
-                                // sx={{ cursor: "pointer", color: "blue", "&:hover": { textDecoration: "underline" } }}
-                                >{notice.title}</TableCell>
-                                <TableCell>{notice.create_dt.slice(0, 10)}</TableCell>
+                                <TableCell>{notice.title}</TableCell>
+                                <TableCell>{notice.create_dt.slice(0, 10).replace(/-/g, ".")}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
