@@ -588,16 +588,30 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
             if pm and all(u["user_id"] != pm.get("user_id") for u in members):
                 members.append(pm)
 
-            # ✅ 각 팀원별 알림 갯수 조회해서 count 필드 추가
+            # 🔁 각 멤버마다 team_member_id, 알림 수 조회
             for member in members:
+                 # ✅ team_member_id 조회
+                cursor.execute("""
+                    SELECT team_member_id
+                    FROM team_member
+                    WHERE project_id = %s
+                      AND user_id = %s
+                      AND pm_id = %s
+                      AND del_yn = 'N'
+                """, (project_id, member["user_id"], pm_id))
+                team_member = cursor.fetchone()
+                member["team_member_id"] = team_member["team_member_id"] if team_member else None
+                
+                # ✅ 알림 수 조회
                 cursor.execute("""
                     SELECT COUNT(*) as count
                     FROM alerts
                     WHERE target_user = ''
                       AND create_id = %s
+                      AND value_id = %s
                       AND category = 'chat'
                       AND del_yn = 'N'
-                """, (member["user_id"],))
+                """, (member["user_id"],member["team_member_id"]))
                 count_result = cursor.fetchone()
                 member["count"] = count_result["count"] if count_result else 0
 
