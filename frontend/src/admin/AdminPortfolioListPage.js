@@ -109,7 +109,7 @@ const MemberProjectList = () => {
             </Stack>
             {post.create_id === myUserId && (
                           <Stack direction="row" spacing={1} mt={1}>
-                            <Button onClick={() => navigate(`/admin/channel/${project_id}/update/${post.channel_id}`)}>
+                            <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
                               수정
                             </Button>
                             <Button onClick={() => handleDelete(post.channel_id)}>
