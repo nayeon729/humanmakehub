@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, FormControlLabel, Checkbox, Chip, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import EmailTimer from "./EmailTimer";
 
 
 const TECH_STACKS = {
@@ -15,6 +16,7 @@ const TECH_STACKS = {
 };
 
 export default function RegisterPage() {
+  const [startTimer, setStartTimer] = useState(false);
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [form, setForm] = useState({
@@ -22,7 +24,7 @@ export default function RegisterPage() {
     phone: "", company: "", portfolio: "", github: "", nickname: "", agreeTerms: false
   });
   const [techStacks, setTechStacks] = useState({});
-  const [selectedTechs, setSelectedTechs] = useState([]); 
+  const [selectedTechs, setSelectedTechs] = useState([]);
   const [experience, setExperience] = useState({});
   const [usernameChecked, setUsernameChecked] = useState(false);
   const [emailChecked, setEmailChecked] = useState(false);
@@ -82,7 +84,6 @@ export default function RegisterPage() {
     try {
       const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
         user_id: form.username,
-        nickname: form.nickname,
       });
 
       if (field === "user_id") {
@@ -108,18 +109,11 @@ export default function RegisterPage() {
         } else {
           alert("사용 가능한 이메일입니다.");
           setEmailSend(true);
+          setStartTimer(false); // 먼저 false로 껐다가
+          setTimeout(() => setStartTimer(true), 10); // 다시 켜주기 (리셋)
         }
       }
 
-      if (field === "nickname") {
-        if (res.data.nicknameExists) {
-          alert("이미 사용 중인 닉네임입니다.");
-          setNicknameChecked(false);
-        } else {
-          alert("사용 가능한 닉네임입니다.");
-          setNicknameChecked(true);
-        }
-      }
     } catch (err) {
       console.error("중복 확인 실패", err);
     }
@@ -137,6 +131,7 @@ export default function RegisterPage() {
       });
       alert(res.data.message);
       setEmailChecked(true);
+      setStartTimer(false);    // ✅ 타이머 중지
     } catch (err) {
       alert(err.response?.data?.detail || "인증 실패");
     }
@@ -149,8 +144,8 @@ export default function RegisterPage() {
     if (form.password !== form.confirmPassword) {
       return alert("비밀번호가 일치하지 않습니다.");
     }
-    if (!usernameChecked || !emailChecked || !nicknameChecked) {
-      return alert("아이디/이메일/닉네임 중복확인을 완료하세요.");
+    if (!usernameChecked || !emailChecked) {
+      return alert("아이디/이메일/이름 중복확인을 완료하세요.");
     }
 
     try {
@@ -181,37 +176,44 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ background: "#f0f4f8", py: 8 }}>
-      <Container maxWidth="md">
-        <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 5 }}>
-          {!role ? (
-            <>
+    <Box
+      sx={{
+        background: "#f0f4f8",
+        minHeight: "92vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Container maxWidth="md" sx={{ display: "flex", justifyContent: "center", alignItems: "center", }}>
+        {!role ? (
+          <>
+            <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 5, marginBottom: "100px", width: "500px" }}>
               <Typography variant="h5" align="center" fontWeight="bold">가입 유형 선택</Typography>
               <Stack spacing={2} mt={4}>
                 <Button variant="contained" size="large" onClick={() => setRole("R01")}>클라이언트 가입</Button>
                 <Button variant="outlined" size="large" onClick={() => setRole("R02")}>멤버 가입</Button>
               </Stack>
-            </>
-          ) : (
-            <>
-              <Typography variant="h5" align="center" fontWeight="bold">{role === "R01" ? "클라이언트" : "멤버"} 회원가입</Typography>
+            </Paper>
+          </>
+        ) : (
+          <>
+            <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 5, mt: 5, mb: 5, width: "800px" }}>
+              <Typography variant="h5" align="center" fontWeight="bold" sx={{ mb: 5 }}>{role === "R01" ? "클라이언트" : "멤버"} 회원가입</Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  fullWidth
+                  label="이름"
+                  name="nickname"
+                  value={form.nickname}
+                  onChange={handleFormChange}
+                />
+              </Stack>
               <Stack spacing={2} mt={3}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <TextField fullWidth label="아이디" name="username" value={form.username} onChange={handleFormChange} />
-                  <Button variant="outlined" onClick={() => checkDuplicate("user_id")}>중복확인</Button>
+                  <Button variant="outlined" onClick={() => checkDuplicate("user_id")} sx={{ width: "150px", paddingY: 2 }}>중복확인</Button>
                 </Stack>
-
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField
-                    fullWidth
-                    label="닉네임"
-                    name="nickname"
-                    value={form.nickname}
-                    onChange={handleFormChange}
-                  />
-                  <Button variant="outlined" onClick={() => checkDuplicate("nickname")}>중복확인</Button>
-                </Stack>
-
                 <Stack direction="row" spacing={1} alignItems="center">
                   <TextField
                     fullWidth
@@ -222,25 +224,33 @@ export default function RegisterPage() {
                     value={form.email}
                     onChange={handleFormChange}
                   />
-                  <Button variant="outlined" onClick={() => checkDuplicate("email")}>중복확인</Button>
+                  <Button variant="outlined" onClick={() => checkDuplicate("email")} sx={{ width: "150px", paddingY: 2 }}>이메일 인증</Button>
                 </Stack>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  { emailSend && (
-                      <>
-                        <TextField
-                          label="인증 코드"
-                          variant="outlined"
-                          fullWidth
-                          value={code}
-                          onChange={(e) => setCode(e.target.value)}
-                          sx={{ mb: 2, width:"140%"}}
-                        />
-                        <Button variant="contained" color="primary" fullWidth onClick={handleVerify} disabled={emailChecked}>
-                          인증 확인
-                        </Button>
-                      </>
-                    )}
-                  </Stack>
+                <Stack  spacing={1} alignItems="center">
+                  {emailSend && (
+                    <>
+                      {startTimer && (
+                        <div>
+                          <span>유효 시간: </span>
+                          <EmailTimer start={startTimer} onExpire={() => alert("시간 초과")} />
+                        </div>
+                      )}
+                      <Box sx={{display:"flex", width:"100%", gap:1}}>
+                      <TextField
+                        label="인증 코드"
+                        variant="outlined"
+                        fullWidth
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                      />
+
+                      <Button variant="contained" color="primary" onClick={handleVerify} disabled={emailChecked} sx={{ width: "150px", paddingY: 2 }}>
+                        인증 확인
+                      </Button>
+                      </Box>
+                    </>
+                  )}
+                </Stack>
 
                 <TextField type="password" label="비밀번호" name="password" value={form.password} onChange={handleFormChange} />
                 <TextField type="password" label="비밀번호 확인" name="confirmPassword" value={form.confirmPassword} onChange={handleFormChange} />
@@ -263,7 +273,7 @@ export default function RegisterPage() {
                         <Typography variant="subtitle1" fontWeight="bold" mb={1}>{category}</Typography>
                         <Stack direction="row" gap={1} flexWrap="wrap">
                           {techs.map((tech) => (
-                            <Chip key={tech.code_id} label={tech.label} clickable color={selectedTechs.some((t) => t.code_id ===tech.code_id) ? "primary" : "default"} onClick={() => toggleTech(tech)} />
+                            <Chip key={tech.code_id} label={tech.label} clickable color={selectedTechs.some((t) => t.code_id === tech.code_id) ? "primary" : "default"} onClick={() => toggleTech(tech)} />
                           ))}
                         </Stack>
                       </Box>
@@ -319,9 +329,10 @@ export default function RegisterPage() {
                   가입 완료
                 </Button>
               </Stack>
-            </>
-          )}
-        </Paper>
+            </Paper>
+          </>
+        )}
+
       </Container>
     </Box>
   );

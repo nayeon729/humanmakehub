@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
-import { useNavigate, useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 export default function LoginPage() {
@@ -9,28 +9,27 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const location = useLocation();
   const { user_id, email } = location.state || {};
-  
+
 
   const BASE_URL = "http://127.0.0.1:8000"; // 실제 API 주소
 
   const handleSubmit = async () => {
-    if(password == confirmPassword) {
-        const payload = {
-            user_id: user_id,
-            email: email,
-            password: password,
-        };
-        console.log(payload);
-        try {
-            const res = await axios.post(`${BASE_URL}/user/pwFind`, payload);
-            alert("비밀번호 재설정 성공!" + res.data?.message);
-            navigate("/login");
-        } catch (error) {
-        console.error("비밀번호 재설정 실패", error);
-        alert("비밀번호 재설정 실패: " + (error.response?.data?.detail || "서버 오류"));
-        }
+    if (password == confirmPassword) {
+      const payload = {
+        user_id: user_id,
+        email: email,
+        password: password,
+      };
+      console.log(payload);
+      try {
+        const res = await axios.post(`${BASE_URL}/user/pwFind`, payload);
+        alert("비밀번호 재설정 성공!");
+        navigate("/login");
+      } catch (error) {
+        alert("비밀번호 재설정 실패: ");
+      }
     } else {
-        alert("비밀번호가 일치하지 않습니다.");
+      alert("비밀번호가 일치하지 않습니다.");
     }
   };
 
@@ -38,32 +37,42 @@ export default function LoginPage() {
 
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Stack spacing={2} mt={3}>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold", alignItems:"center" }}>
-            비밀번호 재설정
+    <Box
+      sx={{
+        background: "#f0f4f8",
+        minHeight: "92vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Container component="main" maxWidth="sm">
+        <Paper elevation={3} sx={{ borderRadius: 4, p: 4, mb: 10 }}>
+          <Stack spacing={2} mt={3}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold", alignItems: "center" }}>
+              비밀번호 재설정
             </Typography>
 
             <TextField
-                type="password"
-                label="비밀번호"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)} />
+              type="password"
+              label="비밀번호"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} />
             <TextField
-                type="password"
-                label="비밀번호 확인"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)} />
+              type="password"
+              label="비밀번호 확인"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)} />
 
 
             <Button variant="contained" size="large" onClick={handleSubmit}>
-                비밀번호 재설정
+              비밀번호 재설정
             </Button>
-        </Stack>
-      </Paper>
-    </Container>
+          </Stack>
+        </Paper>
+      </Container>
+    </Box>
   );
 }
