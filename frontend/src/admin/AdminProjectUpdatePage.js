@@ -12,7 +12,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Combo from "../components/Combo"; // 공통코드용 Combo 컴포넌트
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function AdminProjectUpdatePage() {
   const { project_id } = useParams();

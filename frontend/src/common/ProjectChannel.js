@@ -14,7 +14,7 @@ export default function ProjectChannel({ role }) {
   const [alertsCount, setAlertCount] = useState("");
   const [isChecked, setIsChecked] = useState(false);
 
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   // 🔑 현재 로그인된 user_id 가져오기
   useEffect(() => {

@@ -45,6 +45,7 @@ import AdminProjectCreatePage from "./admin/AdminProjectCreatePage";
 import AdminProjectUpdatePage from "./admin/AdminProjectUpdatePage";
 import AdminPortfolioList from "./admin/AdminPortfolioListPage"
 import AdminPortfolioCreatePage from "./admin/AdminPortfolioCreatePage"
+import AdminPortfolioUpdatePage from "./admin/AdminPortfolioUpdatePage"
 
 import ProjectChannelCommon from "./admin/ProjectChannelCommon";
 import ProjectChannelMember from "./admin/ProjectChannelMemberPage";
@@ -157,6 +158,7 @@ function App() {
           <Route path="update/:project_id" element={<AdminProjectUpdatePage />} />
           <Route path="portfolioList" element={<AdminPortfolioList />} />
           <Route path="portfolioCreate" element={<AdminPortfolioCreatePage />} />
+          <Route path="portfolioUpdate/:portfolio_id" element={<AdminPortfolioUpdatePage />} />
 
         </Route>
         <Route path="admin/channel/:project_id" element={

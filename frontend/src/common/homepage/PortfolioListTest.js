@@ -14,7 +14,7 @@ import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import axios from "axios";
 
 export default function HomePage() {
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const [portfolio, setPortfolio] = useState([]);
 
   const navigate = useNavigate();

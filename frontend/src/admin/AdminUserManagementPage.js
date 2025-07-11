@@ -7,6 +7,7 @@ import {
 import axios from "axios";
 import Combo from "../components/Combo";
 import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -21,7 +22,7 @@ export default function AdminUserManagementPage() {
   const [userGrade, setUserGrade] = useState("");
   const [userRole, setUserRole] = useState("");
   const itemsPerPage = 10;
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -186,9 +187,12 @@ export default function AdminUserManagementPage() {
   const totalPages = Math.ceil(visibleUsers.length / itemsPerPage);
   return (
     <Box sx={{ p: 2 }}>
+      <Box sx={{ display: "flex", gap:1}}>
+        <AccountCircleIcon sx={{ fontSize: 40 }} />
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        👤 사용자 관리
+       사용자 관리
       </Typography>
+      </Box>
 
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
         <Tab label="전체" value="all" />
@@ -196,7 +200,7 @@ export default function AdminUserManagementPage() {
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
       </Tabs>
-      <Stack direction="row" spacing={1} mb={2} mx={29} alignItems={"center"}>
+      <Stack direction="row" spacing={1} mb={2}alignItems={"center"}  justifyContent='center'>
         <TextField
           placeholder="아이디 또는 닉네임 검색"
           value={searchKeyword}
@@ -226,19 +230,18 @@ export default function AdminUserManagementPage() {
           <TableBody>
             {paginatedUsers.map((user) => (
               <TableRow key={user.user_id}>
-                <TableCell>{user.user_id}</TableCell>
-                <TableCell><Typography
+                <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}><Typography
                   sx={{
                     cursor: "pointer",
-                    textDecoration: "underline",
-                    color: "primary.main",
+                    textDecoration: "none",
                     "&:hover": { color: "primary.dark" }
                   }}
                   onClick={() => navigate(`/admin/users/${user.user_id}?readonly=1`)}
                 >
                   {user.nickname}
                 </Typography></TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {user.role === "R02" ? (  // R02는 member
                     <Box>
                       <Combo

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, InputAdornment, Checkbox, Chip, Stack } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 
 export default function RegisterPage() {
+  const { portfolio_id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "", content: "", estimated_dt: "", budget: "",
@@ -12,19 +13,58 @@ export default function RegisterPage() {
   const [techStacks, setTechStacks] = useState({});
   const [selectedTechs, setSelectedTechs] = useState([]); 
 
-  const BASE_URL = process.env.REACT_APP_API_URL;
+  const BASE_URL = "http://127.0.0.1:8000";
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     axios.get(`${BASE_URL}/user/tech-stacks`)
       .then(res => {
         setTechStacks(res.data);
-        console.log("res.data", res.data);
+        console.log("전체 기술", res.data);
       })
       .catch(err => {
         console.error("기술 스택 불러오기 실패", err);
       });
   }, []);
+
+  useEffect(() => {
+    // 기술 스택 불러오기
+    axios.get(`${BASE_URL}/admin/portfolio/${portfolio_id}/tech-stacks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        console.log("선택되어있는 기술", res.data);
+
+        setSelectedTechs(res.data);
+      })
+      .catch(err => {
+        console.error("선택되어있는 기술 스택 불러오기 실패", err);
+      });
+
+    // 포트폴리오 기본 정보도 같이 가져오기
+    axios.get(`${BASE_URL}/admin/portfolio/${portfolio_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        const data = res.data;
+        console.log("포트폴리오 정보:", data);
+
+        // ✅ 단위(개월, 만원) 잘라내고 setForm
+        setForm({
+          title: data.title || "",
+          content: data.content || "",
+          estimated_dt: data.estimated_dt?.replace("개월", "") || "",
+          budget: data.budget?.replace("만원", "") || "",
+        });
+      })
+      .catch(err => {
+        console.error("포트폴리오 정보 불러오기 실패", err);
+      });
+  }, [portfolio_id]);
 
   const handleFormChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -69,16 +109,16 @@ export default function RegisterPage() {
         }))
       };
 
-      await axios.post(`${BASE_URL}/admin/portfolioCreate`, payload, {
+      await axios.post(`${BASE_URL}/admin/portfolioUpdate/${portfolio_id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("포트폴리오 작성완료!");
+      alert("포트폴리오 수정완료!");
       navigate("/admin/portfolioList");
     } catch (error) {
-      console.error("포트폴리오 작성실패", error);
-      alert("포트폴리오 작성실패: " + (error.response?.data?.detail || "서버 오류"));
+      console.error("포트폴리오 수정실패", error);
+      alert("포트폴리오 수정실패: " + (error.response?.data?.detail || "서버 오류"));
     }
   };
 

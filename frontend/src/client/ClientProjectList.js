@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper, Grid, Button, LinearProgress } from "@mui/material";
+import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip } from "@mui/material";
 import axios from "axios";
+import Folder from "../assets/folder.png"
 
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -36,36 +37,83 @@ const ClientProjectList = () => {
     fetchProjects();
   }, []);
 
+  const urgencyMap = {
+    U01: { label: "여유", color: "#46D828" },
+    U02: { label: "보통", color: "#FFBD52" },
+    U03: { label: "높음", color: "#E53434" },
+  };
+
+  const statusMap = {
+    W01: { label: "대기중", color: "#90CAF9" },
+    W02: { label: "진행중", color: "#81C784" },
+    W03: { label: "완료", color: "#A1887F" },
+  };
+
   if (loading) {
-    return <Typography variant="h6">로딩 중...</Typography>;
+    return <Typography variant="h6">로딩 중...</Typography>
   }
 
   return (
     <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Typography variant="h5" mb={4}>프로젝트 목록</Typography>
-    <Box sx={{justifyContent: 'center', alignItems: 'center' }}>
-      <Grid container spacing={5} sx={{ }} >
-        {projects.map((project) => (
-          <Grid item xs={12} sm={6} md={4} key={project.id} sx={{width:'300px'}}>
-            <Paper sx={{ padding: 3 }}>
-              <Typography variant="body2" color="text.secondary">긴급도: {project.urgency_level}</Typography>
-              <Typography variant="body2" color="text.secondary">작성일: {project.create_date}</Typography>  
-              <Typography variant="h6">{project.title}</Typography>
-              <Typography variant="body1" color="text.secondary">카테고리: {project.category_name}</Typography>
-              <Typography variant="body2" color="text.secondary">예상 기간: {project.estimated_duration}일</Typography>
-              <Typography variant="body2" color="text.secondary">예산: {project.budget}원</Typography>
-              <Typography variant="h6">진행상황</Typography>
-              <LinearProgress
-                variant="determinate"
-                value={project.progress || 0}  // progress가 없으면 0으로 처리
-                sx={{ mt: 2 }}
-              />
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <img src={Folder} alt="" style={{ height: "35px" }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>프로젝트 목록</Typography>
+      </Box>
+      <Box sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Grid container spacing={5} sx={{}} >
+          {projects.map((project) => (
+            <Grid item xs={12} sm={6} md={4} key={project.id} sx={{ width: '410px' }}>
+              <Paper elevation={2} sx={{ px: 3, py: 4 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Chip
+                      label={`긴급도: ${urgencyMap[project.urgency]?.label || "없음"}`}
+                      sx={{
+                        backgroundColor: urgencyMap[project.urgency]?.color || "#ccc",
+                        color: "#fff",
+                        fontWeight: "bold",
+                        height: 24
+                      }}
+                      size="small"
+                    />
+                    <Typography color="text.secondary">작성일: {project.create_date}</Typography>
+                  </Box>
+                  <Typography sx={{ fontSize: "20px", fontWeight: "600" }}>{project.title}</Typography>
+                  <Typography ><strong>카테고리:</strong> {project.category_name}</Typography>
+                  <Typography ><strong>예상 기간:</strong> {project.estimated_duration}일</Typography>
+                  <Typography ><strong>예산:</strong> {project.budget}원</Typography>
+                  <Typography ><strong>요구사항</strong></Typography>
+                  <Box sx={{border:"1px solid grey", borderRadius:"5px", height:"100px", padding:"5px"}}>
+                    <Typography >{project.description}</Typography>
+                  </Box>
+                  <Box sx={{ display: "flex"}}>
+                    <Typography><strong>진행상황</strong></Typography>
+                    <Chip
+                      label={statusMap[project.status]?.label || "대기중"}
+                      sx={{
+                        backgroundColor: statusMap[project.status]?.color || "#ddd",
+                        color: "#fff",
+                        fontWeight: "bold",
+                        height: 24,
+                        marginLeft:"10px"
+                      }}
+                      size="small"
+                    />
+                  </Box>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={project.progress || 0}  // progress가 없으면 0으로 처리
+                  sx={{ mt: 2, mb: 1 }}
+                />
+                <Typography color="text.secondary">{project.progress || 0}%</Typography>
 
-            </Paper>
-          </Grid>
-          
-        ))}
-      </Grid>
+
+              </Paper>
+            </Grid>
+
+          ))}
+        </Grid>
       </Box>
     </Box>
   );

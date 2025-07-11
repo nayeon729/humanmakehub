@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [sendEmail, setSendEmail] = useState("");
   const [startTimer, setStartTimer] = useState(false);
 
-  const BASE_URL = "http://127.0.0.1:8000"; // 실제 API 주소
+  const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
 
   const handleSubmit = async () => {
     navigate("/pwReset", {

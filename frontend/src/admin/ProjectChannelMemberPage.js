@@ -10,9 +10,11 @@ import {
   Divider,
   IconButton,
   Button,
-  Chip
+  Chip,
+  TextField, 
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
+import add from "../assets/create.png"
 
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
@@ -22,9 +24,11 @@ export default function ProjectChannelMemberPage() {
   const [projectTitle, setProjectTitle] = useState("");
   const navigate = useNavigate();
   const [teamMemberId, setTeamMemberId] = useState("");
-  const BASE_URL = "http://127.0.0.1:8000";
+
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
   const context = useOutletContext() || {};
-  const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
+  const setIsChecked = context.setIsChecked || (() => {});
 
   useEffect(() => {
     const id = localStorage.getItem("user_id");
@@ -145,34 +149,40 @@ export default function ProjectChannelMemberPage() {
           💬 {projectTitle}
         </Typography>
         <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
-          <CreateIcon />
+          <img src={add} style={{width:'40px', hight:'40px'}}/>
         </IconButton>
       </Stack>
-      <Divider sx={{ my: 2 }} />
+     
 
-      <Stack spacing={2}>
+      <Stack spacing={2} mt={2}>
         {messages.map((msg) => (
           <Paper key={msg.channel_id} sx={{ p: 2 }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Box display='flex' flexDirection="row" alignItems="center">
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
                 label={msg.create_id === pmId ? "PM" : msg.nickname}
               />
-              <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>{msg.title}</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ ml: "auto" }}>
-                {msg.create_dt.slice(0, 10)}
-              </Typography>
-            </Stack>
+              <Box display='flex' flexDirection='row' justifyContent='space-between' width="100%">
+                <Typography variant="subtitle1" fontWeight="bold" ml={1}>{msg.title}</Typography>
+                <Typography variant="caption" sx={{ color: "gray" }}>
+                  {msg.create_dt?.slice(0, 10).replace(/-/g, '.')}
+                </Typography>
+              </Box>
+            </Box>
 
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" mt={2}>
               {msg.content}
             </Typography>
             {msg.create_id === myUserId && (
-              <Stack direction="row" spacing={1} mt={1}>
-                <Button onClick={() => navigate(`/admin/channel/${project_id}/update/${msg.channel_id}`)}>
+              <Stack direction="row" justifyContent='end' sx={{ mb: '-16px', mr: '-8px' }}>
+                <Button
+                  sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
+                  onClick={() => navigate(`/admin/channel/${project_id}/update/${msg.channel_id}`)}>
                   수정
                 </Button>
-                <Button onClick={() => handleDelete(msg.channel_id)}>
+                <Button
+                  sx={{ color: '#d32f2f', fontSize: '12px', minWidth: '20px' }}
+                  onClick={() => handleDelete(msg.channel_id)}>
                   삭제
                 </Button>
               </Stack>

@@ -11,7 +11,7 @@ const MemberProjectList = () => {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchInvitesAndConfirmed();

@@ -13,7 +13,7 @@ export default function AdminNoticeCreatePage() {
     const [content, setContent] = useState("");
     const navigate = useNavigate();
 
-    const BASE_URL = "http://127.0.0.1:8000"; // 서버 주소
+    const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
     useEffect(() => {
     if (noticeId) {
         fetchNotice(noticeId);
@@ -60,14 +60,14 @@ export default function AdminNoticeCreatePage() {
     };
 
     return (
-        <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
-            <Typography variant="h5" gutterBottom fontWeight="bold">
+        <Box sx={{p:2}}>
+            <Typography variant="h4" gutterBottom fontWeight="bold">
                 📢 공지 사항 수정
             </Typography>
 
             <Paper sx={{ p: 3, mt: 2 }}>
                 <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2">제목</Typography>
+                    <Typography variant="body2" fontWeight={600}>제목</Typography>
                     <TextField
                         fullWidth
                         value={title}
@@ -76,7 +76,7 @@ export default function AdminNoticeCreatePage() {
                     />
                 </Box>
                 <Box sx={{ mb: 5 }}>
-                    <Typography variant="body2">분류</Typography>
+                    <Typography variant="body2" fontWeight={600}>분류</Typography>
                     <Combo
                         groupId="NOTICE_TYPE"
                         value={targetType}
@@ -96,10 +96,11 @@ export default function AdminNoticeCreatePage() {
                         sx={{ mb: 2 }}
                     />
                 </Box>
-
-                <Button variant="contained" fullWidth onClick={handleUpdate}>
+                <Box sx={{textAlign:'center'}}>
+                <Button variant="contained" fullWidth onClick={handleUpdate} sx={{width:'250px',height:'45px', fontSize:'16', borderRadius:'20px'}}>
                     글 수정 
                 </Button>
+                </Box>
             </Paper>
         </Box>
     );

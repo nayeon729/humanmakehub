@@ -1255,6 +1255,133 @@ def portfolio_Create(data:Portfolio ,user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+# -----------특정 포트폴리오불러오기----------------
+@router.get("/portfolio/{portfolio_id}")
+def get_user_info(portfolio_id: int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":  # 관리자만 접근 허용
+        raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            
+
+        # 1. 포트폴리오 기본 정보 조회
+            cursor.execute("""
+                SELECT 
+                    *
+                FROM portfolio
+                WHERE portfolio_id = %s AND del_yn = 'N'
+            """, (portfolio_id,))
+            portfolio = cursor.fetchone()
+
+            if not portfolio:
+                raise HTTPException(status_code=404, detail="포트폴리오를 찾을 수 없습니다.")
+
+            return portfolio
+    finally:
+        conn.close()
+
+# ---------- 특정포트폴리오 선택되어있는기술불러오기 ----------
+@router.get("/portfolio/{portfolio_id}/tech-stacks")
+def get_portfolio_tech_stacks(portfolio_id: int, user: dict = Depends(get_current_user)):
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 1. 포트폴리오에 등록된 기술의 code_id만 가져오기
+            cursor.execute("""
+                SELECT code_id 
+                FROM portfolio_skill 
+                WHERE portfolio_id = %s AND del_yn = 'N'
+            """, (portfolio_id,))
+            tech_ids = [row["code_id"] for row in cursor.fetchall()]
+            
+            if not tech_ids:
+                return {}  # 등록된 기술이 없다면 빈 딕셔너리 반환
+
+            # 2. 해당 code_id들의 정보 가져오기 (code_name, parent_code 등)
+            format_strings = ','.join(['%s'] * len(tech_ids))
+            sql = f"""
+                SELECT code_id, code_name, parent_code 
+                FROM common_code 
+                WHERE group_id = 'TECH_STACK' AND code_id IN ({format_strings})
+            """
+            cursor.execute(sql, tech_ids)
+            tech_info = cursor.fetchall()
+
+            # 3. code_name을 label로 바꿔서 보내기
+            result = [
+                {
+                    "label": row["code_name"],
+                    "code_id": row["code_id"],
+                    "parent_code": row["parent_code"]
+                }
+                for row in tech_info
+            ]
+        
+
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------- 포트폴리오수정 ----------
+@router.post("/portfolioUpdate/{portfolio_id}")
+def portfolio_Update(portfolio_id:int, data:Portfolio ,user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+
+            # 1. 포트폴리오 기본 정보 업데이트
+            cursor.execute("""
+                UPDATE portfolio
+                SET title = %s, content = %s, estimated_dt = %s, budget = %s, update_dt = NOW(), update_id = %s
+                WHERE portfolio_id = %s AND del_yn = 'N'
+            """, (data.title, data.content, data.estimated_dt, data.budget, user["user_id"], portfolio_id))
+
+            # 2. 기존 기술 목록 조회
+            cursor.execute("""
+                SELECT code_id
+                FROM portfolio_skill
+                WHERE portfolio_id = %s AND del_yn = 'N'
+            """, (portfolio_id,))
+            existing_skills = set(row["code_id"] for row in cursor.fetchall())  # 기존에있는 code_id만 추출
+
+            # 2. 새로 받은 전체 스킬 목록은 리스트로 유지
+            new_skills = data.skills  # 이건 List[Skill] 객체
+            # 3. 추가할 스킬 추출 (code_id 기준 비교)
+            to_insert = [skill for skill in new_skills if skill.code_id not in existing_skills]
+
+            # 4. DB에 insert
+            for skill in to_insert:
+                cursor.execute("""
+                    INSERT INTO portfolio_skill (portfolio_id, code_id, code_name, parent_code, create_id, create_dt, del_yn)
+                    VALUES (%s, %s, %s, %s, %s, NOW(), 'N')
+                """, (portfolio_id, skill.code_id, skill.code_name, skill.parent_code, user["user_id"]))
+
+            # 삭제할 스킬
+            new_skill_ids = set(skill.code_id for skill in new_skills)
+            to_delete = existing_skills - new_skill_ids
+
+            for code in to_delete:
+                cursor.execute("""
+                    UPDATE portfolio_skill
+                    SET del_yn = 'Y', update_id = %s, update_dt = NOW()
+                    WHERE portfolio_id = %s AND code_id = %s
+                """, (user["user_id"], portfolio_id, code))
+
+        conn.commit()
+        return {"message": "포트폴리오 수정완료"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
         
 @router.get("/users/{user_id}")
 def get_user_info(user_id: str, user: dict = Depends(get_current_user)):

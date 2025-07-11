@@ -32,7 +32,7 @@ export default function RegisterPage() {
   const [code, setCode] = useState("");
   const [emailSend, setEmailSend] = useState(false);
 
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     axios.get(`${BASE_URL}/user/tech-stacks`)

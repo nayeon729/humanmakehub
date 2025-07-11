@@ -20,7 +20,7 @@ export default function AdminDashboard() {
     default: "#9e9e9e",   // 회색 (기본)
   };
   const navigate = useNavigate();
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
