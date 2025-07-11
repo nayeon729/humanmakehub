@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import {
   Box,
@@ -23,6 +23,8 @@ export default function ProjectChannelMemberPage() {
   const navigate = useNavigate();
   const [teamMemberId, setTeamMemberId] = useState("");
   const BASE_URL = "http://127.0.0.1:8000";
+  const context = useOutletContext() || {};
+  const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
 
   useEffect(() => {
     const id = localStorage.getItem("user_id");
@@ -112,6 +114,29 @@ export default function ProjectChannelMemberPage() {
       alert("❌ 프로젝트 삭제에 실패했습니다.");
     }
   };
+
+  useEffect(() => {
+    if(messages != []) {
+      const messagesCheck = async () => {
+          try {
+            const token = localStorage.getItem("token");
+            await axios.post(`${BASE_URL}/common/alertsCheck`, {
+              user_id: user_id,
+              teamMemberId: teamMemberId,
+            }, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            console.log("알람체크 성공");
+            setIsChecked(true);
+          } catch (error) {
+            console.error("알람체크 실패", error);
+          }
+      }
+      messagesCheck();
+    }
+  },[messages, user_id])
 
   return (
     <Box sx={{ flex: 1, p: 3 }}>

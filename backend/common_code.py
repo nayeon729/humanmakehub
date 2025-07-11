@@ -145,23 +145,23 @@ def get_teamMemberId(project_id: int, user_id: str):
         conn.close()
 
 
-@router.get("/adminAlerts/{teamMemberId}/{pmId}")
-def get_adminAlertsList(teamMemberId: int, pmId: str):
-    try:
-        conn = pymysql.connect(**db_config)
-        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            cursor.execute("""
-                SELECT *
-                FROM alerts
-                WHERE value_id = %s AND target_user = "" AND create_id = %s AND del_yn = 'N'
-            """, (teamMemberId, pmId))
+# @router.get("/adminAlerts/{teamMemberId}/{pmId}")
+# def get_adminAlertsList(teamMemberId: int, pmId: str):
+#     try:
+#         conn = pymysql.connect(**db_config)
+#         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+#             cursor.execute("""
+#                 SELECT *
+#                 FROM alerts
+#                 WHERE value_id = %s AND target_user = "" AND create_id = %s AND del_yn = 'N'
+#             """, (teamMemberId, pmId))
 
-        results = cursor.fetchall()
-        alert_count = len(results)
+#         results = cursor.fetchall()
+#         alert_count = len(results)
         
-        return {"count": alert_count}
-    finally:
-        conn.close()
+#         return {"count": alert_count}
+#     finally:
+#         conn.close()
 
 
 @router.get("/alerts/{teamMemberId}/{pmId}")
@@ -191,7 +191,7 @@ def alertsCheck(body: dict = Body(...)):
 
         cursor.execute("""
             UPDATE alerts SET del_yn ='Y' WHERE target_user = "" AND create_id = %s AND value_id = %s AND category = "chat" AND del_yn ='N'
-        """, (body["pm_id"], body["teamMemberId"],))
+        """, (body["user_id"], body["teamMemberId"],))
 
         conn.commit()
 

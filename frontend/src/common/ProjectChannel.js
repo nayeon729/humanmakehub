@@ -50,7 +50,8 @@ export default function ProjectChannel({ role }) {
 
   useEffect(() => {
     if (isChecked) {
-      getalertCount();  // ✅ 알림갯수 다시 불러와서세팅
+      getalertCount();     // 개발자용 알림갯수 다시 불러와서세팅
+      adminGetAlertCount();// 관리자용 알림갯수 다시 불러와서세팅
       setIsChecked(false); // 초기화
     }
   }, [isChecked]);
@@ -60,32 +61,21 @@ export default function ProjectChannel({ role }) {
   },[teamMemberId, pmId])
 
   const getalertCount = async () => {
-    if(role === "R03") {
-      try {
-        const res = await axios.get(`${BASE_URL}/common/adminAlerts/${teamMemberId}/${pmId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        console.log("1대1 알림 갯수 : ", res.data.count);
-        setAlertCount(res.data.count);
-      } catch (err) {
-        console.error("알림 갯수 조회 실패", err);
-      }
-    }
 
-    if(myUserId != ""){
+    if(myUserId != "" && role != "R03"){
         try {
-        const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        console.log("1대1 알림 갯수 : ", res.data.count);
-        setAlertCount(res.data.count);
-      } catch (err) {
-        console.error("알림 갯수 조회 실패", err);
-      }
+          const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          console.log("1대1 알림 갯수 : ", res.data.count);
+          setAlertCount(res.data.count);
+        } catch (err) {
+          console.error("알림 갯수 조회 실패", err);
+        }
+      } else {
+        console.log("PM입니다.");
       }
   }
 
@@ -104,7 +94,11 @@ export default function ProjectChannel({ role }) {
 
   // 🔁 관리자일 때 팀원 목록 조회
   useEffect(() => {
-    if (role === "R03") {
+    adminGetAlertCount();
+  }, [project_id, role]);
+
+  const adminGetAlertCount = () => {
+    if (role === "R03") { //관리자면 실행
       axios
         .get(`${BASE_URL}/admin/project/${project_id}/members`, {
           headers: {
@@ -118,8 +112,10 @@ export default function ProjectChannel({ role }) {
         .catch((err) => {
           console.error("팀원 불러오기 실패", err);
         });
+    } else {
+      console.log("PM이 아닙니다.")
     }
-  }, [project_id, role]);
+  }
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
