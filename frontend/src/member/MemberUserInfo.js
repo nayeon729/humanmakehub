@@ -13,11 +13,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
-import DevIcon from "../assets/dev-icon.png";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useParams, useSearchParams } from "react-router-dom";
 
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function MemberUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
@@ -109,10 +109,12 @@ function ReadOnlyView({ userInfo }) {
   return (
 
     <Box sx={{ flex: 1, p: 3 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-        회원정보
-      </Typography>
+      <Box sx={{ display: "flex", gap:1 }}>
+        <AccountCircleIcon sx={{ fontSize: 40 }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          회원정보
+        </Typography>
+      </Box>
       <Paper sx={{
         p: 3,
         mt: 2,

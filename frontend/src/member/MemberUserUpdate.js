@@ -11,10 +11,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
-import DevIcon from "../assets/dev-icon.png";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function MemberUserEditPage() {
     const [userInfo, setUserInfo] = useState(null);
@@ -121,10 +121,12 @@ export default function MemberUserEditPage() {
 
     return (
         <>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-                <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-                회원정보 수정
-            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+                <AccountCircleIcon sx={{ fontSize: 40 }} />
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                    회원정보 수정
+                </Typography>
+            </Box>
             <Card sx={{ p: 4, height: 650, }}>
 
                 <Typography variant="h6" gutterBottom>

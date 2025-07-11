@@ -12,7 +12,7 @@ export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [pmDialogOpen, setPmDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {

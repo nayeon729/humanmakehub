@@ -23,7 +23,7 @@ export default function ProjectChannelCommonPage() {
   const [myUserId, setMyUserId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   console.log("프로젝트 id:" + project_id);
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
   const id = localStorage.getItem("user_id");

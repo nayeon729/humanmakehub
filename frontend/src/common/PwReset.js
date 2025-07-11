@@ -11,7 +11,7 @@ export default function LoginPage() {
   const { user_id, email } = location.state || {};
 
 
-  const BASE_URL = "http://127.0.0.1:8000"; // 실제 API 주소
+  const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
 
   const handleSubmit = async () => {
     if (password == confirmPassword) {

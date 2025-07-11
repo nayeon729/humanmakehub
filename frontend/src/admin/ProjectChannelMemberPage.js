@@ -22,7 +22,7 @@ export default function ProjectChannelMemberPage() {
   const [projectTitle, setProjectTitle] = useState("");
   const navigate = useNavigate();
   const [teamMemberId, setTeamMemberId] = useState("");
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const id = localStorage.getItem("user_id");

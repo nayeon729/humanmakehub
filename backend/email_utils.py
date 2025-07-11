@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 import os
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = os.getenv("REACT_APP_API_URL")
 
 def send_verification_email(email: str, code: str):
     # 환경 변수에서 이메일 전송 설정값 가져오기

@@ -30,8 +30,9 @@ def list_routes():
 
 # CORS 설정
 origins = [
-    "http://127.0.0.1:3000",
-    "*",  # 개발 중일 때 허용
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://192.168.0.97:3001",
 ]
 
 app.add_middleware(
@@ -64,4 +65,6 @@ app.include_router(member_code_router, prefix="/member")
 def read_root():
     return {"message": "Hello from main.py 👋"}
 
-
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
