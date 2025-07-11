@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import add from "../assets/create.png"
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -51,17 +52,17 @@ export default function AdminNoticeListPage() {
     }
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 2 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
                 {userRole === "R03" && (
-                <Button variant="contained" onClick={() => navigate("/admin/notice/create")}>
-                    공지사항 등록
-                </Button>
+                    <Button onClick={() => navigate("/admin/notice/create")} sx={{ marginRight: '-8px' }}>
+                        <img src={add} style={{ width: '40px', height: '40px' }} />
+                    </Button>
                 )}
             </Stack>
 
-            <Stack direction="row" spacing={1} my={2}>
+            <Stack direction="row" spacing={1} my={2} alignItems={"center"} justifyContent='center'>
                 <TextField
                     label="검색어를 입력하세요"
                     variant="outlined"
@@ -69,8 +70,9 @@ export default function AdminNoticeListPage() {
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
                     fullWidth
+                    sx={{ width: '400px', boxShadow: '1px 2px 4px #9D9D9D', borderRadius: '5px' }}
                 />
-                <Button variant="outlined" onClick={handleSearch}>검색</Button>
+                <Button variant="outlined" onClick={handleSearch} sx={{ backgroundColor: '#2879E3', color: 'white', height: '35px', }}>검색</Button>
             </Stack>
 
             <Paper>
@@ -83,15 +85,21 @@ export default function AdminNoticeListPage() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {notices.map((notice) => (
-                            <TableRow key={notice.id} onClick={() => navigate(`/admin/notice/${notice.notice_id}`)}>
-                                <TableCell>
-                                    <Chip label={noticeTypeMap[notice.target_type]} color="primary" size="small" />
+                        {notices.map((notice) => {
+                            const dateObj = new Date(notice.create_dt);
+                            const fomattedDate = `${dateObj.getFullYear()}.${(dateObj.getMonth() + 1)
+                                .toString()
+                                .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
+                                return(
+                            <TableRow key={notice.id} onClick={() => navigate(`/admin/notice/${notice.notice_id}`)} sx={{ cursor: 'pointer' }}>
+                                <TableCell sx={{ textAlign: 'center', width: '140px' }}>
+                                    <Chip label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: '65px' }}/>
                                 </TableCell>
-                                <TableCell>{notice.title}</TableCell>
-                                <TableCell>{notice.create_dt.slice(0, 10)}</TableCell>
+                                <TableCell sx={{ textAlign: 'center' }} >{notice.title}</TableCell>
+                                <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>
                             </TableRow>
-                        ))}
+                        );
+                        })}
                     </TableBody>
                 </Table>
             </Paper>

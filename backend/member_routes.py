@@ -635,28 +635,28 @@ def get_user_project_channel(project_id: int, user_id: str, teamMemberId: int, u
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            sql = """
-                SELECT 
-                    pc.channel_id,
-                    pc.title,
-                    pc.content,
-                    pc.user_id,
-                    u.nickname,
-                    pc.create_id,
-                    pc.create_dt
-                FROM project_channel pc
-                JOIN user u ON pc.create_id = u.user_id
-                WHERE pc.del_yn = 'N'
-                  AND pc.project_id = %s
-                  AND pc.user_id = %s
-                  AND (
-                        pc.create_id = %s
-                        OR u.role = 'R03'
-                  )
-                ORDER BY pc.create_dt DESC
-            """
-            cursor.execute(sql, (project_id, user_id, user_id))
-            items = cursor.fetchall()
+            # sql = """
+            #     SELECT 
+            #         pc.channel_id,
+            #         pc.title,
+            #         pc.content,
+            #         pc.user_id,
+            #         u.nickname,
+            #         pc.create_id,
+            #         pc.create_dt
+            #     FROM project_channel pc
+            #     JOIN user u ON pc.create_id = u.user_id
+            #     WHERE pc.del_yn = 'N'
+            #       AND pc.project_id = %s
+            #       AND pc.user_id = %s
+            #       AND (
+            #             pc.create_id = %s
+            #             OR u.role = 'R03'
+            #       )
+            #     ORDER BY pc.create_dt DESC
+            # """
+            # cursor.execute(sql, (project_id, user_id, user_id))
+            # items = cursor.fetchall()
 
             cursor.execute("""
                 SELECT pm_id FROM project
@@ -680,7 +680,7 @@ def get_user_project_channel(project_id: int, user_id: str, teamMemberId: int, u
             """, (teamMemberId, user_id, pm_id))
             channels = cursor.fetchall()
 
-            return {"items": channels, "pm_id": pm_id, "total": len(items)}
+            return {"items": channels, "pm_id": pm_id, "total": len(channels)}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

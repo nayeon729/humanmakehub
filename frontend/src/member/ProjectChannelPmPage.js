@@ -58,7 +58,7 @@ export default function ProjectChannelPmPage() {
           try {
             const token = localStorage.getItem("token");
             await axios.post(`${BASE_URL}/common/alertsCheck`, {
-              pm_id: pmId,
+              user_id: pmId,
               teamMemberId: teamMemberId,
             }, {
               headers: {

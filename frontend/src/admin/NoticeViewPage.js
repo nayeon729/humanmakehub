@@ -62,7 +62,7 @@ export default function AdminNoticeViewPage() {
 
     return (
         <>
-            <Box sx={{ p: 3 }}>
+            <Box sx={{ p: 2 }}>
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
                     📢 공지사항
                 </Typography>
@@ -73,7 +73,7 @@ export default function AdminNoticeViewPage() {
                         <Chip
                             label={noticeTypeMap[notice.target_type] || notice.target_type}
                             color="primary"
-                            sx={{mt: 3, mr:1}}
+                            sx={{ mt: 3, mr: 1, width:'65px', pb:'3px'}}
                         />
                         <Typography variant="h5" fontWeight="bold" gutterBottom sx={{mt: 3}}>
                             {notice.title}
@@ -83,13 +83,13 @@ export default function AdminNoticeViewPage() {
                             {userRole === "R03" && (
                             <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
                                 <button
-                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue' }}
+                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor:'pointer'}}
                                     onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
                                 >
                                     수정
                                 </button>
                                 <button
-                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'red' }}
+                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'red', cursor:'pointer' }}
                                     onClick={() => setDeleteDialogOpen(true)}
                                 >
                                     삭제
@@ -98,7 +98,7 @@ export default function AdminNoticeViewPage() {
                             )}
                             <Box mt={1}>
                             <Typography variant="caption" color="text.secondary">
-                                {notice.create_dt?.slice(0, 10)}
+                                {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
                             </Typography>
                             </Box>
                             

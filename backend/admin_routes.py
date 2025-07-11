@@ -40,6 +40,7 @@ class ProjectChannel(BaseModel):
     content:str
     value_id:int
     category:str
+    project_id:int
 
 
 class SkillItem(BaseModel):
@@ -588,16 +589,30 @@ def get_project_members(project_id: int, user: dict = Depends(get_current_user))
             if pm and all(u["user_id"] != pm.get("user_id") for u in members):
                 members.append(pm)
 
-            # ✅ 각 팀원별 알림 갯수 조회해서 count 필드 추가
+            # 🔁 각 멤버마다 team_member_id, 알림 수 조회
             for member in members:
+                 # ✅ team_member_id 조회
+                cursor.execute("""
+                    SELECT team_member_id
+                    FROM team_member
+                    WHERE project_id = %s
+                      AND user_id = %s
+                      AND pm_id = %s
+                      AND del_yn = 'N'
+                """, (project_id, member["user_id"], pm_id))
+                team_member = cursor.fetchone()
+                member["team_member_id"] = team_member["team_member_id"] if team_member else None
+                
+                # ✅ 알림 수 조회
                 cursor.execute("""
                     SELECT COUNT(*) as count
                     FROM alerts
                     WHERE target_user = ''
                       AND create_id = %s
+                      AND value_id = %s
                       AND category = 'chat'
                       AND del_yn = 'N'
-                """, (member["user_id"],))
+                """, (member["user_id"],member["team_member_id"]))
                 count_result = cursor.fetchone()
                 member["count"] = count_result["count"] if count_result else 0
 
@@ -629,7 +644,8 @@ def remove_member_from_project(project_id: int, user_id: str, user: dict = Depen
         conn.close()
 
 @router.post("/projectchannel/{project_id}/create")
-def create_project_channel(project_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+def create_project_channel(projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+    print("🧾 받은 데이터:", projectChannel.dict())  # 여기 추가!
     if user["role"] != "R03":  # 관리자만 작성
         raise HTTPException(status_code=403, detail="관리자 권한 필요")
     
@@ -642,7 +658,7 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
                     VALUES (%s, %s, %s, %s, %s, %s, "board01")
                 """
                 now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], project_id))
+                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.project_id))
 
                 # 프로젝트에 참가한 팀멤버아이디 조회
                 cursor.execute("""
@@ -650,7 +666,7 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
                     FROM team_member 
                     WHERE project_id = %s
                     AND del_yn = 'N'
-                """, (project_id,))
+                """, (projectChannel.project_id,))
                 team_members = cursor.fetchall()
 
                 # 각 팀원에게 알림 보내기
@@ -661,11 +677,11 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
                         VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
                     """, (
                         target_user,
-                        project_id,
+                        projectChannel.project_id,
                         "chat",
                         "시스템 알림제목",
                         "프로젝트에서 PM이 공지사항을 작성하였습니다.",
-                        f"http://localhost:3000/member/channel/{project_id}/common",
+                        f"http://localhost:3000/member/channel/{projectChannel.project_id}/common",
                         user["user_id"]
                     ))
 
@@ -686,7 +702,7 @@ def create_project_channel(project_id: int, projectChannel: ProjectChannel, user
                         "chat",
                         "시스템 알림제목",
                         "시스템 알림내용",
-                        f"http://localhost:3000/member/channel/{project_id}/pm/{projectChannel.user_id}",
+                        f"http://localhost:3000/member/channel/{projectChannel.project_id}/pm/{projectChannel.user_id}",
                         user["user_id"]
                     ))
 
