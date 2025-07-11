@@ -17,7 +17,7 @@ export default function ProjectChannelUpdatePage() {
 
     const navigate = useNavigate();
 
-    const BASE_URL = "http://127.0.0.1:8000"; // 서버 주소
+    const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
     useEffect(() => {
         if (channel_id) {
             fetchChannel(channel_id);
@@ -25,8 +25,8 @@ export default function ProjectChannelUpdatePage() {
     }, [channel_id]);
 
     useEffect(() => {
-  console.log("✅ members 변경:", members);
-}, [members]);
+        console.log("✅ members 변경:", members);
+    }, [members]);
     const fetchChannel = async (channel_id) => {
         try {
             const token = localStorage.getItem("token");
@@ -98,7 +98,7 @@ export default function ProjectChannelUpdatePage() {
         fetchProjectTitle();
     }, [project_id]);
     return (
-        <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
+        <Box sx={{ p: 2 }}>
             <Typography variant="h5" gutterBottom fontWeight="bold">
                 📢 {projectTitle}글 수정
             </Typography>
@@ -116,26 +116,26 @@ export default function ProjectChannelUpdatePage() {
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2">채널</Typography>
                     {members.length > 0 ? (
-  <FormControl fullWidth>
-    <Select
-      labelId="member-select-label"
-      id="member-select"
-      value={userId || ""}
-      onChange={(e) => setUserId(e.target.value)}
-    >
-      {pmId && <MenuItem value={pmId}>공용</MenuItem>}
-      {members
-        .filter((m) => m?.user_id && m.user_id !== pmId)
-        .map((m) => (
-          <MenuItem key={m.user_id} value={m.user_id}>
-            {m.nickname || "이름 없음"}
-          </MenuItem>
-        ))}
-    </Select>
-  </FormControl>
-) : (
-  <Typography>멤버 정보를 불러오는 중...</Typography> // 또는 Skeleton 같은 걸로 대체해도 좋아!
-)}
+                        <FormControl fullWidth>
+                            <Select
+                                labelId="member-select-label"
+                                id="member-select"
+                                value={userId || ""}
+                                onChange={(e) => setUserId(e.target.value)}
+                            >
+                                {pmId && <MenuItem value={pmId}>공용</MenuItem>}
+                                {members
+                                    .filter((m) => m?.user_id && m.user_id !== pmId)
+                                    .map((m) => (
+                                        <MenuItem key={m.user_id} value={m.user_id}>
+                                            {m.nickname || "이름 없음"}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+                    ) : (
+                        <Typography>멤버 정보를 불러오는 중...</Typography>
+                    )}
                 </Box>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2">내용</Typography>
@@ -148,10 +148,11 @@ export default function ProjectChannelUpdatePage() {
                         sx={{ mb: 2 }}
                     />
                 </Box>
-
-                <Button variant="contained" fullWidth onClick={() => handleUpdate(channel_id)}>
-                    글 수정
-                </Button>
+                <Box sx={{ textAlign: 'center' }}>
+                    <Button variant="contained" fullWidth onClick={() => handleUpdate(channel_id)} sx={{height:'45px', width: '250px', fontSize:'16px', borderRadius:'20px'}}>
+                        글 수정
+                    </Button>
+                </Box>
             </Paper>
         </Box>
     );

@@ -12,7 +12,7 @@ export default function AdminAgreementPage() {
   const [selectedId, setSelectedId] = useState(null);
   const [logOpen, setLogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchAgreements();

@@ -27,7 +27,7 @@ export default function AdminProjectManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
 
-  const BASE_URL = "http://127.0.0.1:8000"
+  const BASE_URL = process.env.REACT_APP_API_URL
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -244,6 +244,7 @@ export default function AdminProjectManagementPage() {
         }
       });
       alert("초대 완료!");
+      await fetchInvitedMembers(selectedProjectId);
     } catch (err) {
       console.error(err.response?.data?.detail || "초대 실패");
       alert(err.response?.data?.detail || "초대에 실패했습니다.");

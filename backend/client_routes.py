@@ -141,13 +141,15 @@ def project_list(payload: dict = Body(...), user: dict = Depends(get_current_use
                     budget,
                     urgency,
                     progress,
+                    status,
                     DATE(create_dt) AS create_date,
                     del_yn
                 FROM
                     project
                 WHERE
                     client_id = %s
-                    AND del_yn = 'N'  
+                    AND del_yn = 'N'
+                ORDER BY create_dt DESC  
             """, (user["user_id"],))
 
             projects = cursor.fetchall()  # 프로젝트 목록을 가져옵니다.

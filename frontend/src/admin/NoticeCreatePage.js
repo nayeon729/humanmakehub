@@ -12,7 +12,7 @@ export default function AdminNoticeCreatePage() {
     const [content, setContent] = useState("");
     const navigate = useNavigate();
 
-    const BASE_URL = "http://127.0.0.1:8000"; // 서버 주소
+    const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
     const handleSubmit = async () => {
         if (!title || !targetType || !content) {

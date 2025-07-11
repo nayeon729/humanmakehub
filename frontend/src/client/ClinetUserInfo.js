@@ -10,10 +10,10 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 
-
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function ClientUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
@@ -72,7 +72,13 @@ export default function ClientUserInfo() {
     }
   };
   return (
-    <>
+    <Box sx={{ flex: 1, p: 3 }}>
+      <Box sx={{ display: "flex", gap:1 }}>
+        <AccountCircleIcon sx={{ fontSize: 40 }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          회원정보
+        </Typography>
+      </Box>
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           안녕하세요! <strong>{userInfo.nickname}</strong> 님
@@ -107,7 +113,6 @@ export default function ClientUserInfo() {
         </Box>
       </Card>
 
-
-    </>
+    </Box>
   );
 }

@@ -17,7 +17,7 @@ export default function ProjectChannelCreatePage() {
   const { project_id } = useParams();
   const navigate = useNavigate();
 
-  const BASE_URL = "http://127.0.0.1:8000"; // 서버 주소
+  const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -47,8 +47,8 @@ export default function ProjectChannelCreatePage() {
         title,
         user_id: String(userId),
         content,
-        value_id: teamMemberId =="공용" ? Number(project_id) : Number(teamMemberId),
-        category: teamMemberId =="공용" ? "board01" : "board02",
+        value_id: teamMemberId == "공용" ? Number(project_id) : Number(teamMemberId),
+        category: teamMemberId == "공용" ? "board01" : "board02",
         project_id: Number(project_id),
       }, {
         headers: {
@@ -57,7 +57,7 @@ export default function ProjectChannelCreatePage() {
       });
       alert("글이 등록되었습니다.");
 
-      if(teamMemberId =="공용"){
+      if (teamMemberId == "공용") {
         navigate(`/admin/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
       } else {
         navigate(`/admin/channel/${project_id}/member/${userId}`)
@@ -87,26 +87,26 @@ export default function ProjectChannelCreatePage() {
 
   useEffect(() => {
     const getTeamMemberId = async () => {
-    try {
+      try {
         const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        console.log("project_id" , project_id);
+        console.log("project_id", project_id);
         console.log("userId", userId);
         console.log("res", res.data.team_member_id);
-        console.log("type", typeof(res.data.team_member_id));
+        console.log("type", typeof (res.data.team_member_id));
         setTeamMemberId(res.data.team_member_id);
       } catch (err) {
         console.error("프로젝트 팀멤버아이디 조회 실패", err);
       }
     }
     getTeamMemberId();
-  },[userId])
+  }, [userId])
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 5 }}>
+    <Box sx={{ p: 2 }}>
       <Typography variant="h5" gutterBottom fontWeight="bold">
         💬 {projectTitle} 글 작성
       </Typography>
@@ -165,10 +165,11 @@ export default function ProjectChannelCreatePage() {
             sx={{ mb: 2 }}
           />
         </Box>
-
-        <Button variant="contained" fullWidth onClick={handleSubmit}>
-          글 등록
-        </Button>
+        <Box sx={{ textAlign: 'center' }}>
+          <Button variant="contained" fullWidth onClick={handleSubmit} sx={{ height: '45px', width: '250px', fontSize: '16px', borderRadius: '20px' }}>
+            글 등록
+          </Button>
+        </Box>
       </Paper>
     </Box>
   );

@@ -27,7 +27,6 @@ export default function PasswordConfirmDialog({ open, onConfirm, onCancel }) {
       <DialogContent>
         <TextField
           autoFocus
-          label="비밀번호"
           type="password"
           fullWidth
           value={password}
