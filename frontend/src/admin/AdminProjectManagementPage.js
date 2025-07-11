@@ -300,12 +300,12 @@ export default function AdminProjectManagementPage() {
     <Box sx={{ p: 2 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
         <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-          <img src={folder} style={{ width: '50px', height: '50px' }} /> 
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        📂 프로젝트 관리
-      </Typography>
+          <img src={folder} style={{ width: '50px', height: '50px' }} />
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            프로젝트 관리
+          </Typography>
+        </Stack>
       </Stack>
-</Stack>
       <Grid container spacing={3}>
         {projects.map((proj) => {
           const dateObj = new Date(proj.create_dt);
@@ -314,7 +314,7 @@ export default function AdminProjectManagementPage() {
             .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-              <Paper elevation={3} sx={{p: 3, pt: 2, borderRadius: 2, width: 400}}>
+              <Paper elevation={3} sx={{ p: 3, pt: 2, borderRadius: 2, width: 400 }}>
                 <Box mb={1}
                   sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <Box sx={{ display: "flex", flex: '4' }}>
@@ -322,15 +322,15 @@ export default function AdminProjectManagementPage() {
                       접수일: {formattedDate}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", flex: '1', flexDirection: "row", marginRight: '-14px', gap:'6px'}}>
+                  <Box sx={{ display: "flex", flex: '1', flexDirection: "row", marginRight: '-14px', gap: '6px' }}>
                     <Button
-                      sx={{ background: "none", minWidth : '35px', border: 'none', padding: '0px', color: '#1976d2', fontWeight:400 }}
+                      sx={{ background: "none", minWidth: '35px', border: 'none', padding: '0px', color: '#1976d2', fontWeight: 400 }}
                       onClick={() => navigate(`/admin/update/${proj.project_id}`)}
                     >
                       수정
                     </Button>
                     <Button
-                      sx={{ background: "none", minWidth: '35px', border: 'none', padding: '0px', color: '#d32f2f', fontWeight:400 }}
+                      sx={{ background: "none", minWidth: '35px', border: 'none', padding: '0px', color: '#d32f2f', fontWeight: 400 }}
                       onClick={() => handleDeleteProject(proj.project_id)}
                     >
                       삭제
@@ -338,7 +338,7 @@ export default function AdminProjectManagementPage() {
                   </Box>
                 </Box>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} sx={{ backgroundColor: urgencyColor(proj.urgency), color: 'white', pb:'1px' }} size="small" />
+                  <Chip label={urgencyMap[proj.urgency] || "없음"} color={urgencyColor(proj.urgency)} sx={{ backgroundColor: urgencyColor(proj.urgency), color: 'white', pb: '1px' }} size="small" />
 
                 </Stack>
 
@@ -383,42 +383,42 @@ export default function AdminProjectManagementPage() {
                         setSelectedProjectId(proj.project_id)
                       }}
                     >
-                      + 
+                      +
                     </Button>
                   </Typography>
                 </Box>
                 <Box sx={{ mt: 2 }}>
-                  <Box sx={{ maxHeight: 150, minHeight: 150,  mt: 1, border: "1px solid #eee", borderRadius: 1, p: 1 }}>
-                  <Typography variant="body2" sx={{ textAlign: "center" }}>대기 멤버</Typography>
-                  <hr style={{ border: "none", borderTop: "1px solid #ccc" }} />
-                  <Box sx={{ overflowY: "auto", maxHeight:120}}>
-                    {invitedMemberMap[proj.project_id]?.map((member) => {
-                      if (member.status === 'N' && member.checking === 'N') {
-                        return (
-                          <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                            <Typography>{member.nickname}</Typography>
-                            <Chip label="응답 대기" size="small" sx={{ border: '1px solid #D9D9D9', backgroundColor: 'white', fontSize: '12px', height: '24px', borderRadius: '8px' }}  />
-                          </Box>
-                        );
-                      }
+                  <Box sx={{ maxHeight: 150, minHeight: 150, mt: 1, border: "1px solid #eee", borderRadius: 1, p: 1 }}>
+                    <Typography variant="body2" sx={{ textAlign: "center" }}>대기 멤버</Typography>
+                    <hr style={{ border: "none", borderTop: "1px solid #ccc" }} />
+                    <Box sx={{ overflowY: "auto", maxHeight: 120 }}>
+                      {invitedMemberMap[proj.project_id]?.map((member) => {
+                        if (member.status === 'N' && member.checking === 'N') {
+                          return (
+                            <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                              <Typography>{member.nickname}</Typography>
+                              <Chip label="응답 대기" size="small" sx={{ border: '1px solid #D9D9D9', backgroundColor: 'white', fontSize: '12px', height: '24px', borderRadius: '8px' }} />
+                            </Box>
+                          );
+                        }
 
-                      if (member.status === 'Y' && member.checking === 'Y') {
-                        return (
-                          <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between", mb:1}}>
-                            <Typography>{member.nickname}</Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: '7px' }}>
-                            <Button size="small" sx={{ border: '1px solid #D9D9D9', borderRadius: '8px', fontSize: '12px', height: '24px' }} onClick={() => handlePmApprove(proj.project_id, member.request_id)}>승인</Button>
-                            <Button size="small" sx={{ border: '1px solid #D9D9D9', borderRadius: '8px', fontSize: '12px', height: '24px' }} color="error" onClick={() => handlePmReject(proj.project_id, member.request_id)}>미승인</Button>
-                          </Box>
-                          </Box>
-                        );
-                      }
+                        if (member.status === 'Y' && member.checking === 'Y') {
+                          return (
+                            <Box key={member.user_id} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                              <Typography>{member.nickname}</Typography>
+                              <Box sx={{ display: 'flex', flexDirection: 'row', gap: '7px' }}>
+                                <Button size="small" sx={{ border: '1px solid #D9D9D9', borderRadius: '8px', fontSize: '12px', height: '24px' }} onClick={() => handlePmApprove(proj.project_id, member.request_id)}>승인</Button>
+                                <Button size="small" sx={{ border: '1px solid #D9D9D9', borderRadius: '8px', fontSize: '12px', height: '24px' }} color="error" onClick={() => handlePmReject(proj.project_id, member.request_id)}>미승인</Button>
+                              </Box>
+                            </Box>
+                          );
+                        }
 
-                      // status N + checking Y 는 거절된 상태 → 화면 표시 안함
-                      return null;
-                    })}
+                        // status N + checking Y 는 거절된 상태 → 화면 표시 안함
+                        return null;
+                      })}
+                    </Box>
                   </Box>
-                </Box>
                 </Box>
                 <Box sx={{ mt: 2 }}>
                   <Box
@@ -431,35 +431,35 @@ export default function AdminProjectManagementPage() {
                       backgroundColor: "#fafafa" // (선택) 배경 구분
                     }}
                   >
-                  <Typography variant="body2" sx={{ textAlign: "center" }}>
-                    참여 멤버
-                  </Typography>
-<hr style={{ border: "none", borderTop: "1px solid #ccc" }} />
-                  <Box sx={{overflowY: "auto", maxHeight:120}}>
-                    {memberMap[proj.project_id]?.map((member) => (
-                      <Box
-                        key={member.user_id}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 1,
-                        }}
-                      >
-                        <Typography>{member.nickname}</Typography>
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                           sx={{ height: '24px', fontSize: '12px', border: '1px solid #D9D9D9', borderRadius: '8px', color: '#828282' }}
-                          onClick={() => handleRemoveMember(proj.project_id, member.user_id)}
+                    <Typography variant="body2" sx={{ textAlign: "center" }}>
+                      참여 멤버
+                    </Typography>
+                    <hr style={{ border: "none", borderTop: "1px solid #ccc" }} />
+                    <Box sx={{ overflowY: "auto", maxHeight: 120 }}>
+                      {memberMap[proj.project_id]?.map((member) => (
+                        <Box
+                          key={member.user_id}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 1,
+                          }}
                         >
-                          참여 종료
-                        </Button>
-                      </Box>
-                    ))}
+                          <Typography>{member.nickname}</Typography>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="error"
+                            sx={{ height: '24px', fontSize: '12px', border: '1px solid #D9D9D9', borderRadius: '8px', color: '#828282' }}
+                            onClick={() => handleRemoveMember(proj.project_id, member.user_id)}
+                          >
+                            참여 종료
+                          </Button>
+                        </Box>
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
                 </Box>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" fontWeight="bold" gutterBottom>
@@ -500,8 +500,8 @@ export default function AdminProjectManagementPage() {
                     min={0}
                     max={100}
                     valueLabelDisplay="auto"
-                    sx={{ 
-                       mt:1,
+                    sx={{
+                      mt: 1,
                       color: "#D9D9D9",
                       '& .MuiSlider-thumb': {
                         backgroundColor: '#9D9D9D', // 핸들 색
@@ -524,15 +524,15 @@ export default function AdminProjectManagementPage() {
                     sx={{ minWidth: 50 }}
                   />
                 </Box>
-<Box sx={{ textAlign:'center'}}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2, borderRadius:'20px', height:'45px', width:'250px', fontSize:'16px', backgroundColor:'#2879E3' }}
-                  onClick={() => navigate(`/admin/channel/${proj.project_id}/common`)}
-                >
-                  프로젝트 채널
-                </Button>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 2, borderRadius: '20px', height: '45px', width: '250px', fontSize: '16px', backgroundColor: '#2879E3' }}
+                    onClick={() => navigate(`/admin/channel/${proj.project_id}/common`)}
+                  >
+                    프로젝트 채널
+                  </Button>
                 </Box>
               </Paper>
             </Grid>
