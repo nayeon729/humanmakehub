@@ -135,14 +135,15 @@ export default function AdminProjectManagementPage() {
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
+                    </Typography>
                     <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '227px', height: '100px' }}>
                       {proj.description}
                     </Box>
-                  </Typography>
+                  <Box sx={{ textAlign:'center'}}>
                   <Button
                     variant="contained"
                     fullWidth
-                    sx={{ mt: 2, borderRadius:'13px'}}
+                    sx={{ mt: 2, borderRadius:'20px', height:'45px', width:'250px',fontSize:'16px',}}
                     onClick={() => {
                       setSelectedProjectId(proj.project_id);
                       setPmDialogOpen(true);
@@ -151,6 +152,7 @@ export default function AdminProjectManagementPage() {
                   >
                     {isManaged ? "관리 중" : "관리하기"}
                   </Button>
+                  </Box>
                 </Paper>
               </Grid>
             );
