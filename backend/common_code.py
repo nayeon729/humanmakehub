@@ -140,7 +140,7 @@ def get_teamMemberId(project_id: int, user_id: str):
         if data:
             return data
         
-        return "공용"
+        return {"team_member_id": "공용"}
     finally:
         conn.close()
 

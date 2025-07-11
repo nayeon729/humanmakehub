@@ -45,10 +45,11 @@ export default function ProjectChannelCreatePage() {
       const token = localStorage.getItem("token");
       await axios.post(`${BASE_URL}/admin/projectchannel/${project_id}/create`, {
         title,
-        user_id: userId,
+        user_id: String(userId),
         content,
         value_id: teamMemberId =="공용" ? Number(project_id) : Number(teamMemberId),
         category: teamMemberId =="공용" ? "board01" : "board02",
+        project_id: Number(project_id),
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
