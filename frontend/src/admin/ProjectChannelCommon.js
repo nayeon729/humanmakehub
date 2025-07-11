@@ -15,6 +15,7 @@ import {
 import CreateIcon from "@mui/icons-material/Create";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import add from "../assets/create.png"
 
 export default function ProjectChannelCommonPage() {
   const [posts, setPosts] = useState([]);
@@ -86,7 +87,7 @@ export default function ProjectChannelCommonPage() {
           💬 {projectTitle}
         </Typography>
         <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
-          <CreateIcon />
+          <img src={add} style={{width:'40px', hight:'40px'}}/>
         </IconButton>
       </Stack>
 
@@ -98,24 +99,35 @@ export default function ProjectChannelCommonPage() {
             sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
+            <Box display='flex' flexDirection='row' justifyContent='space-between'>
             <Typography variant="subtitle1" fontWeight="bold">
               {post.title}
             </Typography>
+            <Typography variant="caption" sx={{ color: "gray" }}>
+                {post.create_dt?.slice(0, 10).replace(/-/g, '.')}
+              </Typography>
+              </Box>
+            {/* <Typography variant="body2" sx={{ color: "gray" }}>
+              {post.content}
+            </Typography> */}
             <Typography variant="body2" sx={{ color: "gray" }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
+            
+            
             <Stack direction="row" justifyContent="space-between" mt={1}>
-              
-              <Typography variant="caption" sx={{ color: "gray" }}>
-                {new Date(post.create_dt).toLocaleDateString("ko-KR")}
-              </Typography>
+
             </Stack>
             {post.create_id === myUserId && (
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Button onClick={() => navigate(`/admin/channel/${project_id}/update/${post.channel_id}`)}>
+                          <Stack direction="row" justifyContent='end' sx={{mb:'-16px', mr:'-8px'}}>
+                            <Button 
+                              sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
+                              onClick={() => navigate(`/admin/channel/${project_id}/update/${post.channel_id}`)}>
                               수정
                             </Button>
-                            <Button onClick={() => handleDelete(post.channel_id)}>
+                            <Button 
+                            sx={{ color: '#d32f2f', fontSize: '12px', minWidth: '20px' }}
+                            onClick={() => handleDelete(post.channel_id)}>
                               삭제
                             </Button>
                           </Stack>
