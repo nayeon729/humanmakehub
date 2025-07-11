@@ -35,7 +35,6 @@ class UserRegister(BaseModel):
 class DuplicateCheckRequest(BaseModel):
     user_id: Optional[str] = None
     email: Optional[str] = None
-    nickname: Optional[str] = None
 
 class FindRequest(BaseModel):
     user_id: Optional[str] = None
@@ -137,9 +136,6 @@ def register_user(user: UserRegister):
             cursor.execute("SELECT user_id FROM user WHERE user_id = %s", (user.user_id,))
             if cursor.fetchone():
                 raise HTTPException(status_code=400, detail="이미 사용 중인 아이디입니다.")
-            cursor.execute("SELECT user_id FROM user WHERE nickname = %s", (user.nickname,))
-            if cursor.fetchone():
-                raise HTTPException(status_code=400, detail="이미 사용 중인 닉네임입니다.")
             cursor.execute("SELECT user_id FROM user WHERE email = %s", (user.email,))
             if cursor.fetchone():
                 raise HTTPException(status_code=400, detail="이미 등록된 이메일입니다.")
@@ -185,7 +181,6 @@ def check_duplicate(data: DuplicateCheckRequest):
     result = {
         "user_idExists": False,
         "emailExists": False,
-        "nicknameExists": False,
         "message": ""
     }
 
@@ -222,10 +217,7 @@ def check_duplicate(data: DuplicateCheckRequest):
                     # ✅ 메시지 담기
                     result["message"] = "인증 메일을 보냈습니다!"
 
-            # 닉네임 중복 확인
-            if data.nickname:
-                cursor.execute("SELECT user_id FROM user WHERE nickname = %s AND del_yn = 'N'", (data.nickname,))
-                result["nicknameExists"] = cursor.fetchone() is not None
+
 
         return result
     except Exception as e:

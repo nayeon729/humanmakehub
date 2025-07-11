@@ -1,13 +1,13 @@
 // ✅ src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./common/HomePage";
+import HomePage from "./common/homepage/HomePage";
 import LoginPage from "./common/LoginPage";
 import RegisterPage from "./common/RegisterPage";
 import IdFind from "./common/IdFind";
 import PwFind from "./common/PwFind";
 // import IdFindView from "./common/IdFindView";
 import PwReset from "./common/PwReset";
-import PortfolioListTest from "./common/PortfolioListTest"
+import PortfolioListTest from "../src/common/homepage/PortfolioListTest"
 
 import ClientDashBoard from "./client/ClientDashboard";
 import ClientNoticeBoard from "./client/ClientNoticeBoard";

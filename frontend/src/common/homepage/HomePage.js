@@ -14,7 +14,8 @@ import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "axios";
-import FloatingQRCode  from "../common/FloatingQRCode";
+import FloatingQRCode from "./FloatingQRCode";
+import HeroSlider from "./HeroSlider";
 
 export default function HomePage() {
   const BASE_URL = "http://127.0.0.1:8000";
@@ -25,19 +26,6 @@ export default function HomePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));       // ≤600px
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // 601px~900px
-
-  const cardStyle = {
-    flex: isMobile ? "1 1 100%" : isTablet ? "1 1 45%" : "1 1 280px", // 반응형 대응
-    minWidth: 240,
-    maxWidth: 320,
-    backgroundColor: "#3a3d4d",
-    borderRadius: 16,
-    padding: "30px 24px",
-    boxShadow: "0 10px 24px rgba(0,0,0,0.25)",
-    transition: "transform 0.3s, box-shadow 0.3s",
-    cursor: "pointer",
-    border: "2px solid transparent"
-  };
 
   const techStacks = [
     "React-native", "Firebase", "Kotlin", "Node.js", "React", "Django",
@@ -58,71 +46,6 @@ export default function HomePage() {
     { label: "Contact", id: "contactSection" }
   ];
 
-  const heroSlides = [
-    {
-      title: (
-        <>
-          휴먼메이크허브는,<br />
-          당신의 <span style={{ color: "#ff3f3f" }}>팀</span>입니다
-        </>
-      ),
-      desc: (
-        <>
-          각자의 전문성이 하나로 모여<br />
-          완성도 높은 결과를 만들어냅니다.
-        </>
-      ),
-      frameClass: "hero_frame_1",
-    },
-    {
-      title: (
-        <>
-          한 번에 하나의 <span style={{ color: "#ff3f3f" }}>프로젝트</span>,<br />
-          진정성 있는 몰입
-        </>
-      ),
-      desc: (
-        <>
-          우리는 수많은 일보다<br />
-          단 하나의 약속에 집중합니다.
-        </>
-      ),
-      frameClass: "hero_frame_2",
-    },
-    {
-      title: (
-        <>
-          좋은 <span style={{ color: "#ff3f3f" }}>협업</span>은<br />
-          좋은 사람이 만나는 일입니다
-        </>
-      ),
-      desc: (
-        <>
-          기술보다 먼저, 사람을 믿고<br />
-          함께할 수 있는 문화를 만듭니다.
-        </>
-      ),
-      frameClass: "hero_frame_3",
-    },
-    {
-      title: (
-        <>
-          우리는<br />
-          <span style={{ color: "#ff3f3f" }}>과정</span>을 소중히 여깁니다
-        </>
-      ),
-      desc: (
-        <>
-          함께 만든 과정이 있어야<br />
-          결과물에 담긴 의미도 깊어집니다.
-        </>
-      ),
-      frameClass: "hero_frame_4",
-    },
-  ];
-
-
-  const [activeIndex, setActiveIndex] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const handleToggle = (item) => {
     setSelectedItems((prev) =>
@@ -151,7 +74,6 @@ export default function HomePage() {
       return;
     }
 
-    // 모든 조건 통과 시
     const formValues = {};
     for (let [key, value] of formData.entries()) {
       formValues[key] = value;
@@ -160,15 +82,15 @@ export default function HomePage() {
     formValues["category"] = JSON.stringify(selectedItems);  // ⭐ 핵심
 
     console.log("formValues", formValues);
-    
-    try{
-      await axios.post(`${BASE_URL}/user/askSend`, 
+
+    try {
+      await axios.post(`${BASE_URL}/user/askSend`,
         formValues
       );
-      
+
       alert("🎉 문의가 성공적으로 접수되었습니다!");
 
-    } catch(err) {
+    } catch (err) {
       console.log(err.response?.data?.detail || "문의사항전송중 오류");
     }
   };
@@ -182,7 +104,7 @@ export default function HomePage() {
           position: "fixed",
           top: 0,
           width: "100%",
-          backgroundColor: "#ffffff", // 밝고 선명한 배경
+          backgroundColor: "#ffffff",
           zIndex: 1200,
           boxShadow: "0 4px 20px -4px rgba(0, 0, 0, 0.5)",
           px: { xs: 2, md: 4 },
@@ -224,11 +146,11 @@ export default function HomePage() {
             component="ul"
             sx={{
               display: { xs: "none", md: "flex" },
-              position: "absolute",             // ✅ 절대 위치
-              left: "50%",                      // ✅ 가운데로 이동
-              transform: "translateX(-50%)",   // ✅ 정확한 가운데 정렬
+              position: "absolute",
+              left: "57%",
+              transform: "translateX(-50%)",
               listStyle: "none",
-              gap: 4,
+              gap: 5,
               m: 0,
               p: 0
             }}
@@ -246,20 +168,43 @@ export default function HomePage() {
                     borderRadius: 8,
                     transition: "all 0.3s ease"
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#fff";
-                    e.currentTarget.style.backgroundColor = "#1976d2";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#444";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
                 >
                   {item.label}
                 </a>
               </li>
             ))}
+            {/* 로그인/회원가입 버튼 */}
+            <li>
+              <Box sx={{
+                display: "flex", justifyContent: "center", gap: 5, marginLeft: "10px", marginRight: "30px", fontSize: 16,
+                fontWeight: 600, color: "#1976d2", whiteSpace: "nowrap"
+              }}>
+                {localStorage.getItem("token") ? (
+                  <a
+                   style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      navigate("/");
+                      window.location.reload();
+                    }}
+                  >
+                    LOG-OUT
+                  </a>
+                ) : (
+                  <>
+                    <a style={{ cursor: "pointer" }} onClick={() => navigate("/login")}>
+                      LOG-IN
+                    </a>
+                    <a style={{ cursor: "pointer" }} onClick={() => navigate("/register")}>
+                      REGISTER
+                    </a>
+                  </>
+                )}
+              </Box>
+            </li>
           </Box>
+
+
 
           {/* 모바일 햄버거 버튼 */}
           <Box sx={{ display: { xs: "block", md: "none" } }}>
@@ -388,59 +333,8 @@ export default function HomePage() {
       </section>
 
       {/* Hero Section */}
-      < section className="hero_wrap" style={{ paddingTop: 30, backgroundColor: "#f5f5f5" }
-      }>
-        <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          slidesPerView={"auto"}
-          centeredSlides={true}
-          spaceBetween={30}
-          loop={true}
-          autoplay={{ delay: 4500, disableOnInteraction: false }}
-          pagination={{ clickable: true }}
-          navigation
-          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-          style={{ paddingBottom: 60 }}
-        >
-          {heroSlides.map((slide, index) => {
-            const isActive = index === activeIndex;
-
-            const activeBg = "#ffb300";     // 메인: 안정된 Amber 600
-            const inactiveBg = "#fef3c7";   // 연한 크림/노랑
-            const activeText = "#212121";   // 짙은 회색 (눈에 잘 띔)
-            const inactiveText = "#666666"; // 흐린 회색 (덜 강조됨)
-
-            return (
-              <SwiperSlide
-                key={index}
-                style={{
-                  width: isMobile ? "100%" : "340px",
-                  backgroundColor: isActive ? activeBg : inactiveBg,
-                  color: isActive ? activeText : inactiveText,
-                  borderRadius: 12,
-                  padding: "80px 80px",
-                  boxShadow: isActive
-                    ? "0 12px 32px rgba(0,0,0,0.3)"
-                    : "0 6px 20px rgba(0,0,0,0.15)",
-                  transition: "background-color 0.5s ease, color 0.5s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  textAlign: "center"
-                }}
-              >
-                <h3 style={{ fontSize: isMobile ? 30 : isTablet ? 30 : 32, marginBottom: 20, fontWeight: 700 }}>
-                  {slide.title}
-                </h3>
-                <p style={{ fontSize: isMobile ? 20 : isTablet ? 20 : 20, color: isActive ? "#dcdcdc" : "#999", lineHeight: 1.6 }}>
-                  {slide.desc}
-                </p>
-                <div className={`hero_frame_wrap ${slide.frameClass}`}><span /></div>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+      < section className="hero_wrap" >
+        <HeroSlider />
       </section >
 
       {/* SERVICE 1 Section */}
@@ -524,10 +418,10 @@ export default function HomePage() {
                   transition: "transform 0.3s, box-shadow 0.3s, border 0.3s",
                   border: "1.5px solid #e0e0e0",
                   cursor: "pointer",
-                  display: "flex",                  // ✅ 추가
-                  flexDirection: "column",         // ✅ 추가
-                  alignItems: "center",            // ✅ 추가
-                  textAlign: "center"              // ✅ 추가
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-6px)";
@@ -542,14 +436,14 @@ export default function HomePage() {
               >
                 {/* 아이콘 */}
                 <div style={{
-                  width: 72,                         // ✅ 키움
+                  width: 72,
                   height: 72,
                   borderRadius: "50%",
                   backgroundColor: "#1976d2",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 36,                      // ✅ 더 큼
+                  fontSize: 36,
                   marginBottom: 20,
                   color: "#fff"
                 }}>
@@ -558,11 +452,11 @@ export default function HomePage() {
 
                 {/* 제목 */}
                 <strong style={{
-                  fontSize: 20,                      // ✅ 키움
+                  fontSize: 20,
                   display: "block",
                   marginBottom: 16,
                   color: "#212121",
-                  fontWeight: 700                    // ✅ bold
+                  fontWeight: 700
                 }}>
                   {service.title}
                 </strong>
@@ -1049,115 +943,158 @@ export default function HomePage() {
       </section>
 
       {/* CONTACT Section */}
-      <section className="contact_wrap" id="contactSection" style={{ backgroundColor: "#ffb300", padding: "96px 24px" }}>
-        <div className="contact_inner" style={{ maxWidth: 900, margin: "auto" }}>
-          <div className="contact_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
-            <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
-            <strong style={{ fontSize: 32, color: "#111", fontWeight: "bold" }}>HumanMakeHub에 문의하기</strong>
-          </div>
-
-          <div className="contact_main_wrap">
-            <form id="askSend">
-              <Grid container spacing={3}>
-                {/* 고객정보 */}
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="이름" name="username" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="회사명" name="company" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="연락처" name="phone" placeholder="010-1234-5678" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="소속/직책" name="position" variant="outlined" sx={{ backgroundColor: "#fff" }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField fullWidth label="이메일" name="email" variant="outlined" required sx={{ backgroundColor: "#fff" }} />
-                </Grid>
-
-                {/* 문의항목 체크 */}
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    문의 항목 (중복 선택 가능)
-                  </Typography>
-                  <Grid container spacing={1}>
-                    {["웹 개발", "앱 개발", "데이터 분석", "AI솔루션", "전산시스템 구축", "쇼핑몰 구축", "플랫폼 구축", "기타"].map((item, idx) => {
-                      const isSelected = selectedItems.includes(item);
-                      return (
-                        <Grid item xs={6} sm={4} md={3} key={idx}>
-                          <Chip
-                            label={item}
-                            variant={isSelected ? "filled" : "outlined"}
-                            color={isSelected ? "primary" : "default"}
-                            clickable
-                            onClick={() => handleToggle(item)}
-                            sx={{
-                              width: "100%", // ✅ 그리드 셀 안에서 꽉 채움
-                              justifyContent: "center",
-                              backgroundColor: isSelected ? "#1976d2" : "#fff",
-                              color: isSelected ? "#fff" : "#1976d2",
-                              border: isSelected ? "none" : "1px solid #1976d2",
-                              fontWeight: 500
-                            }}
-                          />
-                        </Grid>
-                      );
-                    })}
-                  </Grid>
-
-                </Grid>
-
-                {/* 내용 */}
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    문의 내용 *
-                  </Typography>
-                  <TextField
-                    name="askMessage"
-                    fullWidth
-                    multiline
-                    minRows={6}
-                    placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
-                    variant="outlined"
-                    sx={{ backgroundColor: "#fff" }}
-                  />
-                </Grid>
-
-                {/* 개인정보 동의 */}
-                <Grid item xs={12}>
-                  <Box display="flex" alignItems="center">
-                    <input type="checkbox" id="privacy" required style={{ marginRight: 8 }} />
-                    <label htmlFor="privacy" style={{ fontSize: 14 }}>
-                      (필수) 개인정보 수집 및 이용방침에 동의합니다.
-                    </label>
-                  </Box>
-                </Grid>
-
-                {/* 제출 버튼 */}
-                <Grid item xs={12}>
-                  <Button
-                    type="button"  // ✅ 새로고침 방지!
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      backgroundColor: "#1976d2",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      padding: "12px 0",
-                      '&:hover': { backgroundColor: "#1565c0" }
-                    }}
-                    onClick={() => askSend()}
-                  >
-                    문의하기
-                  </Button>
-                </Grid>
-              </Grid>
-              <FloatingQRCode />
-            </form>
-          </div>
+      <section className="contact_wrap" id="contactSection" style={{ backgroundColor: "#ffb300", padding: "96px 0", display: "column", justifyContent: "center", alignItems: "center" }}>
+        <div className="contact_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
+          <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
+          <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold" }}>HumanMakeHub에 문의하기</strong>
         </div>
+        <form id="askSend">
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Box>
+              {/* 고객정보 */}
+              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>
+              <TextField fullWidth name="username" variant="outlined" required
+                sx={{
+                  backgroundColor: "#fff", width: "500px",
+                  borderRadius: "5px",
+                  "& .MuiInputBase-root": { height: 45, },
+                  "& input": { padding: "0 12px", },
+                }} />
+
+              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>회사명*</Typography>
+              <TextField fullWidth name="company" variant="outlined" required
+                sx={{
+                  backgroundColor: "#fff", width: "500px",
+                  borderRadius: "5px",
+                  "& .MuiInputBase-root": { height: 45, },
+                  "& input": { padding: "0 12px", },
+                }} />
+
+              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>연락처*</Typography>
+              <TextField fullWidth name="phone" placeholder="010-1234-5678" variant="outlined" required
+                sx={{
+                  backgroundColor: "#fff", width: "500px",
+                  borderRadius: "5px",
+                  "& .MuiInputBase-root": { height: 45, },
+                  "& input": { padding: "0 12px", },
+                }} />
+
+              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>소속/직책</Typography>
+              <TextField fullWidth name="position" variant="outlined"
+                sx={{
+                  backgroundColor: "#fff", width: "500px",
+                  borderRadius: "5px",
+                  "& .MuiInputBase-root": { height: 45, },
+                  "& input": { padding: "0 12px", },
+                }} />
+
+              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이메일*</Typography>
+              <TextField fullWidth name="email" variant="outlined" required
+                sx={{
+                  backgroundColor: "#fff", width: "500px",
+                  borderRadius: "5px",
+                  "& .MuiInputBase-root": { height: 45, },
+                  "& input": { padding: "0 12px", },
+                }} />
+
+
+              {/* 문의항목 체크 */}
+              <Box sx={{ mt: 4, mb: 4 }}>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ fontSize: "17px" }}>
+                  문의 항목 (중복 선택 가능)
+                </Typography>
+
+                <Box
+                  sx={{
+                    width: "520px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1.5,
+                  }}
+                >
+                  {["웹 개발", "앱 개발", "데이터 분석", "AI솔루션", "전산시스템 구축", "쇼핑몰 구축", "플랫폼 구축", "기타"].map((item, idx) => {
+                    const isSelected = selectedItems.includes(item);
+                    return (
+                      <Chip
+                        key={idx}
+                        label={item}
+                        clickable
+                        variant={isSelected ? "filled" : "outlined"}
+                        color={isSelected ? "primary" : "default"}
+                        onClick={() => handleToggle(item)}
+                        sx={{
+                          px: 2,
+                          py: 1,
+                          fontWeight: 500,
+                          fontSize: "14px",
+                          backgroundColor: isSelected ? "#1976d2" : "#fff",
+                          color: isSelected ? "#fff" : "#1976d2",
+                          border: isSelected ? "none" : "1px solid #1976d2",
+
+                          // ⭐ 확실하게 hover 스타일 덮기
+                          "&:hover": {
+                            backgroundColor: `${isSelected ? "#1976d2" : "#fff"} !important`,
+                          }
+                        }}
+                      />
+                    );
+                  })}
+                </Box>
+              </Box>
+
+              {/* 내용 */}
+
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ fontSize: "17px" }}>
+                문의 내용 *
+              </Typography>
+              <TextField
+                name="askMessage"
+                multiline
+                minRows={8}
+                placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
+                variant="outlined"
+                sx={{ backgroundColor: "#fff", width: "500px", borderRadius: "5px", }}
+              />
+
+              {/* 개인정보 동의 */}
+              <Box display="flex" alignItems="center" sx={{ marginTop: "8px" }}>
+                <input type="checkbox" id="privacy" required style={{ marginRight: 8 }} />
+                <label htmlFor="privacy" style={{ fontSize: 14 }}>
+                  (필수) 개인정보 수집 및 이용방침에 동의합니다.
+                </label>
+              </Box>
+            </Box>
+
+            {/* 제출 버튼 */}
+            <Button
+              type="button"  // ✅ 새로고침 방지!
+              variant="contained"
+              size="large"
+              sx={{
+                width: "200px",
+                marginTop: "30px",
+                backgroundColor: "#1976d2",
+                color: "#fff",
+                fontWeight: "bold",
+                padding: "12px 0",
+                '&:hover': { backgroundColor: "#1565c0" }
+              }}
+              onClick={() => askSend()}
+            >
+              문의하기
+            </Button>
+          </Box>
+          <FloatingQRCode />
+        </form>
+
       </section>
 
       {/* FOOTER Section */}
@@ -1165,102 +1102,25 @@ export default function HomePage() {
         <div className="footer_inner" style={{ maxWidth: 1200, margin: "auto" }}>
 
           {/* 주소 및 회사 정보 */}
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="body2" sx={{ fontSize: 14, color: "#aaa", mb: 0.5 }}>
-              서울특별시 영등포구 영중로 8길 6, 401호(영등포동, 성남빌딩)
-            </Typography>
-            <Typography variant="body2" sx={{ fontSize: 14, color: "#aaa" }}>
-              대표자 박춘보 / 사업자등록번호 000-00-00000
-            </Typography>
-          </Box>
 
-          {/* 연락처 및 이메일 */}
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 4,
-              alignItems: "center",
-              mb: 4,
-              fontSize: 14
-            }}
-          >
-            <Typography variant="body2">
-              📞{" "}
-              <a href="tel:070-1234-5678" style={{ color: "#ffb300", textDecoration: "none", fontWeight: 500 }}>
-                070-1234-5678
-              </a>
-            </Typography>
-            <Typography variant="body2">
-              ✉️{" "}
-              <a href="mailto:contact@humanmakehub.com" style={{ color: "#ffb300", textDecoration: "none", fontWeight: 500 }}>
-                contact@humanmakehub.com
-              </a>
-            </Typography>
-          </Box>
-
-          {/* 로그인/회원가입 버튼 */}
-          <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 5 }}>
-            {localStorage.getItem("token") ? (
-              <>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    color: "#ccc",
-                    borderColor: "#444",
-                    '&:hover': { backgroundColor: "#1976d2", borderColor: "#1976d2", color: "#fff" }
-                  }}
-                  onClick={() => navigate("/mypage/profile")}
-                >
-                  내 프로필
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    color: "#ccc",
-                    borderColor: "#444",
-                    '&:hover': { backgroundColor: "#ffb300", borderColor: "#ffb300", color: "#1b1b1b" }
-                  }}
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    navigate("/");
-                    window.location.reload();
-                  }}
-                >
-                  로그아웃
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    color: "#ccc",
-                    borderColor: "#444",
-                    '&:hover': { backgroundColor: "#1976d2", borderColor: "#1976d2", color: "#fff" }
-                  }}
-                  onClick={() => navigate("/login")}
-                >
-                  로그인
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    color: "#ccc",
-                    borderColor: "#444",
-                    '&:hover': { backgroundColor: "#ffb300", borderColor: "#ffb300", color: "#1b1b1b" }
-                  }}
-                  onClick={() => navigate("/register")}
-                >
-                  회원가입
-                </Button>
-              </>
-            )}
-          </Box>
+          <Typography variant="body2" sx={{ fontSize: 14, color: "#aaa", mb: 0.5 }}>
+            서울특별시 영등포구 영중로 8길 6, 401호(영등포동, 성남빌딩)
+          </Typography>
+          <Typography variant="body2" sx={{ fontSize: 14, color: "#aaa" }}>
+            대표자 박춘보 / 사업자등록번호 000-00-00000
+          </Typography>
+          <Typography variant="body2">
+            📞{" "}
+            <a href="tel:070-1234-5678" style={{ color: "#ccc", textDecoration: "none", fontWeight: 500 }}>
+              070-1234-5678
+            </a>
+          </Typography>
+          <Typography variant="body2">
+            ✉️{" "}
+            <a href="mailto:contact@humanmakehub.com" style={{ color: "#ccc", textDecoration: "none", fontWeight: 500 }}>
+              contact@humanmakehub.com
+            </a>
+          </Typography>
 
           {/* 저작권 / 제작사 */}
           <Box
@@ -1278,11 +1138,6 @@ export default function HomePage() {
             <Typography variant="body2">
               ⓒ {new Date().getFullYear()} <strong>HumanMakeHub</strong>. All rights reserved.
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="body2">MADE BY</Typography>
-              <img src="/logoicon.png" alt="로고" style={{ height: 16 }} />
-              <Typography variant="body2" sx={{ fontWeight: 600, color: "#ffb300" }}>HumanMakeHub</Typography>
-            </Box>
           </Box>
         </div>
       </footer>

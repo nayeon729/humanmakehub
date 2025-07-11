@@ -43,7 +43,7 @@ export default function SidebarLayout({ role }) {
         </Typography>
         <List>
           {menus.map((item, index) => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive = location.pathname === item.path;
             return (
               <ListItem key={index} disablePadding>
                 <ListItemButton

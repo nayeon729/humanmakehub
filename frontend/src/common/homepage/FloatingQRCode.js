@@ -1,7 +1,7 @@
 // ✅ FloatingQRCode.jsx
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import qrImage from "../assets/kakao_qr.png";  // QR 이미지 경로 맞춰줘!
+import qrImage from "../../assets/kakao_qr.png";  // QR 이미지 경로 맞춰줘!
 
 export default function FloatingQRCode() {
     return (

@@ -63,68 +63,71 @@ export default function LoginPage() {
   };
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
-          로그인
-        </Typography>
-
-        <TextField
-          fullWidth
-          margin="normal"
-          label="아이디"
-          variant="outlined"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-
-        <TextField
-          fullWidth
-          margin="normal"
-          label="비밀번호"
-          type="password"
-          variant="outlined"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-          onClick={handleLogin}
-        >
-          로그인하기
-        </Button>
-
-        <Typography
-          variant="body2"
-          sx={{ mt: 2, textAlign: "center", cursor: "pointer", color: "primary.main" }}
-          onClick={() => navigate("/register")}
-        >
-          아직 계정이 없으신가요? 회원가입
-        </Typography>
-        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
-          <Typography
-            variant="body2"
-            sx={{ mt: 2, textAlign: "center", cursor: "pointer", color: "primary.main" }}
-            onClick={() => navigate("/idFind")}
-          >
-            아이디찾기 
+    <Box
+      sx={{
+        background: "#f0f4f8",
+        minHeight: "92vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Container component="main" maxWidth="sm">
+        <Paper elevation={3} sx={{ borderRadius: 4, p: 4, mb:10 }}>
+          <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+            로그인
           </Typography>
-           &nbsp; | 
-          <Typography
-            variant="body2"
-            sx={{ mt: 2, textAlign: "center", cursor: "pointer", color: "primary.main" }}
-            onClick={() => navigate("/pwFind")}
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="아이디"
+            variant="outlined"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="비밀번호"
+            type="password"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, mb: 2}}
+            onClick={handleLogin}
           >
-            비밀번호재설정
-          </Typography>
-        </Stack>
-      </Paper>
-    </Container>
+            로그인하기
+          </Button>
+
+          <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+            <Typography
+              variant="body2"
+              sx={{textAlign: "center", cursor: "pointer", color: "primary.main" }}
+              onClick={() => navigate("/idFind")}
+            >
+              아이디 찾기
+            </Typography>
+             <Typography sx={{color: "primary.main"}}>|</Typography>
+            <Typography
+              variant="body2"
+              sx={{ textAlign: "center", cursor: "pointer", color: "primary.main" }}
+              onClick={() => navigate("/pwFind")}
+            >
+              비밀번호 재설정
+            </Typography>
+          </Stack>
+        </Paper>
+      </Container>
+    </Box>
   );
 }
