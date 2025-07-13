@@ -17,6 +17,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useParams, useSearchParams } from "react-router-dom";
 
 
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function MemberUserInfo() {
@@ -109,7 +110,7 @@ function ReadOnlyView({ userInfo }) {
   return (
 
     <Box sx={{ flex: 1, p: 3 }}>
-      <Box sx={{ display: "flex", gap:1 }}>
+      <Box sx={{ display: "flex", gap: 1 }}>
         <AccountCircleIcon sx={{ fontSize: 40 }} />
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           회원정보
@@ -210,10 +211,14 @@ function EditableView({ userInfo, myId }) {
 
   return (
     <>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-        회원정보
-      </Typography>
+
+      <Box sx={{ display: "flex", gap: 1 }}>
+        <AccountCircleIcon sx={{ fontSize: 40 }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          회원정보
+        </Typography>
+      </Box>
+
       <Paper sx={{
         p: 3,
         mt: 2,
