@@ -43,6 +43,20 @@ const MemberProjectList = () => {
       });
   }
 
+
+  const handleDelete = (portfolio_id) => {
+    axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`)
+      .then(res => {
+        console.log("res", res);
+        console.log("res.data", res.data);
+        getPortfolio();
+      })
+      .catch(err => {
+        console.error(`${portfolio_id}아이디 포트폴리오 삭제 실패`, err);
+        setLoading(false);
+      });
+  }
+
   if (loading) return <Typography variant="h6">로딩 중...</Typography>;
 
   return (
@@ -112,7 +126,7 @@ const MemberProjectList = () => {
                             <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
                               수정
                             </Button>
-                            <Button onClick={() => handleDelete(post.channel_id)}>
+                            <Button onClick={() => handleDelete(post.portfolio_id)}>
                               삭제
                             </Button>
                           </Stack>

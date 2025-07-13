@@ -1382,6 +1382,38 @@ def portfolio_Update(portfolio_id:int, data:Portfolio ,user: dict = Depends(get_
         conn.close()
 
 
+# ---------- 포트폴리오삭제 ----------
+@router.post("/portfolioDelete/{portfolio_id}")
+def portfolio_Update(portfolio_id:int, user: dict = Depends(get_current_user)):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 수정할 수 있습니다.")
+    
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+
+            # 1. 포트폴리오 기본 정보 업데이트
+            cursor.execute("""
+                UPDATE portfolio
+                SET update_id = %s, update_dt = NOW(), del_yn = 'Y'
+                WHERE portfolio_id = %s
+            """, (user["user_id"], portfolio_id))
+
+            # 1-1. 포트폴리오 기술도 같이 삭제
+            cursor.execute("""
+                UPDATE portfolio_skill
+                SET update_id = %s, update_dt = NOW(), del_yn = 'Y'
+                WHERE portfolio_id = %s
+            """, (user["user_id"], portfolio_id))
+
+        conn.commit()
+        return {"message": "포트폴리오 삭제완료"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
         
 @router.get("/users/{user_id}")
 def get_user_info(user_id: str, user: dict = Depends(get_current_user)):
