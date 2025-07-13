@@ -45,6 +45,7 @@ const MemberProjectList = () => {
 
 
   const handleDelete = (portfolio_id) => {
+    const token = localStorage.getItem("token");
     axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
               })
