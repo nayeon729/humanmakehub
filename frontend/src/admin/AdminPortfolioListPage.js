@@ -45,6 +45,9 @@ const MemberProjectList = () => {
 
 
   const handleDelete = (portfolio_id) => {
+    const confirmDelete = window.confirm("정말 이 포트폴리오를 삭제하시겠습니까?");
+    if (!confirmDelete) return; // ❌ 아니오 누르면 중단
+
     const token = localStorage.getItem("token");
     axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
