@@ -156,8 +156,8 @@ def update_user_info(payload: dict = Body(...), user: dict = Depends(get_current
                     if is_fresher == 'Y':
                         years = 0
                     else:
-                        raw_exp = str(skill.get("experience", "0"))
-                        years = int(raw_exp.replace("년", "")) if "년" in raw_exp else int(raw_exp)
+                        raw_exp = (skill.get("years", "0"))
+                        years = (raw_exp.replace("년", "")) if "년" in raw_exp else (raw_exp)
 
                     cursor.execute(sql, (
                         user["user_id"],
@@ -719,3 +719,44 @@ def get_notice_detail(notice_id: int, user: dict = Depends(get_current_user)):
         return result
     finally:
         conn.close()
+        
+@router.get("/user/tech-stacks")
+def get_tech_stacks():
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 자식 코드만 가져오기 (PARENT_CODE가 NULL 아닌 것만)  React , Node.js 등등
+            sql = """
+                SELECT code_id, code_name, parent_code
+                FROM common_code
+                WHERE group_id = 'TECH_STACK' AND parent_code IS NOT NULL
+                ORDER BY code_id ASC
+            """
+            cursor.execute(sql)
+            child_codes = cursor.fetchall()
+
+            # 부모 코드도 같이 가져오기  프론트엔드, 백엔드 등등
+            cursor.execute("""
+                SELECT code_id, code_name
+                FROM common_code
+                WHERE group_id = 'TECH_STACK' AND parent_code IS NULL
+                ORDER BY code_id ASC
+            """)
+            parent_codes = cursor.fetchall()
+
+        # 🧠 분류용 딕셔너리로 정리
+        result = {}
+        parent_map = {row["code_id"]: row["code_name"] for row in parent_codes}
+        for item in child_codes:
+            parent_name = parent_map.get(item["parent_code"], "기타")
+            if parent_name not in result:
+                result[parent_name] = []
+            result[parent_name].append({
+                "label": item["code_name"],
+                "code_id": item["code_id"],
+                "parent_code": item["parent_code"]
+            })
+
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
