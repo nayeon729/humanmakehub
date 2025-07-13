@@ -45,7 +45,9 @@ const MemberProjectList = () => {
 
 
   const handleDelete = (portfolio_id) => {
-    axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`)
+    axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              })
       .then(res => {
         console.log("res", res);
         console.log("res.data", res.data);
