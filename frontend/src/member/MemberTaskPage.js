@@ -6,6 +6,7 @@ import DevIcon from "../assets/dev-icon.png";
 import AlertCard from "../components/AlertCard";
 
 export default function MemberDashboard() {
+  
   const [stats, setStats] = useState({
     user: 0,
     project: 0,
@@ -23,7 +24,7 @@ export default function MemberDashboard() {
   useEffect(() => {
     const fetchAlerts = async () => {
       const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
-      const res = await axios.get("http://127.0.0.1:8000/common/alerts", {
+      const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlerts(res.data);

@@ -17,7 +17,7 @@ export default function ClientDashboard() {
   useEffect(() => {
     const fetchAlerts = async () => {
       const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
-      const res = await axios.get("http://127.0.0.1:8000/common/alerts", {
+      const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlerts(res.data);

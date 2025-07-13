@@ -6,6 +6,8 @@ import Folder from "../assets/folder.png"
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -17,7 +19,7 @@ const ClientProjectList = () => {
         }
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/client/list",  // 프로젝트 목록 요청
+          `${BASE_URL}/client/list`,  // 프로젝트 목록 요청
           {},
           {
             headers: {

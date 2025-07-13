@@ -10,12 +10,14 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
   const [items, setItems] = useState([]); 
   const [selected, setSelected] = useState(""); 
   const [isLoading, setIsLoading] = useState(false); 
+  
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
    useEffect(() => {
     if (!groupId) return;
     setIsLoading(true);
     axios
-      .get(`http://127.0.0.1:8000/common/codes/${groupId}`)
+      .get(`${BASE_URL}/common/codes/${groupId}`)
       .then((res) => {
         const formattedItems = res.data.map((item) => ({
           value: item.code_id,

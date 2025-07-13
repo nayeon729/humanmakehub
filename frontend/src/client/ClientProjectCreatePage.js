@@ -11,6 +11,7 @@ import Folder from "../assets/folder.png"
 
 const ClientUserInfo = () => {
 
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     projectName: "",
     projectType: "",
@@ -37,7 +38,7 @@ const ClientUserInfo = () => {
         budget: formData.budget.replace(/[^0-9]/g, ""), // '원'을 제거
       };
 
-      const response = await axios.post("http://127.0.0.1:8000/client/projects", formData, {
+      const response = await axios.post(`${BASE_URL}/client/projects`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // JWT 토큰을 헤더에 포함시킴
         },
