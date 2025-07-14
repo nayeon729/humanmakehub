@@ -26,7 +26,7 @@ export default function ClientUserEditPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await axios.get(`${BASE_URL}/client/userinfo`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -43,7 +43,7 @@ export default function ClientUserEditPage() {
 
   const handleSubmit = async (password) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       // ✅ 먼저 비밀번호 확인
       await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
         headers: { Authorization: `Bearer ${token}` }

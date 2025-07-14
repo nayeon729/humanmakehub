@@ -27,12 +27,12 @@ export default function ProjectChannelCommonPage() {
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-  const id = localStorage.getItem("user_id");
+  const id = sessionStorage.getItem("user_id");
   if (id) setMyUserId(id);
 }, []);
   const fetchPosts = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/project/common/${project_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -52,7 +52,7 @@ export default function ProjectChannelCommonPage() {
       try {
         const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/projecttitle`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setProjectTitle(res.data.title);
@@ -68,7 +68,7 @@ export default function ProjectChannelCommonPage() {
      const confirmed = window.confirm("정말 삭제하시겠습니까?");
   if (!confirmed) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });

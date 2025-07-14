@@ -35,7 +35,7 @@ export default function MemberUserInfo() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         let res;
 
         if (user_id && isReadonly) {
@@ -69,7 +69,7 @@ export default function MemberUserInfo() {
   const handleWithdraw = async (password) => {
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       // ✅ 먼저 비밀번호 확인
       await axios.post(`${BASE_URL}/member/verify-password`, { password }, {
@@ -82,7 +82,7 @@ export default function MemberUserInfo() {
       });
 
       alert("탈퇴가 완료되었습니다.");
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
       alert("비밀번호가 일치하지 않거나 오류 발생");
@@ -190,7 +190,7 @@ function EditableView({ userInfo, myId }) {
 
   const handleWithdraw = async (password) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       await axios.post(`${BASE_URL}/member/verify-password`, { password }, {
         headers: { Authorization: `Bearer ${token}` },
@@ -201,7 +201,7 @@ function EditableView({ userInfo, myId }) {
       });
 
       alert("탈퇴가 완료되었습니다.");
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
       alert("비밀번호가 일치하지 않거나 오류 발생");

@@ -29,7 +29,7 @@ const ClientUserInfo = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
 
       // clean된 데이터로 설정
       const cleanedFormData = {

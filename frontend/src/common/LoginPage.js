@@ -24,7 +24,7 @@ export default function LoginPage() {
       }));
 
       const token = response.data.access_token;
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("token", token);
 
       // 2. 사용자 정보 요청 (/me)
       const userRes = await axios.get(`${BASE_URL}/user/me`, {
@@ -32,9 +32,9 @@ export default function LoginPage() {
       });
 
       const role = userRes.data.role;
-      localStorage.setItem("role", role);
-      localStorage.setItem("nickname", userRes.data.nickname || "");
-      localStorage.setItem("user_id", userRes.data.user_id || "");
+      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("nickname", userRes.data.nickname || "");
+      sessionStorage.setItem("user_id", userRes.data.user_id || "");
 
       // 3. ✅ 역할별 메인 화면 리다이렉트
       if (role === "R03") {

@@ -21,7 +21,7 @@ export default function AdminNoticeListPage() {
 
     const fetchNotices = async (page = 1, keyword = "") => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/notices`, {
                 params: { page, keyword },
                 headers: { Authorization: `Bearer ${token}` },
@@ -34,7 +34,7 @@ export default function AdminNoticeListPage() {
     };
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
+        const role = sessionStorage.getItem("role");
         setUserRole(role);
     }, []);
     useEffect(() => {

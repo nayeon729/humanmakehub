@@ -5,18 +5,26 @@ import { Box, Typography, Button, Paper, Grid, Chip, Skeleton, Stack, LinearProg
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertCard from "../components/AlertCard";
+import Folder from "../assets/folder.png"
 
 export default function ClientDashboard() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-    const [alerts, setAlerts] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+
+  const categoryColors = {
+    project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
+    ask: "#ff9800",   // 주황 (예: 문의사항 알림)
+    chat: "#ff9800",   // 주황 (예: 문의사항 알림)
+    default: "#9e9e9e",   // 회색 (기본)
+  };
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchAlerts = async () => {
-      const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
+      const token = sessionStorage.getItem("token"); // 또는 sessionStorage.getItem()
       const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -27,7 +35,7 @@ export default function ClientDashboard() {
 
   const handleCloseAlert = async (alertId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/common/alerts/${alertId}/delete`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -40,21 +48,25 @@ export default function ClientDashboard() {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        📂 고객 대시보드
+        🛡️ 고객 대시보드
       </Typography>
 
-      {alerts.map((alert) => (
-              <AlertCard
-                key={alert.alert_id}
-                title={alert.title}
-                description={alert.message}
-                confirmText="바로가기"
-                onConfirm={() => window.location.href = alert.link}
-                onClose={() => handleCloseAlert(alert.alert_id)}
-              />
-            ))}
-     
-       
+      {alerts.map((alert) => {
+        const color = categoryColors[alert.category] || categoryColors.default;
+        return(
+        <AlertCard
+          key={alert.alert_id}
+          title={alert.title}
+          description={alert.message}
+          confirmText="바로가기"
+          onConfirm={() => window.location.href = alert.link}
+          onClose={() => handleCloseAlert(alert.alert_id)}
+          color={color}
+        />
+        )
+      })}
+
+
     </Box>
   );
 }

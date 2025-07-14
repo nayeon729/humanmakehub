@@ -29,7 +29,7 @@ export default function ProjectChannelUpdatePage() {
     }, [members]);
     const fetchChannel = async (channel_id) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/projectchannel/${channel_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -45,7 +45,7 @@ export default function ProjectChannelUpdatePage() {
     useEffect(() => {
         const fetchMembers = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = sessionStorage.getItem("token");
                 const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/members`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -64,7 +64,7 @@ export default function ProjectChannelUpdatePage() {
             return;
         }
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             await axios.put(`${BASE_URL}/admin/projectchannel/${channel_id}/update`, {
                 title,
                 user_id: userId,
@@ -86,7 +86,7 @@ export default function ProjectChannelUpdatePage() {
             try {
                 const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/projecttitle`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
                     },
                 });
                 setProjectTitle(res.data.title);

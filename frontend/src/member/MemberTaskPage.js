@@ -6,7 +6,7 @@ import DevIcon from "../assets/dev-icon.png";
 import AlertCard from "../components/AlertCard";
 
 export default function MemberDashboard() {
-  
+
   const [stats, setStats] = useState({
     user: 0,
     project: 0,
@@ -23,7 +23,7 @@ export default function MemberDashboard() {
 
   useEffect(() => {
     const fetchAlerts = async () => {
-      const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
+      const token = sessionStorage.getItem("token"); // 또는 sessionStorage.getItem()
       const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -35,7 +35,7 @@ export default function MemberDashboard() {
 
   const handleCloseAlert = async (alertId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/common/alerts/${alertId}/delete`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -50,23 +50,22 @@ export default function MemberDashboard() {
 
 
       <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-        개발자 대시보드
+        🛡️ 개발자 대시보드
       </Typography>
 
       {alerts.map((alert) => {
         const color = categoryColors[alert.category] || categoryColors.default;
 
         return (
-        <AlertCard
-          key={alert.alert_id}
-          title={alert.title}
-          description={alert.message}
-          confirmText="바로가기"
-          onConfirm={() => window.location.href = alert.link}
-          onClose={() => handleCloseAlert(alert.alert_id)}
-          color={color}
-        />
+          <AlertCard
+            key={alert.alert_id}
+            title={alert.title}
+            description={alert.message}
+            confirmText="바로가기"
+            onConfirm={() => window.location.href = alert.link}
+            onClose={() => handleCloseAlert(alert.alert_id)}
+            color={color}
+          />
         )
       })}
 

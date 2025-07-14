@@ -12,7 +12,7 @@ const ClientProjectList = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const token = localStorage.getItem("token");  // 토큰 가져오기
+        const token = sessionStorage.getItem("token");  // 토큰 가져오기
         if (!token) {
           alert("로그인 후 사용 가능합니다.");
           return;
@@ -83,7 +83,7 @@ const ClientProjectList = () => {
                   <Typography sx={{ fontSize: "20px", fontWeight: "600" }}>{project.title}</Typography>
                   <Typography ><strong>카테고리:</strong> {project.category_name}</Typography>
                   <Typography ><strong>예상 기간:</strong> {project.estimated_duration}일</Typography>
-                  <Typography ><strong>예산:</strong> {project.budget}원</Typography>
+                  <Typography ><strong>예산:</strong> {project.budget.toLocaleString()}원</Typography>
                   <Typography ><strong>요구사항</strong></Typography>
                   <Box sx={{border:"1px solid grey", borderRadius:"5px", height:"100px", padding:"5px"}}>
                     <Typography >{project.description}</Typography>

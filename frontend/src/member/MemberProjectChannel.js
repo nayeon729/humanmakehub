@@ -20,12 +20,12 @@ export default function MemberProjectChannel() {
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    const id = localStorage.getItem("user_id");
+    const id = sessionStorage.getItem("user_id");
     if (id) setMyUserId(id);
   }, []);
   const fetchPosts = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/member/project/common/${project_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -44,7 +44,7 @@ export default function MemberProjectChannel() {
       try {
         const res = await axios.get(`${BASE_URL}/member/project/${project_id}/projecttitle`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setProjectTitle(res.data.title);

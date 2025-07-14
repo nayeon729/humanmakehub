@@ -28,14 +28,14 @@ export default function ProjectChannelPmPage() {
   const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
 
   useEffect(() => {
-    const id = localStorage.getItem("user_id");
+    const id = sessionStorage.getItem("user_id");
     if (id) {
       setMyUserId(id);
     }
   }, []);
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(
         `${BASE_URL}/member/project/${project_id}/user/${user_id}/${teamMemberId}`,
         {
@@ -56,7 +56,7 @@ export default function ProjectChannelPmPage() {
     if(messages != []) {
       const messagesCheck = async () => {
           try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             await axios.post(`${BASE_URL}/common/alertsCheck`, {
               user_id: pmId,
               teamMemberId: teamMemberId,
@@ -85,7 +85,7 @@ export default function ProjectChannelPmPage() {
       try {
         const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${user_id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         console.log("project_id" , project_id);
@@ -109,7 +109,7 @@ export default function ProjectChannelPmPage() {
       try {
         const res = await axios.get(`${BASE_URL}/member/project/${project_id}/projecttitle`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setProjectTitle(res.data.title);
@@ -125,7 +125,7 @@ export default function ProjectChannelPmPage() {
     const confirmed = window.confirm("정말 삭제하시겠습니까?");
     if (!confirmed) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${BASE_URL}/member/projectchannel/${channel_id}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -20,7 +20,7 @@ export default function AdminAgreementPage() {
 
   const fetchAgreements = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/agreements`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -35,7 +35,7 @@ export default function AdminAgreementPage() {
   const handleStatusUpdate = async (id, newStatus) => {
     if (!window.confirm(`정말로 상태를 '${newStatus}'로 변경하시겠습니까?`)) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/agreements/${id}/status`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -49,7 +49,7 @@ export default function AdminAgreementPage() {
 
   const fetchLogs = async (agreementId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/agreements/${agreementId}/logs`, {
         headers: { Authorization: `Bearer ${token}` },
       });

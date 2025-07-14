@@ -24,7 +24,7 @@ export default function ClientProjectDetailPage() {
   const [newMessage, setNewMessage] = useState("");
 
   const BASE_URL = process.env.REACT_APP_API_URL;
-  const username = localStorage.getItem("username");
+  const username = sessionStorage.getItem("username");
 
   useEffect(() => {
     if (projectId) {
@@ -62,7 +62,7 @@ export default function ClientProjectDetailPage() {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${BASE_URL}/messages`, {
         sender_id: username,
         receiver_id: 0,

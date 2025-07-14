@@ -18,7 +18,7 @@ export default function ProjectChannel({ role }) {
 
   // 🔑 현재 로그인된 user_id 가져오기
   useEffect(() => {
-    const id = localStorage.getItem("user_id");
+    const id = sessionStorage.getItem("user_id");
     if (id) {
       setMyUserId(id);
     }
@@ -30,7 +30,7 @@ export default function ProjectChannel({ role }) {
         try {
         const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${myUserId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         console.log("res : ", res);
@@ -66,7 +66,7 @@ export default function ProjectChannel({ role }) {
         try {
           const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
             },
           });
           console.log("1대1 알림 갯수 : ", res.data.count);
@@ -102,7 +102,7 @@ export default function ProjectChannel({ role }) {
       axios
         .get(`${BASE_URL}/admin/project/${project_id}/members`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         })
         .then((res) => {

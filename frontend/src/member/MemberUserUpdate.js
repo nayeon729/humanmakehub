@@ -80,7 +80,7 @@ export default function MemberUserEditPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     axios
       .get(`${BASE_URL}/user/tech-stacks`, {
@@ -120,7 +120,7 @@ export default function MemberUserEditPage() {
       return alert("유효하지 않은 포트폴리오 주소입니다.");
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       await axios.post(
         `${BASE_URL}/member/verify-password`,

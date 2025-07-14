@@ -3,6 +3,11 @@ import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper } from
 import axios from "axios";
 import Combo from "../components/Combo";  // 공통코드용 Combo 컴포넌트
 import { useNavigate } from "react-router-dom";
+import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';
+import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';
+import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
+import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
+import Folder from "../assets/folder.png"
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -25,7 +30,7 @@ export default function AdminProjectCreatePage() {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       const cleanedFormData = {
         ...formData,
@@ -50,11 +55,17 @@ export default function AdminProjectCreatePage() {
 
   return (
     <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Typography variant="h5" mb={2}>관리자 프로젝트 생성</Typography>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <img src={Folder} alt="" style={{ height: "35px" }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>관리자 프로젝트 생성</Typography>
+      </Box>
       <Paper sx={{ p: 4, width: 600 }}>
         <Stack spacing={3}>
           {/* 1. 기본 정보 */}
-          <Typography variant="h6">1. 프로젝트 기본 정보를 입력해주세요.</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <LooksOneRoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>프로젝트의 기본 정보를 입력해주세요.</Typography>
+          </Box>
           <TextField
             label="프로젝트 이름"
             name="projectName"
@@ -72,7 +83,10 @@ export default function AdminProjectCreatePage() {
           />
 
           {/* 2. 설명 */}
-          <Typography variant="h6">2. 프로젝트에 대해 설명해주세요.</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+          </Box>
           <TextField
             label="프로젝트 설명"
             name="projectContent"
@@ -85,7 +99,10 @@ export default function AdminProjectCreatePage() {
           />
 
           {/* 3. 기간 & 금액 */}
-          <Typography variant="h6">3. 예산과 기간</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
+          </Box>
           <TextField
             label="예상 기간"
             name="estimatedDuration"
@@ -109,9 +126,11 @@ export default function AdminProjectCreatePage() {
           />
 
           {/* 4. 긴급도 */}
-          <Typography variant="h6">4. 의뢰한 클라이언트 ID와 프로젝트 긴급도</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Looks4RoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
+          </Box>
 
-          
           {/* 클라이언트 ID 입력 */}
           <TextField
             label="클라이언트 ID"

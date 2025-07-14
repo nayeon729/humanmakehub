@@ -179,11 +179,11 @@ export default function HomePage() {
                 display: "flex", justifyContent: "center", gap: 5, marginLeft: "10px", marginRight: "30px", fontSize: 16,
                 fontWeight: 600, color: "#1976d2", whiteSpace: "nowrap"
               }}>
-                {localStorage.getItem("token") ? (
+                {sessionStorage.getItem("token") ? (
                   <a
                    style={{ cursor: "pointer" }}
                     onClick={() => {
-                      localStorage.removeItem("token");
+                      sessionStorage.removeItem("token");
                       navigate("/");
                       window.location.reload();
                     }}

@@ -22,7 +22,7 @@ export default function AdminNoticeCreatePage() {
 
     const fetchNotice = async (notice_id) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/notices/${notice_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -41,7 +41,7 @@ export default function AdminNoticeCreatePage() {
             return;
         }
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             await axios.put(`${BASE_URL}/admin/notices/${noticeId}/update`, {
                 title,
                 target_type: targetType,

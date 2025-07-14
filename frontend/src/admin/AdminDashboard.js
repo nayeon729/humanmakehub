@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const response = await axios.get(`${BASE_URL}/admin/stats`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchAlerts = async () => {
-      const token = localStorage.getItem("token"); // 또는 sessionStorage.getItem()
+      const token = sessionStorage.getItem("token"); // 또는 sessionStorage.getItem()
       const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -56,7 +56,7 @@ export default function AdminDashboard() {
 
   const handleCloseAlert = async (alertId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/common/alerts/${alertId}/delete`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });

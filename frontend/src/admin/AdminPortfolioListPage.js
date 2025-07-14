@@ -23,7 +23,7 @@ const MemberProjectList = () => {
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    const id = localStorage.getItem("user_id");
+    const id = sessionStorage.getItem("user_id");
     if (id) setMyUserId(id);
 
     getPortfolio();
@@ -48,7 +48,7 @@ const MemberProjectList = () => {
     const confirmDelete = window.confirm("정말 이 포트폴리오를 삭제하시겠습니까?");
     if (!confirmDelete) return; // ❌ 아니오 누르면 중단
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
               })
@@ -68,7 +68,7 @@ const MemberProjectList = () => {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h4" fontWeight="bold">
           포트폴리오 목록
         </Typography>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>

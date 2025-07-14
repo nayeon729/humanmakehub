@@ -21,7 +21,7 @@ export default function AdminProjectManagementPage() {
 
   const fetchProjects = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       console.log("보내는 토큰:", token);
       const res = await axios.get(`${BASE_URL}/admin/projects`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -39,7 +39,7 @@ export default function AdminProjectManagementPage() {
 
   const handleAssignPM = async (project_id) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/admin/projects/assign-pm`, {
         project_id: project_id
       }, {

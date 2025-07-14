@@ -27,7 +27,7 @@ export default function ProjectChannelCreatePage() {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${BASE_URL}/member/projectchannel/${project_id}/create`, {
         title,
         content,
@@ -51,11 +51,11 @@ export default function ProjectChannelCreatePage() {
       try {
         const res = await axios.get(`${BASE_URL}/member/project/${project_id}/projecttitle`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setProjectTitle(res.data.title);
-        setUserId(localStorage.getItem("user_id"));
+        setUserId(sessionStorage.getItem("user_id"));
       } catch (err) {
         console.error("프로젝트 제목 불러오기 실패", err);
       }
@@ -70,7 +70,7 @@ export default function ProjectChannelCreatePage() {
         try {
           const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${userId}`, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
             },
           });
           console.log("res", res);
@@ -95,7 +95,7 @@ export default function ProjectChannelCreatePage() {
 
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(
         `${BASE_URL}/member/project/${project_id}/user/${userId}/${teamMemberId}`,
         {

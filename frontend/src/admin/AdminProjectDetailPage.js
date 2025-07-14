@@ -66,7 +66,7 @@ export default function AdminProjectDetailPage() {
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
         try {
-            const sender_id = localStorage.getItem("username") || "admin";
+            const sender_id = sessionStorage.getItem("username") || "admin";
             await axios.post(`${BASE_URL}/messages`, {
                 sender_id,
                 receiver_id: 0,
@@ -74,7 +74,7 @@ export default function AdminProjectDetailPage() {
                 content: newMessage,
             }, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    Authorization: `Bearer ${sessionStorage.getItem("token")}`
                 }
             });
             setNewMessage("");
@@ -175,7 +175,7 @@ export default function AdminProjectDetailPage() {
                         </Typography>
                     ) : (
                         messages.map((msg, idx) => {
-                            const isMine = msg.sender_id === localStorage.getItem("username");
+                            const isMine = msg.sender_id === sessionStorage.getItem("username");
                             const messageTime = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                             return (

@@ -19,7 +19,7 @@ const MemberProjectList = () => {
 
   const fetchInvitesAndConfirmed = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const [invRes, confirmedRes] = await Promise.all([
@@ -55,7 +55,7 @@ const MemberProjectList = () => {
 
   const handleRespond = async (requestId, accept) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(
         `${BASE_URL}/member/invite/${requestId}/respond`,
         { accept },

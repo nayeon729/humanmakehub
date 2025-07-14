@@ -11,6 +11,11 @@ import {
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Combo from "../components/Combo"; // 공통코드용 Combo 컴포넌트
+import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';
+import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';
+import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
+import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
+import Folder from "../assets/folder.png"
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -30,7 +35,7 @@ export default function AdminProjectUpdatePage() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await axios.get(`${BASE_URL}/admin/projects/${project_id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -59,7 +64,7 @@ export default function AdminProjectUpdatePage() {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const cleanedFormData = {
         ...formData,
         estimatedDuration: String(formData.estimatedDuration).replace(/[^0-9]/g, ""),
@@ -89,10 +94,16 @@ export default function AdminProjectUpdatePage() {
 
   return (
     <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Typography variant="h5" mb={2}>프로젝트 수정</Typography>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <img src={Folder} alt="" style={{ height: "35px" }} />
+        <Typography variant="h4" fontWeight="bold" gutterBottom>관리자 프로젝트 생성</Typography>
+      </Box>
       <Paper sx={{ p: 4, width: 600 }}>
         <Stack spacing={3}>
-          <Typography variant="h6">1. 프로젝트 기본 정보</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <LooksOneRoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>프로젝트의 기본 정보를 입력해주세요.</Typography>
+          </Box>
           <TextField
             label="프로젝트 이름"
             name="projectName"
@@ -108,7 +119,10 @@ export default function AdminProjectUpdatePage() {
             onSelectionChange={(val) => setFormData((prev) => ({ ...prev, projectType: val }))}
           />
 
-          <Typography variant="h6">2. 설명</Typography>
+         <Box sx={{ display: "flex", gap: 1 }}>
+            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+          </Box>
           <TextField
             label="프로젝트 설명"
             name="projectContent"
@@ -120,7 +134,10 @@ export default function AdminProjectUpdatePage() {
             required
           />
 
-          <Typography variant="h6">3. 예산과 기간</Typography>
+         <Box sx={{ display: "flex", gap: 1 }}>
+            <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
+          </Box>
           <TextField
             label="예상 기간"
             name="estimatedDuration"
@@ -139,7 +156,10 @@ export default function AdminProjectUpdatePage() {
             InputProps={{ endAdornment: <InputAdornment position="end">원</InputAdornment> }}
           />
 
-          <Typography variant="h6">4. 클라이언트 ID 및 긴급도</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Looks4RoundedIcon color="primary" sx={{ fontSize: 32 }} />
+            <Typography variant="h6" mb={2}>의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
+          </Box>
           <TextField
             label="클라이언트 ID"
             name="user_id"

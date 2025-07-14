@@ -17,7 +17,7 @@ export default function MemberNoticeViewPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const role = localStorage.getItem("role");
+        const role = sessionStorage.getItem("role");
         setUserRole(role);
     }, []);
     useEffect(() => {
@@ -26,7 +26,7 @@ export default function MemberNoticeViewPage() {
 
     const fetchNotice = async (notice_id) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/member/notices/${notice_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });

@@ -21,7 +21,7 @@ export default function AdminNoticeCreatePage() {
         }
 
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             await axios.post(`${BASE_URL}/admin/notices`, {
                 title,
                 target_type: targetType,

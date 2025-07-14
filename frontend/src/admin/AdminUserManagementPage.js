@@ -33,7 +33,7 @@ export default function AdminUserManagementPage() {
   }, [tab]);
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const response = await axios.get(`${BASE_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -46,7 +46,7 @@ export default function AdminUserManagementPage() {
 
 
   const handleGradeChange = async (user_id, newGrade) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.grade === newGrade) return;
     if (!token) {
@@ -83,7 +83,7 @@ export default function AdminUserManagementPage() {
 
 
   const handleRoleChange = async (user_id, newRole) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.role === newRole) return;
     if (!token) {
@@ -121,7 +121,7 @@ export default function AdminUserManagementPage() {
   const handleDeleteConfirm = async () => {
     if (!selectedUserId) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${BASE_URL}/admin/users/${selectedUserId}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -156,7 +156,7 @@ export default function AdminUserManagementPage() {
   const handleRecoverUser = async () => {
     if (!selectedUserId) return;
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.put(`${BASE_URL}/admin/users/${selectedUserId}/recover`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -25,7 +25,7 @@ export default function ClientUserInfo() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         console.log("📦 토큰 확인:", token);
         const res = await axios.get(`${BASE_URL}/client/userinfo`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -51,7 +51,7 @@ export default function ClientUserInfo() {
   const handleWithdraw = async (password) => {
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       // ✅ 먼저 비밀번호 확인
       await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
@@ -64,7 +64,7 @@ export default function ClientUserInfo() {
       });
 
       alert("탈퇴가 완료되었습니다.");
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
       alert("비밀번호가 일치하지 않거나 오류 발생");

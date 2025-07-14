@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const [selectedTechs, setSelectedTechs] = useState([]); 
 
   const BASE_URL = "http://127.0.0.1:8000";
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     axios.get(`${BASE_URL}/user/tech-stacks`)

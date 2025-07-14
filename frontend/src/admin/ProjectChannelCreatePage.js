@@ -22,7 +22,7 @@ export default function ProjectChannelCreatePage() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/members`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -42,7 +42,7 @@ export default function ProjectChannelCreatePage() {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${BASE_URL}/admin/projectchannel/${project_id}/create`, {
         title,
         user_id: String(userId),
@@ -73,7 +73,7 @@ export default function ProjectChannelCreatePage() {
       try {
         const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/projecttitle`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         setProjectTitle(res.data.title);
@@ -90,7 +90,7 @@ export default function ProjectChannelCreatePage() {
       try {
         const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${userId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
         console.log("project_id", project_id);

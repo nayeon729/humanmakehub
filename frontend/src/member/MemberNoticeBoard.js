@@ -19,7 +19,7 @@ export default function AdminNoticeListPage() {
 
     const fetchNotices = async (page = 1, keyword = "") => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/notices`, {
                 params: { page, keyword },
                 headers: { Authorization: `Bearer ${token}` },

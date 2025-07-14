@@ -2,8 +2,8 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const token = sessionStorage.getItem("token");
+  const role = sessionStorage.getItem("role");
 
   if (!token) return <Navigate to="/login" />; // 로그인 안 되어 있음
   if (!allowedRoles.includes(role)) return <Navigate to="/not-authorized" />; // 권한 없음

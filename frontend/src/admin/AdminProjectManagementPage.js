@@ -42,8 +42,8 @@ export default function AdminProjectManagementPage() {
 
   const fetchProjects = async () => {
     try {
-      const pm_id = localStorage.getItem("user_id");
-      const token = localStorage.getItem("token");
+      const pm_id = sessionStorage.getItem("user_id");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/my-projects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -66,7 +66,7 @@ export default function AdminProjectManagementPage() {
 
   const fetchInvitedMembers = async (project_id) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/invited-members`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -82,7 +82,7 @@ export default function AdminProjectManagementPage() {
 
   const fetchProjectMembers = async (project_id) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/project/${project_id}/members/without-pm`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -97,7 +97,7 @@ export default function AdminProjectManagementPage() {
   };
 
   const handleProgressChange = async (project_id, newProgress) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const proj = projects.find(p => p.project_id === project_id);
     if (!proj || proj.progress === newProgress) return;
     if (!token) {
@@ -133,7 +133,7 @@ export default function AdminProjectManagementPage() {
   };
 
   const handleStatusChange = async (project_id, newStatus) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const proj = projects.find(p => p.project_id === project_id);
     if (!proj || proj.status === newStatus) return;
     if (!token) {
@@ -171,7 +171,7 @@ export default function AdminProjectManagementPage() {
 
   const handleDeleteProject = async (project_id) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${BASE_URL}/admin/projects/${project_id}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -216,7 +216,7 @@ export default function AdminProjectManagementPage() {
   const convertedPositions = selectedPositions.map((p) => positionMap[p]);
   const handleSearch = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.post(`${BASE_URL}/admin/members/filter`, {
         ranks: convertedRanks,
         positions: convertedPositions,
@@ -233,8 +233,8 @@ export default function AdminProjectManagementPage() {
 
   const handleAddMember = async (member_id) => {
     try {
-      const token = localStorage.getItem("token");
-      const pm_id = localStorage.getItem("user_id");
+      const token = sessionStorage.getItem("token");
+      const pm_id = sessionStorage.getItem("user_id");
       await axios.post(`${BASE_URL}/admin/project/${selectedProjectId}/invite`, {
         member_id: member_id,
         pm_id: pm_id
@@ -253,7 +253,7 @@ export default function AdminProjectManagementPage() {
 
   const handleRemoveMember = async (projectId, userId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${BASE_URL}/admin/project/${projectId}/member/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -269,7 +269,7 @@ export default function AdminProjectManagementPage() {
 
   const handlePmApprove = async (projectId, requestId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${BASE_URL}/admin/project/${projectId}/approve/${requestId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -285,7 +285,7 @@ export default function AdminProjectManagementPage() {
 
   const handlePmReject = async (projectId, requestId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post(`${BASE_URL}/admin/project/${projectId}/reject/${requestId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });

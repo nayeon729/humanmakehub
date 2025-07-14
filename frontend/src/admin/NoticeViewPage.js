@@ -18,7 +18,7 @@ export default function AdminNoticeViewPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-            const role = localStorage.getItem("role");
+            const role = sessionStorage.getItem("role");
             setUserRole(role);
         }, []);
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function AdminNoticeViewPage() {
 
     const fetchNotice = async (notice_id) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/notices/${notice_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -39,7 +39,7 @@ export default function AdminNoticeViewPage() {
 
     const handleDeleteNotice = async (notice_id) => {
         try {
-            const token = localStorage.getItem("token");
+            const token = sessionStorage.getItem("token");
             await axios.delete(`${BASE_URL}/admin/notices/${notice_id}/delete`, {
                 headers: { Authorization: `Bearer ${token}` }
             });

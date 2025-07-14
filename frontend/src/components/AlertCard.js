@@ -24,7 +24,7 @@ export default function AlertBox({
       sx={{
         backgroundColor: color,
         color: "white",
-        p: 0.7,
+        p: 1,
         mt: 2,
         mb: 2,
         borderRadius: 2,
@@ -54,8 +54,8 @@ export default function AlertBox({
 
             {/* 버튼 영역 */}
               <Button
-                variant="contained"
-                sx={{ backgroundColor: "white", color: "#005fb8", position:'absolute', right:'12px', height:'25px',mt:1}}
+                variant="text"
+                sx={{ backgroundColor: "transparent", color: "white", border:"1px solid white", borderRadius:"10px", position:'absolute', top:'40px',right:'10px', height:'25px'}}
                 onClick={onConfirm}
               >
                 {confirmText}

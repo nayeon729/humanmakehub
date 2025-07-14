@@ -19,13 +19,13 @@ export default function TopNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
+    const storedRole = sessionStorage.getItem("role");
     setRole(storedRole);
   }, [location]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
     setRole(null);
     navigate("/login");
   };
