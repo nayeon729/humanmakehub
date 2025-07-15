@@ -188,6 +188,7 @@ function ReadOnlyView({ userInfo }) {
 function EditableView({ userInfo, myId }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const handleWithdraw = async (password) => {
     try {

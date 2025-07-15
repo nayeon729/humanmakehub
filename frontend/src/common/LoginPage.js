@@ -55,23 +55,27 @@ export default function LoginPage() {
 
       // 3. ✅ 역할별 메인 화면 리다이렉트
      if (role === "R03" || role === "R04") {
+      showAlert("관리자님 환영합니다!", () => {
         navigate("/admin/dashboard");
-      } else if (role === "R01") {
+      });
+    } else if (role === "R01") {
+      showAlert("클라이언트님 반갑습니다!", () => {
         navigate("/client/dashboard");
-      } else if (role === "R02") {
+      });
+    } else if (role === "R02") {
+      showAlert("개발자님 환영합니다!", () => {
         navigate("/member/tasks");
-      } else {
-        showAlert("알 수 없는 사용자 역할입니다.");
-      }
-    } catch (error) {
-      console.error("로그인 실패", error);
-      if (error.response?.status === 401) {
-        showAlert("아이디 또는 비밀번호가 올바르지 않습니다.");
-      } else {
-        showAlert("서버 오류로 인해 로그인할 수 없습니다.");
-      }
+      });
+    } else {
+      showAlert("알 수 없는 사용자 역할입니다.");
     }
-  };
+  } catch (error) {
+    console.error("로그인 실패", error);
+    if (error.response?.status === 500) {
+      showAlert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+  }
+};
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
