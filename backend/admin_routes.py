@@ -1,14 +1,16 @@
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File, Form
 from pydantic import BaseModel
 from datetime import datetime
 import pymysql
 from database import db_config
+import shutil, os
 from jwt_auth import get_current_user
 from typing import Optional
 from typing import List
 import json
 
 router = APIRouter( tags=["Admin"])
+UPLOAD_DIR = "C:/Users/admin/uploads"
 
 # --- 필요한 모델 ---
 class GradeUpdate(BaseModel):
@@ -714,6 +716,91 @@ def create_project_channel(projectChannel: ProjectChannel, user: dict = Depends(
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+@router.post("/projectchannel/{project_id}/create-with-file")
+def create_with_file(
+    project_id: int,
+    title: str = Form(...),
+    user_id: str = Form(...),
+    content: str = Form(...),
+    value_id: int = Form(...),
+    category: str = Form(...),
+    files: List[UploadFile] = File(None),
+    user: dict = Depends(get_current_user)
+):
+    if user["role"] != "R03":
+        raise HTTPException(status_code=403, detail="관리자만 작성 가능합니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cursor:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # 게시글 삽입
+            cursor.execute("""
+                INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (title, user_id, content, now, user["user_id"], value_id, category))
+            channel_id = cursor.lastrowid
+
+            # 파일 저장
+            if files:
+                for file in files:
+                    filename = file.filename
+                    filepath = os.path.join(UPLOAD_DIR, filename)
+                    with open(filepath, "wb") as buffer:
+                        shutil.copyfileobj(file.file, buffer)
+
+                    cursor.execute("""
+                        INSERT INTO post_file (channel_id, file_name, file_path, create_dt, create_id, del_yn)
+                        VALUES (%s, %s, %s, %s, %s, 'N')
+                    """, (channel_id, filename, filepath, now, user["user_id"]))
+
+        conn.commit()
+        return {"message": "게시글과 파일이 등록되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/projectchannel/{channel_id}/view")
+def get_project_channel_detail(channel_id: int, user: dict = Depends(get_current_user)):
+
+    conn = pymysql.connect(**db_config)
+    try:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 채널 게시글 정보 조회
+            cursor.execute("""
+                SELECT channel_id, title, content, user_id, create_dt, value_id, category
+                FROM project_channel
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
+            channel = cursor.fetchone()
+
+            if not channel:
+                raise HTTPException(status_code=404, detail="게시글이 존재하지 않습니다")
+
+            # 첨부 이미지 조회
+            cursor.execute("""
+                SELECT file_id, file_name, file_path
+                FROM post_file
+                WHERE channel_id = %s AND del_yn = 'N'
+            """, (channel_id,))
+            images = cursor.fetchall()
+
+            # 파일 경로를 URL로 바꿔주기 (프론트에서 쓸 수 있게!)
+            for img in images:
+                if img["file_path"].startswith("C:/Users/admin/uploads"):
+                    img["file_path"] = img["file_path"].replace(
+                        "C:/Users/admin/uploads", "http://localhost:8000/static"
+                    )
+
+            return {
+                "channel": channel,
+                "images": images
+            }
+    finally:
+        conn.close()
+
 
 @router.get("/projectchannel/{channel_id}")
 def get_channel_by_id(channel_id: int, user: dict = Depends(get_current_user)):
@@ -752,9 +839,9 @@ def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user
             row = cursor.fetchone()
 
             if not row:
-                raise HTTPException(status_code=404, detail="글-을 찾을 수 없습니다.")
-            # if row["create_id"] != user["create_id"]:
-            #     raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
+                raise HTTPException(status_code=404, detail="글을 찾을 수 없습니다.")
+            if row["create_id"] != user["create_id"]:
+                raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
 
             sql = """
                 UPDATE project_channel

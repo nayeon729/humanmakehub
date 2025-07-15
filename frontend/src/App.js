@@ -51,6 +51,7 @@ import ProjectChannelCommon from "./admin/ProjectChannelCommon";
 import ProjectChannelMember from "./admin/ProjectChannelMemberPage";
 import ProjectChannelCreate from "./admin/ProjectChannelCreatePage";
 import ProjectChannelUpdate from "./admin/ProjectChannelUpdatePage";
+import ProjectChannelView from "./admin/ProjectChannelViewPage";
 
 import PrivateRoute from "./common/PrivateRoute";
 import SidebarLayout from "./common/SidebarLayout";
@@ -171,7 +172,7 @@ function App() {
             <Route path="common" element={<ProjectChannelCommon />} />
             <Route path="member/:user_id" element={<ProjectChannelMember />} />
             <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
-
+            <Route path="view/:channel_id" element={<ProjectChannelView />} />
           </Route>
           <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />
 

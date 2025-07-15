@@ -18,6 +18,8 @@ export default function ProjectChannelCreatePage() {
   const { project_id } = useParams();
   const navigate = useNavigate();
   const { showAlert } = useAlert();
+   const [images, setImages] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
@@ -39,34 +41,44 @@ export default function ProjectChannelCreatePage() {
 
   const handleSubmit = async () => {
     if (!title || !userId || !content) {
-      showAlert("모든 필수 항목을 입력해주세요.");
+      alert("모든 필수 항목을 입력해주세요.");
       return;
     }
 
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("user_id", String(userId));
+    formData.append("content", content);
+    formData.append("value_id", teamMemberId == "공용" ? Number(project_id) : Number(teamMemberId));
+    formData.append("category", teamMemberId == "공용" ? "board01" : "board02");
+
+    images.forEach((img) => {
+      formData.append("files", img);
+    });
+
+
     try {
       const token = sessionStorage.getItem("token");
-      await axios.post(`${BASE_URL}/admin/projectchannel/${project_id}/create`, {
-        title,
-        user_id: String(userId),
-        content,
-        value_id: teamMemberId == "공용" ? Number(project_id) : Number(teamMemberId),
-        category: teamMemberId == "공용" ? "board01" : "board02",
-        project_id: Number(project_id),
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      showAlert("글이 등록되었습니다.");
+      const res = await axios.post(
+        `${BASE_URL}/admin/projectchannel/${project_id}/create-with-file`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
+      alert("글이 등록되었습니다.");
       if (teamMemberId == "공용") {
-        navigate(`/admin/channel/${project_id}/common`); // 공지사항 목록 페이지로 이동
+        navigate(`/admin/channel/${project_id}/common`);
       } else {
-        navigate(`/admin/channel/${project_id}/member/${userId}`)
+        navigate(`/admin/channel/${project_id}/member/${userId}`);
       }
     } catch (error) {
       console.error("글 등록 실패", error);
-      showAlert("글 등록 중 오류가 발생했습니다.");
+      alert("글 등록 중 오류가 발생했습니다.");
     }
   };
 
@@ -106,6 +118,17 @@ export default function ProjectChannelCreatePage() {
     }
     getTeamMemberId();
   }, [userId])
+
+const handleFileChange = (e) => {
+  const selectedFiles = Array.from(e.target.files);
+
+  // 기존 이미지 + 새로 선택한 이미지 합치기
+  const updatedFiles = [...images, ...selectedFiles];
+  setImages(updatedFiles);
+
+  const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
+  setPreviewUrls(prev => [...prev, ...newPreviews]);
+};
 
   return (
     <Box sx={{ p: 2 }}>
@@ -155,6 +178,15 @@ export default function ProjectChannelCreatePage() {
               )}
             </Select>
           </FormControl>
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2">이미지 첨부</Typography>
+          <input type="file" multiple accept="image/*" onChange={handleFileChange}/>
+          <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
+            {previewUrls.map((url, index) => (
+              <img key={index} src={url} alt="preview" width="120" height="120" style={{ objectFit: "cover", borderRadius: "8px" }} />
+            ))}
+          </Box>
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography variant="body2">내용</Typography>

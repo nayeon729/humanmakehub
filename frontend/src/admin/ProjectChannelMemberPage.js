@@ -158,7 +158,7 @@ export default function ProjectChannelMemberPage() {
 
       <Stack spacing={2} mt={2}>
         {messages.map((msg) => (
-          <Paper key={msg.channel_id} sx={{ p: 2 }}>
+          <Paper key={msg.channel_id} sx={{ p: 2 }}  onClick={() => navigate(`/admin/channel/${project_id}/view/${msg.channel_id}`)}>
             <Box display='flex' flexDirection="row" alignItems="center">
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
