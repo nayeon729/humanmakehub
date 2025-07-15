@@ -34,7 +34,6 @@ import AdminProjectManagementPage from "./admin/AdminProjectManagementPage";
 import AdminAllProjectsPage from "./admin/AdminAllProjectsPage";
 import AdminProjectDetailPage from "./admin/AdminProjectDetailPage"; // ✅ 추가
 import AdminUserManagementPage from "./admin/AdminUserManagementPage";
-import AdminAgreementPage from "./admin/AdminAgreementPage";
 import NoticeCreatePage from "./admin/NoticeCreatePage";
 import NoticeListPage from "./admin/NoticeListPage";
 import NoticeViewPage from "./admin/NoticeViewPage";
@@ -146,7 +145,6 @@ function App() {
           <Route path="projects/all" element={<AdminAllProjectsPage />} />
           <Route path="projects" element={<AdminProjectManagementPage />} />
           <Route path="project/:id" element={<AdminProjectDetailPage />} /> {/* ✅ 추가 */}
-          <Route path="agreements" element={<AdminAgreementPage />} />
           <Route path="notice/create" element={<NoticeCreatePage />} />
           <Route path="notice/list" element={<NoticeListPage />} />
           <Route path="notice/:noticeId" element={<NoticeViewPage />} />
@@ -161,7 +159,7 @@ function App() {
         </Route>
         <Route path="admin/channel/:project_id" element={
           <PrivateRoute allowedRoles={["R03","R04"]}>
-            <ProjectChannel role="R03" />
+            <ProjectChannel role="R03" />  {/* 위에서 R03이나 R04면 관리자인값 R03넘기는거라 상관없음 */}
           </PrivateRoute>
         }>
           <Route path="create" element={<ProjectChannelCreate />} />

@@ -55,7 +55,7 @@ export default function AdminNoticeListPage() {
         <Box sx={{ p: 2 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
-                {userRole === "R03" && (
+                {["R03", "R04"].includes(userRole) && (
                     <Button onClick={() => navigate("/admin/notice/create")} sx={{ marginRight: '-8px' }}>
                         <img src={add} style={{ width: '40px', height: '40px' }} />
                     </Button>

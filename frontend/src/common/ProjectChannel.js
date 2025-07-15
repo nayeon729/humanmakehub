@@ -62,7 +62,7 @@ export default function ProjectChannel({ role }) {
 
   const getalertCount = async () => {
 
-    if(myUserId != "" && role != "R03"){
+    if(myUserId != "" && role != "R03"){  // App.js 에서 R03, R04 체크해서 R03으로 넘김
         try {
           const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
             headers: {
@@ -87,7 +87,7 @@ export default function ProjectChannel({ role }) {
         { text: "공용", path: `${base}/common` },
         { text: "PM", path: `${base}/pm/${myUserId}` }, // ✅ user_id 포함!
       ]);
-    } else if (role === "R03") {
+    } else if (role === "R03") {  // App.js 에서 R03, R04 체크해서 R03으로 넘김
       setMenus([{ text: "공용", path: `/admin/channel/${project_id}/common` }]);
     }
   }, [project_id, role, myUserId]);
@@ -98,7 +98,7 @@ export default function ProjectChannel({ role }) {
   }, [project_id, role]);
 
   const adminGetAlertCount = () => {
-    if (role === "R03") { //관리자면 실행
+    if (role === "R03") { //관리자면 실행  App.js 에서 R03, R04 체크해서 R03으로 넘김
       axios
         .get(`${BASE_URL}/admin/project/${project_id}/members`, {
           headers: {
@@ -151,7 +151,7 @@ export default function ProjectChannel({ role }) {
         </List>
 
         {/* 🔍 관리자용 팀원 목록 */}
-        {role === "R03" && members.length > 0 && (
+        {role === "R03" && members.length > 0 && (  // App.js 에서 R03, R04 체크해서 R03으로 넘김
           <>
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>

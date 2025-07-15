@@ -68,8 +68,8 @@ export default function TopNavbar() {
       } : {}
     });
 
-    {/* PM */ }
-    if (role === "R03") {
+    {/* PM / ADMIN*/ }
+    if (role === "R03" || role === "R04") {
       return (
         <>
           <MenuItem {...commonProps("/admin/dashboard")}>
@@ -171,13 +171,13 @@ export default function TopNavbar() {
           <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
             {role ? (
               <>
-                {(role === "R03" || role === "R02" || role === "R01") && (
+                {(role === "R04" || role === "R03" || role === "R02" || role === "R01") && (
                   <>
                     <Button
                       color="inherit"
 
                     >
-                      {role === "R03" ? `PM ${nickname}님 환영합니다.` : role === "R02" ? `개발자 ${nickname}님 환영합니다.` : `고객 ${nickname}님 환영합니다.`}
+                      {role === "R04" ? `ADMIN(최종관리자) ${nickname}님 환영합니다.` : role === "R03" ? `PM ${nickname}님 환영합니다.` : role === "R02" ? `개발자 ${nickname}님 환영합니다.` : `고객 ${nickname}님 환영합니다.`}
                     </Button>
 
                   </>

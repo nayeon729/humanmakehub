@@ -26,6 +26,8 @@ export default function AdminUserManagementPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const role = sessionStorage.getItem("role");
+    setUserRole(role);
     fetchUsers();
   }, []);
   useEffect(() => {
@@ -185,6 +187,16 @@ export default function AdminUserManagementPage() {
     currentPage * itemsPerPage
   );
   const totalPages = Math.ceil(visibleUsers.length / itemsPerPage);
+
+  const getRoleLabel = (roleCode) => {
+    switch (roleCode) {
+      case "R01": return "Client";
+      case "R02": return "Member";
+      case "R03": return "PM";
+      case "R04": return "Admin";
+      default: return roleCode;
+    }
+  };
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ display: "flex", gap:1}}>
@@ -196,6 +208,7 @@ export default function AdminUserManagementPage() {
 
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
         <Tab label="전체" value="all" />
+        <Tab label="ADMIN" value="R04" />
         <Tab label="PM" value="R03" />
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
@@ -257,6 +270,7 @@ export default function AdminUserManagementPage() {
                   )}
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
+                  {userRole === "R04" ? (
                   <Box>
                     <Combo
                       groupId="USER_ROLE"
@@ -265,6 +279,11 @@ export default function AdminUserManagementPage() {
                       sx={{ minWidth: 50 }}
                     />
                   </Box>
+                  ) : (
+                      <Typography>
+                        {getRoleLabel(user.role)}
+                      </Typography>
+                  )}
                 </TableCell >
                 <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
                 <TableCell align="center">

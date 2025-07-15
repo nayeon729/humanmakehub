@@ -430,7 +430,7 @@ def get_project_common(project_id: int):
                 FROM project_channel pc
                 JOIN user u ON pc.user_id = u.user_id
                 WHERE pc.del_yn = 'N'
-                  AND u.role = 'R03'
+                  AND u.role IN ('R03', 'R04')
                   AND pc.user_id = pc.create_id
                   AND pc.value_id = %s
                   AND pc.category = "board01"
@@ -593,7 +593,7 @@ def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user
         
 @router.get("/project/{project_id}/members")
 def get_project_members(project_id: int, user: dict = Depends(get_current_user)):
-    if user["role"] not in ["R03", "R02"]:
+    if user["role"] not in ["R04", "R03", "R02"]:
         raise HTTPException(status_code=403, detail="권한이 없습니다.")
     try:
         conn = pymysql.connect(**db_config)

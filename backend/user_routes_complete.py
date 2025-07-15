@@ -446,7 +446,7 @@ def askSending(data: askSend):
                     %s, %s, %s, %s, %s, %s, 'N', NOW(), 'N', %s
                 )
             """, (
-                "R03",  # 알림 받을 대상
+                "R03",  # 알림 받을 대상   이거받는곳 if문에 R04도 넣어서 상관없음
                 ask_id,
                 "ask",
                 "시스템 알람",

@@ -84,7 +84,7 @@ def get_alerts(user: dict = Depends(get_current_user)):
             row1 = list(cursor.fetchall())
             print("row1 type:", type(row1))  # 👈 이거 찍어보면 확실
 
-            if user["role"] == "R03":
+            if user["role"] in ("R03", "R04"):
                 cursor.execute("""
                     SELECT *
                     FROM alerts
@@ -111,7 +111,7 @@ def delete_alert(alert_id: int, user: dict = Depends(get_current_user)):
                 WHERE alert_id = %s AND target_user = %s
             """, (user["user_id"], alert_id, user["user_id"]))
 
-            if user["role"] == "R03":
+            if user["role"] in ("R03", "R04"):
             # 관리자면 target_user가 "R03" 인것도 delyn
                 cursor.execute("""
                     UPDATE alerts
@@ -143,25 +143,6 @@ def get_teamMemberId(project_id: int, user_id: str):
         return {"team_member_id": "공용"}
     finally:
         conn.close()
-
-
-# @router.get("/adminAlerts/{teamMemberId}/{pmId}")
-# def get_adminAlertsList(teamMemberId: int, pmId: str):
-#     try:
-#         conn = pymysql.connect(**db_config)
-#         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-#             cursor.execute("""
-#                 SELECT *
-#                 FROM alerts
-#                 WHERE value_id = %s AND target_user = "" AND create_id = %s AND del_yn = 'N'
-#             """, (teamMemberId, pmId))
-
-#         results = cursor.fetchall()
-#         alert_count = len(results)
-        
-#         return {"count": alert_count}
-#     finally:
-#         conn.close()
 
 
 @router.get("/alerts/{teamMemberId}/{pmId}")

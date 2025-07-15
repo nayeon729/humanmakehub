@@ -80,7 +80,7 @@ export default function AdminNoticeViewPage() {
                         </Typography>
                         </Box>
                         <Box>
-                            {userRole === "R03" && (
+                            {["R03", "R04"].includes(userRole) && (
                             <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
                                 <button
                                     style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor:'pointer'}}
