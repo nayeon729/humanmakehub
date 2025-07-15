@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-
+from fastapi.staticfiles import StaticFiles
 
 from user_routes_complete import router as user_router
 from admin_routes import router as admin_router
@@ -62,7 +62,7 @@ app.include_router(admin_router, prefix="/admin")
 app.include_router(client_router, prefix="/client")
 app.include_router( common_code_router, prefix="/common", tags=["공통코드"])
 app.include_router(member_code_router, prefix="/member")
-
+app.mount("/static", StaticFiles(directory="C:/Users/admin/uploads"), name="static")
 
 # 루트 확인용
 @app.get("/")

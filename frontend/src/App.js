@@ -50,6 +50,7 @@ import ProjectChannelCommon from "./admin/ProjectChannelCommon";
 import ProjectChannelMember from "./admin/ProjectChannelMemberPage";
 import ProjectChannelCreate from "./admin/ProjectChannelCreatePage";
 import ProjectChannelUpdate from "./admin/ProjectChannelUpdatePage";
+import ProjectChannelView from "./admin/ProjectChannelViewPage";
 
 import PrivateRoute from "./common/PrivateRoute";
 import SidebarLayout from "./common/SidebarLayout";
@@ -159,16 +160,16 @@ function App() {
           <Route path="portfolioCreate" element={<AdminPortfolioCreatePage />} />
           <Route path="portfolioUpdate/:portfolio_id" element={<AdminPortfolioUpdatePage />} />
 
-        </Route>
-        <Route path="admin/channel/:project_id" element={
-          <PrivateRoute allowedRoles={["R03","R04"]}>
-            <ProjectChannel role="R03" />  {/* 위에서 R03이나 R04면 관리자인값 R03넘기는거라 상관없음 */}
-          </PrivateRoute>
-        }>
-          <Route path="create" element={<ProjectChannelCreate />} />
-          <Route path="common" element={<ProjectChannelCommon />} />
-          <Route path="member/:user_id" element={<ProjectChannelMember />} />
-          <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
+          </Route>
+          <Route path="admin/channel/:project_id" element={
+            <PrivateRoute allowedRoles={["R03", "R04"]}>
+              <ProjectChannel role="R03" />  {/* 위에서 R03이나 R04면 관리자인값 R03넘기는거라 상관없음 */}
+            </PrivateRoute>
+          }>
+            <Route path="create" element={<ProjectChannelCreate />} />
+            <Route path="common" element={<ProjectChannelCommon />} />
+            <Route path="member/:user_id" element={<ProjectChannelMember />} />
+            <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
 
           </Route>
           <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />

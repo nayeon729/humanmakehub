@@ -99,6 +99,7 @@ export default function ProjectChannelCommonPage() {
           <Paper
             key={post.channel_id}
             sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
+            onClick={() => navigate(`/admin/channel/${project_id}/view/${post.channel_id}`)}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Box display='flex' flexDirection='row' justifyContent='space-between'>
