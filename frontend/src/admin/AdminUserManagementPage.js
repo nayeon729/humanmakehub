@@ -8,6 +8,7 @@ import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useAlert } from "../components/CommonAlert";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -24,6 +25,7 @@ export default function AdminUserManagementPage() {
   const itemsPerPage = 10;
   const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const role = sessionStorage.getItem("role");
@@ -42,7 +44,7 @@ export default function AdminUserManagementPage() {
       setUsers(response.data);
     } catch (error) {
       console.error("사용자 불러오기 실패", error);
-      alert("사용자 정보를 불러올 수 없습니다.");
+      showAlert("사용자 정보를 불러올 수 없습니다.");
     }
   };
 
@@ -52,11 +54,11 @@ export default function AdminUserManagementPage() {
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.grade === newGrade) return;
     if (!token) {
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
     }
     if (!newGrade) {
-      alert("새 등급이 유효하지 않습니다.");
+      showAlert("새 등급이 유효하지 않습니다.");
       return;
     }
     try {
@@ -75,11 +77,11 @@ export default function AdminUserManagementPage() {
           user.user_id === user_id ? { ...user, grade: newGrade } : user
         )
       );
-      alert("✅ 등급이 성공적으로 수정되었습니다.");
+      showAlert("✅ 등급이 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("❌ 등급 수정 실패", error);
       const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-      alert("❌ 등급 수정 실패: " + errorMsg);
+      showAlert("❌ 등급 수정 실패: " + errorMsg);
     }
   };
 
@@ -89,11 +91,11 @@ export default function AdminUserManagementPage() {
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.role === newRole) return;
     if (!token) {
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
     }
     if (!newRole) {
-      alert("새 역할이 유효하지 않습니다.");
+      showAlert("새 역할이 유효하지 않습니다.");
       return;
     }
     try {
@@ -112,11 +114,11 @@ export default function AdminUserManagementPage() {
           user.user_id === user_id ? { ...user, role: newRole } : user
         )
       );
-      alert("✅ 역할이 성공적으로 수정되었습니다.");
+      showAlert("✅ 역할이 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("❌ 역할 수정 실패", error);
       const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-      alert("❌ 역할 수정 실패: " + errorMsg);
+      showAlert("❌ 역할 수정 실패: " + errorMsg);
     }
   };
 
@@ -129,10 +131,10 @@ export default function AdminUserManagementPage() {
       });
       fetchUsers();
       setDeleteDialogOpen(false);
-      alert("✅ 사용자가 삭제(표시)되었습니다.");
+      showAlert("✅ 사용자가 삭제(표시)되었습니다.");
     } catch (error) {
       console.error("❌ 사용자 삭제 실패", error);
-      alert("❌ 사용자 삭제에 실패했습니다.");
+      showAlert("❌ 사용자 삭제에 실패했습니다.");
     }
   };
 
@@ -164,10 +166,10 @@ export default function AdminUserManagementPage() {
       });
       fetchUsers(); // 다시 리스트 새로고침
       setRecoverDialogOpen(false);
-      alert("✅ 사용자가 복구되었습니다.");
+      showAlert("✅ 사용자가 복구되었습니다.");
     } catch (error) {
       console.error("❌ 사용자 복구 실패", error);
-      alert("❌ 사용자 복구에 실패했습니다.");
+      showAlert("❌ 사용자 복구에 실패했습니다.");
     }
   };
 

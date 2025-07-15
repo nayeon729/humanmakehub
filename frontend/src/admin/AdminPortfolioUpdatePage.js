@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, InputAdornment, Checkbox, Chip, Stack } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import { useAlert } from "../components/CommonAlert";
 
 
 export default function RegisterPage() {
@@ -15,6 +16,7 @@ export default function RegisterPage() {
 
   const BASE_URL = process.env.REACT_APP_API_URL;
   const token = sessionStorage.getItem("token");
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     axios.get(`${BASE_URL}/user/tech-stacks`)
@@ -86,16 +88,16 @@ export default function RegisterPage() {
 
     try {
         if (!form.title) {
-            return alert("제목을 입력해주세요");
+            return showAlert("제목을 입력해주세요");
         }
         if (!form.content) {
-            return alert("내용을 입력해주세요.");
+            return showAlert("내용을 입력해주세요.");
         }
         if (!form.estimated_dt) {
-            return alert("예상기간을 입력해주세요.");
+            return showAlert("예상기간을 입력해주세요.");
         }
         if (!form.budget) {
-            return alert("예상금액을 입력해주세요.");
+            return showAlert("예상금액을 입력해주세요.");
         }
       const payload = {
         title: form.title,
@@ -114,11 +116,11 @@ export default function RegisterPage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("포트폴리오 수정완료!");
+      showAlert("포트폴리오 수정완료!");
       navigate("/admin/portfolioList");
     } catch (error) {
       console.error("포트폴리오 수정실패", error);
-      alert("포트폴리오 수정실패: " + (error.response?.data?.detail || "서버 오류"));
+      showAlert("포트폴리오 수정실패: " + (error.response?.data?.detail || "서버 오류"));
     }
   };
 

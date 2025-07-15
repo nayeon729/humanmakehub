@@ -16,6 +16,7 @@ import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mu
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import EmailTimer from "./EmailTimer";
+import { useAlert } from "../components/CommonAlert";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ export default function LoginPage() {
 
 
   const BASE_URL = process.env.REACT_APP_API_URL;
-
+  const { showAlert } = useAlert();
+  
   const handleSubmit = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/user/idFind`, { params: { email: email }, });
@@ -39,7 +41,7 @@ export default function LoginPage() {
       setResultVisible(true);
     } catch (error) {
       console.error("아이디 찾기 실패", error);
-      alert("아이디 찾기 실패: " + (error.response?.data?.detail || "서버 오류"));
+      showAlert("아이디 찾기 실패: " + (error.response?.data?.detail || "서버 오류"));
     }
   };
 
@@ -49,11 +51,11 @@ export default function LoginPage() {
         email: email,
       });
       if (res.data.emailExists) {
-        alert("존재하는 이메일입니다.");
+        showAlert("존재하는 이메일입니다.");
         setStartTimer(false); // 먼저 false로 껐다가
         setTimeout(() => setStartTimer(true), 10); // 다시 켜주기 (리셋)
       } else {
-        alert("존재하지 않는 이메일입니다.");
+        showAlert("존재하지 않는 이메일입니다.");
       }
 
     } catch (err) {
@@ -63,7 +65,7 @@ export default function LoginPage() {
 
   const handleVerify = async () => {
     if (!code.trim()) {
-      alert("인증 코드를 입력해주세요!");
+      showAlert("인증 코드를 입력해주세요!");
       return;
     }
 
@@ -71,11 +73,11 @@ export default function LoginPage() {
       const res = await axios.get(`${BASE_URL}/user/verify-email`, {
         params: { code: code },
       });
-      alert(res.data.message);
+      showAlert(res.data.message);
       setEmailChecked(true);
       setStartTimer(false);
     } catch (err) {
-      alert(err.response?.data?.detail || "인증 실패");
+      showAlert(err.response?.data?.detail || "인증 실패");
     }
   };
 
@@ -125,7 +127,7 @@ export default function LoginPage() {
               {startTimer && (
                 <div>
                   <span>유효 시간: </span>
-                  <EmailTimer start={startTimer} onExpire={() => alert("시간 초과")} />
+                  <EmailTimer start={startTimer} onExpire={() => showAlert("시간 초과")} />
                 </div>
               )}
 

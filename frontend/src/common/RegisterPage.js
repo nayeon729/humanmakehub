@@ -3,7 +3,7 @@ import { Box, Typography, Button, TextField, Container, Paper, FormControlLabel,
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import EmailTimer from "./EmailTimer";
-
+import { useAlert } from "../components/CommonAlert";
 
 const TECH_STACKS = {
   "프론트엔드": ["React", "Vue.js", "Angular", "Next.js", "JavaScript", "TypeScript", "HTML/CSS"],
@@ -33,7 +33,7 @@ export default function RegisterPage() {
   const [emailSend, setEmailSend] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL;
-
+  const { showAlert } = useAlert();
   useEffect(() => {
     axios.get(`${BASE_URL}/user/tech-stacks`)
       .then(res => {
@@ -88,10 +88,10 @@ export default function RegisterPage() {
 
       if (field === "user_id") {
         if (res.data.user_idExists) {
-          alert("이미 사용 중인 아이디입니다.");
+          showAlert("이미 사용 중인 아이디입니다.");
           setUsernameChecked(false);
         } else {
-          alert("사용 가능한 아이디입니다.");
+          showAlert("사용 가능한 아이디입니다.");
           setUsernameChecked(true);
         }
         console.log("techStacks", techStacks);
@@ -104,10 +104,10 @@ export default function RegisterPage() {
           email: form.email,
         });
         if (res.data.emailExists) {
-          alert("이미 등록된 이메일입니다.");
+          showAlert("이미 등록된 이메일입니다.");
           setEmailChecked(false);
         } else {
-          alert("사용 가능한 이메일입니다.");
+          showAlert("사용 가능한 이메일입니다.");
           setEmailSend(true);
           setStartTimer(false); // 먼저 false로 껐다가
           setTimeout(() => setStartTimer(true), 10); // 다시 켜주기 (리셋)
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
   const handleVerify = async () => {
     if (!code.trim()) {
-      alert("인증 코드를 입력해주세요!");
+      showAlert("인증 코드를 입력해주세요!");
       return;
     }
 
@@ -129,23 +129,23 @@ export default function RegisterPage() {
       const res = await axios.get(`${BASE_URL}/user/verify-email`, {
         params: { code: code }, // 👈 이렇게 code를 전달해!
       });
-      alert(res.data.message);
+      showAlert(res.data.message);
       setEmailChecked(true);
       setStartTimer(false);    // ✅ 타이머 중지
     } catch (err) {
-      alert(err.response?.data?.detail || "인증 실패");
+      showAlert(err.response?.data?.detail || "인증 실패");
     }
   };
 
   const handleSubmit = async () => {
     if (!form.agreeTerms) {
-      return alert("이용약관에 동의해야 합니다.");
+      return showAlert("이용약관에 동의해야 합니다.");
     }
     if (form.password !== form.confirmPassword) {
-      return alert("비밀번호가 일치하지 않습니다.");
+      return showAlert("비밀번호가 일치하지 않습니다.");
     }
     if (!usernameChecked || !emailChecked) {
-      return alert("아이디/이메일/이름 중복확인을 완료하세요.");
+      return showAlert("아이디/이메일/이름 중복확인을 완료하세요.");
     }
 
     try {
@@ -167,11 +167,11 @@ export default function RegisterPage() {
       };
 
       await axios.post(`${BASE_URL}/user/register`, payload);
-      alert("회원가입 완료!");
+      showAlert("회원가입 완료!");
       navigate("/login");
     } catch (error) {
       console.error("회원가입 실패", error);
-      alert("회원가입 실패: " + (error.response?.data?.detail || "서버 오류"));
+      showAlert("회원가입 실패: " + (error.response?.data?.detail || "서버 오류"));
     }
   };
 
@@ -232,7 +232,7 @@ export default function RegisterPage() {
                       {startTimer && (
                         <div>
                           <span>유효 시간: </span>
-                          <EmailTimer start={startTimer} onExpire={() => alert("시간 초과")} />
+                          <EmailTimer start={startTimer} onExpire={() => showAlert("시간 초과")} />
                         </div>
                       )}
                       <Box sx={{display:"flex", width:"100%", gap:1}}>

@@ -8,12 +8,15 @@ import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import pjadd from '../icon/pjadd.png';
 import folder from'../icon/folder.png';
+import { useAlert } from "../components/CommonAlert";
+
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
   const [pmDialogOpen, setPmDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     fetchProjects();
@@ -50,7 +53,7 @@ export default function AdminProjectManagementPage() {
 
       // 다시 프로젝트 불러오기 (리렌더링)
       fetchProjects();
-      alert('해당 프로젝트의 PM이 되었습니다.');
+      showAlert('해당 프로젝트의 PM이 되었습니다.');
     } catch (error) {
       console.error("PM 지정 실패", error);
     }

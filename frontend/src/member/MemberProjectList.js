@@ -5,13 +5,14 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import Folder from "../assets/folder.png";
-
+import { useAlert } from "../components/CommonAlert";
 
 const MemberProjectList = () => {
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_URL;
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     fetchInvitesAndConfirmed();
@@ -47,7 +48,7 @@ const MemberProjectList = () => {
       setLoading(false);
     } catch (error) {
       console.error("프로젝트 목록 불러오기 실패", error);
-      alert("프로젝트 목록을 불러오는 데 실패했습니다.");
+      showAlert("프로젝트 목록을 불러오는 데 실패했습니다.");
       setLoading(false);
     }
   };
@@ -61,11 +62,11 @@ const MemberProjectList = () => {
         { accept },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert(accept ? "참여 완료!" : "거절 완료");
+      showAlert(accept ? "참여 완료!" : "거절 완료");
       fetchInvitesAndConfirmed(); // 다시 목록 갱신
     } catch (err) {
       console.error("응답 실패", err);
-      alert("응답 처리에 실패했습니다.");
+      showAlert("응답 처리에 실패했습니다.");
     }
   };
 

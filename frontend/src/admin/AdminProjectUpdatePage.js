@@ -16,12 +16,14 @@ import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';
 import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
 import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
 import Folder from "../assets/folder.png"
+import { useAlert } from "../components/CommonAlert";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function AdminProjectUpdatePage() {
   const { project_id } = useParams();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     projectName: "",
     projectType: "",
@@ -84,11 +86,11 @@ export default function AdminProjectUpdatePage() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert("프로젝트가 성공적으로 수정되었습니다!");
+      showAlert("프로젝트가 성공적으로 수정되었습니다!");
       navigate("/admin/projects/all");
     } catch (err) {
       console.error("수정 실패", err);
-      alert("수정 중 오류 발생");
+      showAlert("수정 중 오류 발생");
     }
   };
 

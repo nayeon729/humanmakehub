@@ -15,6 +15,7 @@ import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useParams, useSearchParams } from "react-router-dom";
+import { useAlert } from "../components/CommonAlert";
 
 
 
@@ -30,7 +31,7 @@ export default function MemberUserInfo() {
   const { user_id } = useParams();
   const [searchParams] = useSearchParams();
   const isReadonly = searchParams.get("readonly") === "1";
-
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -55,7 +56,7 @@ export default function MemberUserInfo() {
         setMyId(res.data.user_id);
       } catch (err) {
         console.error("회원 정보 조회 실패", err);
-        alert("사용자 정보를 불러올 수 없습니다.");
+        showAlert("사용자 정보를 불러올 수 없습니다.");
       }
     };
 
@@ -81,11 +82,11 @@ export default function MemberUserInfo() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert("탈퇴가 완료되었습니다.");
+      showAlert("탈퇴가 완료되었습니다.");
       sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
-      alert("비밀번호가 일치하지 않거나 오류 발생");
+      showAlert("비밀번호가 일치하지 않거나 오류 발생");
       console.error(err);
     }
   };
@@ -200,11 +201,11 @@ function EditableView({ userInfo, myId }) {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("탈퇴가 완료되었습니다.");
+      showAlert("탈퇴가 완료되었습니다.");
       sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
-      alert("비밀번호가 일치하지 않거나 오류 발생");
+      showAlert("비밀번호가 일치하지 않거나 오류 발생");
       console.error(err);
     }
   };

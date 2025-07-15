@@ -5,6 +5,7 @@ import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import AlertCard from "../components/AlertCard";
+import { useAlert } from "../components/CommonAlert";
 
 export default function AdminDashboard() {
   
@@ -21,6 +22,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_URL;
   const [alerts, setAlerts] = useState([]);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -112,7 +114,7 @@ export default function AdminDashboard() {
           description={alert.message}
           confirmText="바로가기"
           onConfirm={() => window.location.href = alert.link}
-          onClose={() => handleCloseAlert(alert.alert_id)}
+          onClose={() => handleCloseshowAlert(alert.alert_id)}
           color={color}
         />
         )

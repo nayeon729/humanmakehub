@@ -8,6 +8,7 @@ import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import Combo from "../components/Combo";
 import folder from '../icon/folder.png';
+import { useAlert } from "../components/CommonAlert";
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -25,6 +26,7 @@ export default function AdminProjectManagementPage() {
   const [selectedPositions, setSelectedPositions] = useState([]);
   const [filteredDevelopers, setFilteredDevelopers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { showAlert } = useAlert();
 
 
   const BASE_URL = process.env.REACT_APP_API_URL
@@ -101,11 +103,11 @@ export default function AdminProjectManagementPage() {
     const proj = projects.find(p => p.project_id === project_id);
     if (!proj || proj.progress === newProgress) return;
     if (!token) {
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
     }
     if (!newProgress) {
-      alert("새 상태가 유효하지 않습니다.");
+      showAlert("새 상태가 유효하지 않습니다.");
       return;
     }
     try {
@@ -124,11 +126,11 @@ export default function AdminProjectManagementPage() {
           project.project_id === project_id ? { ...project, progress: newProgress } : project
         )
       );
-      alert("✅ 진행률이 성공적으로 수정되었습니다.");
+      showAlert("✅ 진행률이 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("❌ 진행률 수정 실패", error);
       const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-      alert("❌ 진행률 수정 실패: " + errorMsg);
+      showAlert("❌ 진행률 수정 실패: " + errorMsg);
     }
   };
 
@@ -137,11 +139,11 @@ export default function AdminProjectManagementPage() {
     const proj = projects.find(p => p.project_id === project_id);
     if (!proj || proj.status === newStatus) return;
     if (!token) {
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
     }
     if (!newStatus) {
-      alert("새 상태가 유효하지 않습니다.");
+      showAlert("새 상태가 유효하지 않습니다.");
       return;
     }
     try {
@@ -160,11 +162,11 @@ export default function AdminProjectManagementPage() {
           project.project_id === project_id ? { ...project, status: newStatus } : project
         )
       );
-      alert("✅ 상태이 성공적으로 수정되었습니다.");
+      showAlert("✅ 상태이 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("❌ 상태 수정 실패", error);
       const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-      alert("❌ 상태 수정 실패: " + errorMsg);
+      showAlert("❌ 상태 수정 실패: " + errorMsg);
     }
   };
 
@@ -177,10 +179,10 @@ export default function AdminProjectManagementPage() {
       });
       fetchProjects();
       setDeleteDialogOpen(false);
-      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
     } catch (error) {
       console.error("❌ 프로젝트 삭제 실패", error);
-      alert("❌ 프로젝트 삭제에 실패했습니다.");
+      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
     }
   };
 
@@ -227,7 +229,7 @@ export default function AdminProjectManagementPage() {
       setFilteredDevelopers(res.data);
     } catch (error) {
       console.error("개발자 검색 실패", error);
-      alert("개발자 목록을 불러오지 못했습니다.");
+      showAlert("개발자 목록을 불러오지 못했습니다.");
     }
   };
 
@@ -243,11 +245,11 @@ export default function AdminProjectManagementPage() {
           Authorization: `Bearer ${token}`
         }
       });
-      alert("초대 완료!");
+      showAlert("초대 완료!");
       await fetchInvitedMembers(selectedProjectId);
     } catch (err) {
       console.error(err.response?.data?.detail || "초대 실패");
-      alert(err.response?.data?.detail || "초대에 실패했습니다.");
+      showAlert(err.response?.data?.detail || "초대에 실패했습니다.");
     }
   };
 
@@ -257,13 +259,13 @@ export default function AdminProjectManagementPage() {
       await axios.delete(`${BASE_URL}/admin/project/${projectId}/member/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("✅ 팀원 참여가 종료되었습니다.");
+      showAlert("✅ 팀원 참여가 종료되었습니다.");
 
       // 최신 멤버 리스트 다시 불러오기
       await fetchProjectMembers(projectId);
     } catch (err) {
       console.error("❌ 팀원 삭제 실패", err);
-      alert("팀원 삭제에 실패했습니다.");
+      showAlert("팀원 삭제에 실패했습니다.");
     }
   };
 
@@ -274,12 +276,12 @@ export default function AdminProjectManagementPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert("✅ 승인 완료");
+      showAlert("✅ 승인 완료");
       await fetchProjectMembers(projectId);       // 팀원 갱신
       await fetchInvitedMembers(projectId);       // 대기 리스트 갱신
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.detail || "승인 중 오류 발생");
+      showAlert(err.response?.data?.detail || "승인 중 오류 발생");
     }
   };
 
@@ -289,11 +291,11 @@ export default function AdminProjectManagementPage() {
       await axios.post(`${BASE_URL}/admin/project/${projectId}/reject/${requestId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert("❌ 미승인 처리 완료");
+      showAlert("❌ 미승인 처리 완료");
       await fetchInvitedMembers(projectId);
     } catch (err) {
       console.error(err);
-      alert("미승인 처리 실패");
+      showAlert("미승인 처리 실패");
     }
   };
 

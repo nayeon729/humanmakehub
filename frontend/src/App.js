@@ -8,6 +8,7 @@ import PwFind from "./common/PwFind";
 // import IdFindView from "./common/IdFindView";
 import PwReset from "./common/PwReset";
 import PortfolioListTest from "../src/common/homepage/PortfolioListTest"
+import { AlertProvider } from "./components/CommonAlert";
 
 import ClientDashBoard from "./client/ClientDashboard";
 import ClientProjectCreatePage from "./client/ClientProjectCreatePage";
@@ -60,82 +61,84 @@ import MemberProjectChannel from "./member/MemberProjectChannel";
 function App() {
   return (
     <Router>
-      <TopNavbar />
-      <Routes>
+      <AlertProvider>
+        <TopNavbar />
+        <Routes>
 
 
-        {/* 공통 */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/idFind" element={<IdFind />} />
-        <Route path="/pwFind" element={<PwFind />} />
-        {/* <Route path="/idFindView" element={<IdFindView />} /> */}
-        <Route path="/pwReset" element={<PwReset />} />
-        <Route path="/t" element={<PortfolioListTest />} />
-
-        {/* 클라이언트 */}
-        <Route
-          path="/client"
-          element={
-            <PrivateRoute allowedRoles={["R01"]}>
-              <SidebarLayout role="client" />
-            </PrivateRoute>
-          }
-        >
-          <Route path="dashboard" element={<ClientDashBoard />} />
-          <Route path="create" element={<ClientProjectCreatePage />} />
-          <Route path="list" element={<ClientProjectList />} />
-          <Route path="project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
-          <Route path="userinfo" element={<ClientUserInfo />} />
-          <Route path="userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
-          <Route path="notice/list" element={<NoticeListPage />} />
-
-        </Route>
+          {/* 공통 */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/idFind" element={<IdFind />} />
+          <Route path="/pwFind" element={<PwFind />} />
+          {/* <Route path="/idFindView" element={<IdFindView />} /> */}
+          <Route path="/pwReset" element={<PwReset />} />
+          <Route path="/t" element={<PortfolioListTest />} />
 
 
-        {/* 팀원 */}
-        <Route
-          path="/admin/users/:user_id"
-          element={
-            <PrivateRoute allowedRoles={["R03","R04"]}>  {/* 관리자 전용 */}
-              <MemberUserInfo />
-            </PrivateRoute>
-          }
-        />
+          {/* 클라이언트 */}
+          <Route
+            path="/client"
+            element={
+              <PrivateRoute allowedRoles={["R01"]}>
+                <SidebarLayout role="client" />
+              </PrivateRoute>
+            }
+          >
+            <Route path="dashboard" element={<ClientDashBoard />} />
+            <Route path="create" element={<ClientProjectCreatePage />} />
+            <Route path="list" element={<ClientProjectList />} />
+            <Route path="project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
+            <Route path="userinfo" element={<ClientUserInfo />} />
+            <Route path="userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
+            <Route path="notice/list" element={<NoticeListPage />} />
 
-        <Route
-          path="/member"
-          element={
+          </Route>
+
+
+          {/* 팀원 */}
+          <Route
+            path="/admin/users/:user_id"
+            element={
+              <PrivateRoute allowedRoles={["R03", "R04"]}>  {/* 관리자 전용 */}
+                <MemberUserInfo />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/member"
+            element={
+              <PrivateRoute allowedRoles={["R02"]}>
+                <SidebarLayout role="Developer" />
+              </PrivateRoute>
+            }
+          >
+            <Route path="tasks" element={<MemberTaskPage />} />
+            <Route path="userinfo" element={<MemberUserInfo />} />
+            <Route path="userupdate" element={<MemberUserUpdate />} />
+            <Route path="projectlist" element={<MemberProjectList />} />
+            <Route path="notice" element={<MemberNoticeBoard />} />
+            <Route path="notice/:noticeId" element={<MemberNoticeViewPage />} />
+          </Route>
+          <Route path="member/channel/:project_id" element={
             <PrivateRoute allowedRoles={["R02"]}>
-              <SidebarLayout role="Developer" />
+              <ProjectChannel role="R02" />
             </PrivateRoute>
-          }
-        >
-          <Route path="tasks" element={<MemberTaskPage />} />
-          <Route path="userinfo" element={<MemberUserInfo />} />
-          <Route path="userupdate" element={<MemberUserUpdate />} />
-          <Route path="projectlist" element={<MemberProjectList />} />
-          <Route path="notice" element={<MemberNoticeBoard />} />
-          <Route path="notice/:noticeId" element={<MemberNoticeViewPage />} />
-        </Route>
-        <Route path="member/channel/:project_id" element={
-          <PrivateRoute allowedRoles={["R02"]}>
-            <ProjectChannel role="R02" />
-          </PrivateRoute>
-        }>
-          <Route path="common" element={<MemberProjectChannel />} />
-          <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
-          <Route path="create" element={<ProjectChannelPmCreatePage />} />
-          <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />
-        </Route>
+          }>
+            <Route path="common" element={<MemberProjectChannel />} />
+            <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
+            <Route path="create" element={<ProjectChannelPmCreatePage />} />
+            <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />
+          </Route>
 
-        {/* 관리자 */}
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute allowedRoles={["R03" ,"R04"]}>
-              <SidebarLayout role="PM(Admin)" />
+          {/* 관리자 */}
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute allowedRoles={["R03", "R04"]}>
+                <SidebarLayout role="PM(Admin)" />
 
             </PrivateRoute>
           }
@@ -167,14 +170,15 @@ function App() {
           <Route path="member/:user_id" element={<ProjectChannelMember />} />
           <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
 
-        </Route>
-        <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />
+          </Route>
+          <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />
 
 
 
 
-      </Routes>
-    </Router>
+        </Routes>
+      </AlertProvider>
+    </Router >
   );
 }
 

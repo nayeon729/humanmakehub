@@ -3,12 +3,14 @@ import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chi
 
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import { useAlert } from "../components/CommonAlert";
 
 export default function getAskList() {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_URL;
   const [askList, setAskList] = useState([]);
   const token = sessionStorage.getItem("token");
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     getAskList();
@@ -41,11 +43,11 @@ export default function getAskList() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("문의사항 체크완료!");
+      showAlert("문의사항 체크완료!");
       getAskList();
     } catch (error) {
       console.error("문의사항 체크실패", error);
-      alert("문의사항 체크실패: " + (error.response?.data?.detail || "서버 오류"));
+      showAlert("문의사항 체크실패: " + (error.response?.data?.detail || "서버 오류"));
     }
   };
 

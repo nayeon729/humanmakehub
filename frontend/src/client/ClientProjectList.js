@@ -13,19 +13,20 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Folder from "../assets/folder.png"
+import { useAlert } from "../components/CommonAlert";
 
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const BASE_URL = process.env.REACT_APP_API_URL;
-
+  const { showAlert } = useAlert();
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const token = sessionStorage.getItem("token");  // 토큰 가져오기
         if (!token) {
-          alert("로그인 후 사용 가능합니다.");
+          showAlert("로그인 후 사용 가능합니다.");
           return;
         }
 
@@ -43,7 +44,7 @@ const ClientProjectList = () => {
       } catch (error) {
         console.error("프로젝트 목록을 가져오는 데 실패했습니다.", error);
         setLoading(false);
-        alert("프로젝트 목록을 가져오는 데 실패했습니다.");
+        showAlert("프로젝트 목록을 가져오는 데 실패했습니다.");
       }
     };
 

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useAlert } from "../components/CommonAlert";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -34,6 +35,7 @@ export default function MemberUserEditPage() {
   const [skillDetails, setSkillDetails] = useState({});
 
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const isValidURL = (url) => {
     try {
@@ -115,9 +117,9 @@ export default function MemberUserEditPage() {
   }, []);
 
   const handleSubmit = async (password) => {
-    if (git && !isValidGitURL(git)) return alert("유효하지 않은 Git 주소입니다.");
+    if (git && !isValidGitURL(git)) return showAlert("유효하지 않은 Git 주소입니다.");
     if (portfolio && !isValidURL(portfolio))
-      return alert("유효하지 않은 포트폴리오 주소입니다.");
+      return showAlert("유효하지 않은 포트폴리오 주소입니다.");
 
     try {
       const token = sessionStorage.getItem("token");
@@ -151,11 +153,11 @@ export default function MemberUserEditPage() {
         }
       );
 
-      alert("회원정보가 수정되었습니다!");
+      showAlert("회원정보가 수정되었습니다!");
       navigate("/member/userinfo");
     } catch (err) {
       console.error("수정 실패", err);
-      alert("수정 중 오류 발생");
+      showAlert("수정 중 오류 발생");
     }
   };
 

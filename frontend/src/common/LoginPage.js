@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import { useAlert } from "../components/CommonAlert";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -24,10 +25,11 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
+  const { showAlert } = useAlert();
 
   const handleLogin = async () => {
     if (!username || !password) {
-      alert("아이디와 비밀번호를 모두 입력하세요.");
+      showAlert("아이디와 비밀번호를 모두 입력하세요.");
       return;
     }
 
@@ -59,14 +61,14 @@ export default function LoginPage() {
       } else if (role === "R02") {
         navigate("/member/tasks");
       } else {
-        alert("알 수 없는 사용자 역할입니다.");
+        showAlert("알 수 없는 사용자 역할입니다.");
       }
     } catch (error) {
       console.error("로그인 실패", error);
       if (error.response?.status === 401) {
-        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+        showAlert("아이디 또는 비밀번호가 올바르지 않습니다.");
       } else {
-        alert("서버 오류로 인해 로그인할 수 없습니다.");
+        showAlert("서버 오류로 인해 로그인할 수 없습니다.");
       }
     }
   };

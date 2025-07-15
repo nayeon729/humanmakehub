@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import { useAlert } from "../components/CommonAlert";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -34,6 +34,7 @@ export default function ClientUserEditPage() {
   const [company, setCompany] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -68,11 +69,11 @@ export default function ClientUserEditPage() {
           },
         }
       );
-      alert("회원정보가 수정되었습니다!");
+      showAlert("회원정보가 수정되었습니다!");
       navigate("/client/userinfo");
     } catch (err) {
       console.error("수정 실패", err);
-      alert("수정 중 오류 발생");
+      showAlert("수정 중 오류 발생");
     }
   };
 

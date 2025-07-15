@@ -7,6 +7,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
+import { useAlert } from "../components/CommonAlert";
 
 
 export default function AdminNoticeViewPage() {
@@ -16,6 +17,7 @@ export default function AdminNoticeViewPage() {
     const [userRole, setUserRole] = useState("");
     const BASE_URL = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
+    const { showAlert } = useAlert();
 
     useEffect(() => {
             const role = sessionStorage.getItem("role");
@@ -45,11 +47,11 @@ export default function AdminNoticeViewPage() {
             });
             fetchNotice();
             setDeleteDialogOpen(false);
-            alert("✅ 공지가 삭제(표시)되었습니다.")
+            showAlert("✅ 공지가 삭제(표시)되었습니다.")
             navigate("/notice/list");
         } catch (error) {
             console.error("❌ 공지 삭제 실패", error);
-            alert("❌ 공지 삭제에 실패했습니다.");
+            showAlert("❌ 공지 삭제에 실패했습니다.");
 
         }
     };

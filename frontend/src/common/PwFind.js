@@ -3,6 +3,7 @@ import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mu
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import EmailTimer from "./EmailTimer";
+import { useAlert } from "../components/CommonAlert";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export default function LoginPage() {
   const [startTimer, setStartTimer] = useState(false);
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
-
+  const { showAlert } = useAlert();
+  
   const handleSubmit = async () => {
     navigate("/pwReset", {
       state: {
@@ -34,27 +36,27 @@ export default function LoginPage() {
           email: email,
         });
         if (res.data.emailExists) {
-          alert("존재하는 이메일입니다.");
+          showAlert("존재하는 이메일입니다.");
           console.log("data : ", res);
           setSendUserId(res.data?.user_id);
           setSendEmail(res.data?.email);
           setTimeout(() => setStartTimer(true), 10); // 다시 켜주기 (리셋)
         } else {
-          alert("존재하지 않는 이메일입니다.");
+          showAlert("존재하지 않는 이메일입니다.");
         }
       } else {
-        alert("존재하지않는 아이디입니다.")
+        showAlert("존재하지않는 아이디입니다.")
       }
 
     } catch (err) {
-      alert("아이디 및 이메일을 확인해주세요.");
+      showAlert("아이디 및 이메일을 확인해주세요.");
       console.error("비밀번호 재설정 실패", err);
     }
   };
 
   const handleVerify = async () => {
     if (!code.trim()) {
-      alert("인증 코드를 입력해주세요!");
+      showAlert("인증 코드를 입력해주세요!");
       return;
     }
 
@@ -62,11 +64,11 @@ export default function LoginPage() {
       const res = await axios.get(`${BASE_URL}/user/verify-email`, {
         params: { code: code }, // 👈 이렇게 code를 전달해!
       });
-      alert(res.data.message);
+      showAlert(res.data.message);
       setEmailChecked(true);
       setStartTimer(false);
     } catch (err) {
-      alert(err.response?.data?.detail || "인증 실패");
+      showAlert(err.response?.data?.detail || "인증 실패");
     }
   };
 
@@ -112,7 +114,7 @@ export default function LoginPage() {
             {startTimer && (
               <div>
                 <span>유효 시간: </span>
-                <EmailTimer start={startTimer} onExpire={() => alert("시간 초과")} />
+                <EmailTimer start={startTimer} onExpire={() => showAlert("시간 초과")} />
               </div>
             )}
             <Stack direction="row" spacing={1} alignItems="center">

@@ -5,6 +5,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
+import { useAlert } from "../components/CommonAlert";
 
 export default function ProjectChannelUpdatePage() {
     const { channel_id, project_id } = useParams();
@@ -16,6 +17,7 @@ export default function ProjectChannelUpdatePage() {
     const [projectTitle, setProjectTitle] = useState("");
 
     const navigate = useNavigate();
+    const { showAlert } = useAlert();
 
     const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
     useEffect(() => {
@@ -60,7 +62,7 @@ export default function ProjectChannelUpdatePage() {
 
     const handleUpdate = async (channel_id) => {
         if (!title || !content) {
-            alert("모든 필수 항목을 입력해주세요.");
+            showAlert("모든 필수 항목을 입력해주세요.");
             return;
         }
         try {
@@ -74,11 +76,11 @@ export default function ProjectChannelUpdatePage() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            alert("✅ 공지사항이 수정되었습니다.");
+            showAlert("✅ 공지사항이 수정되었습니다.");
             navigate(`/member/channel/${project_id}/pm/${userId}`);
         } catch (error) {
             console.error("❌ 공지사항 수정 실패", error);
-            alert("공지사항 수정에 실패했습니다.");
+            showAlert("공지사항 수정에 실패했습니다.");
         }
     };
     useEffect(() => {
