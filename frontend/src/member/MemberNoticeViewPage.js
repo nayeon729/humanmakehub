@@ -3,7 +3,7 @@ import {
     Box, Typography, Paper,
     Chip, Stack,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Notice from "../assets/notice.png";
 

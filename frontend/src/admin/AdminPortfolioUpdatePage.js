@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, InputAdornment, Checkbox, Chip, Stack } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 
 export default function RegisterPage() {
@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const [techStacks, setTechStacks] = useState({});
   const [selectedTechs, setSelectedTechs] = useState([]); 
 
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = process.env.REACT_APP_API_URL;
   const token = sessionStorage.getItem("token");
 
   useEffect(() => {

@@ -1,6 +1,16 @@
+/**
+ * 파일명: ClientUserInfo.js
+ * 설명: 클라이언트(고객)가 새 프로젝트를 등록하는 폼 컴포넌트.
+ * 주요 기능:
+ *   - 프로젝트명, 유형, 내용, 예상 금액 및 기간, 긴급도 입력
+ *   - Combo 컴포넌트를 사용하여 공통코드(프로젝트 유형, 긴급도) 선택
+ *   - axiosInstance를 사용하여 /client/projects로 POST 요청 전송
+ *   - 예상 금액/기간은 숫자만 추출하여 서버에 전송
+ */
+
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
 import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';
 import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';

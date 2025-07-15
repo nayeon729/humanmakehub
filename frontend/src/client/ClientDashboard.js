@@ -1,9 +1,16 @@
-// src/pages/client/ClientDashBoard.js
+/**
+ * 파일명: ClientDashboard.js
+ * 설명: 클라이언트(고객) 대시보드 페이지. 알림을 조회하고 알림 카드를 표시함.
+ * 주요 기능:
+ *   - 공통 알림 리스트 조회 (/common/alerts)
+ *   - 알림 삭제 처리 (/common/alerts/{id}/delete)
+ *   - 알림 클릭 시 지정된 링크로 이동
+ */
 
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Paper, Grid, Chip, Skeleton, Stack, LinearProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import AlertCard from "../components/AlertCard";
 import Folder from "../assets/folder.png"
 

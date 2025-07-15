@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, InputAdornment, Checkbox, Chip, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 
 export default function RegisterPage() {

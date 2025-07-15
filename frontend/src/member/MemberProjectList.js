@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Paper, Grid, Button, LinearProgress, Chip, Stack,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import Folder from "../assets/folder.png";
 

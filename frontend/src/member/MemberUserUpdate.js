@@ -14,7 +14,7 @@ import {
   FormControlLabel
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 

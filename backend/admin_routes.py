@@ -60,7 +60,7 @@ class Portfolio(BaseModel):
 
 @router.get("/users")
 def get_all_users(user: dict = Depends(get_current_user)):
-    if str(user["role"]) != "R03":
+    if str(user["role"]) not in ["R03" , "R04"]:
         raise HTTPException(status_code=403, detail="관리자만 접근할 수 있습니다.")
     try:
         conn = pymysql.connect(**db_config)
@@ -153,7 +153,9 @@ def update_user_grade(user_id: str, update: GradeUpdate):
         conn.close()
 
 @router.put("/users/{user_id}/role")
-def update_user_role(user_id: str, update: RoleUpdate):
+def update_user_role(user_id: str, update: RoleUpdate, user: dict = Depends(get_current_user)):
+    if user["role"] != "R04":
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:

@@ -4,7 +4,7 @@ import {
     Slider, Grid, Chip, Stack, Button, Dialog, DialogTitle,
     DialogContent, DialogContentText, DialogActions,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
 

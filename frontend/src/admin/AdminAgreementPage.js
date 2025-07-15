@@ -4,7 +4,7 @@ import {
   Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Paper,
   Chip, Button, Select, MenuItem, CircularProgress, Dialog, DialogTitle, DialogContent
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 export default function AdminAgreementPage() {
   const [agreements, setAgreements] = useState([]);

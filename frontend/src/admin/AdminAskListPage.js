@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chip } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 export default function getAskList() {
   const navigate = useNavigate();

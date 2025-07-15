@@ -1,7 +1,22 @@
+/**
+ * 파일명: LoginPage.js
+ * 설명: 사용자 로그인 페이지. 사용자 인증 및 역할별 대시보드로 라우팅.
+ * 주요 기능:
+ *   - /user/login: 로그인 요청 (username + password)
+ *   - /user/me: 로그인 후 사용자 정보 조회
+ *   - 역할(role)에 따라 다른 페이지로 리다이렉트
+ *     - R01: 클라이언트 → /client/dashboard
+ *     - R02: 멤버(개발자) → /member/tasks
+ *     - R03, R04: 관리자 → /admin/dashboard
+ *   - 아이디/비밀번호 찾기 링크 제공
+ * 비고:
+ *   - axiosInstance 사용, JWT 토큰은 sessionStorage에 저장
+ *   - Enter 키로 로그인 가능
+ */
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,7 +52,7 @@ export default function LoginPage() {
       sessionStorage.setItem("user_id", userRes.data.user_id || "");
 
       // 3. ✅ 역할별 메인 화면 리다이렉트
-      if (role === "R03") {
+     if (role === "R03" || role === "R04") {
         navigate("/admin/dashboard");
       } else if (role === "R01") {
         navigate("/client/dashboard");

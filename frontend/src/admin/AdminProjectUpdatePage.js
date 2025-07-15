@@ -8,7 +8,7 @@ import {
   InputAdornment,
   Paper
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useParams, useNavigate } from "react-router-dom";
 import Combo from "../components/Combo"; // 공통코드용 Combo 컴포넌트
 import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';

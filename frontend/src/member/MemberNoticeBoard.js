@@ -4,7 +4,7 @@ import {
     TableCell, TableBody, Paper, Stack, Chip, Pagination
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import Notice from "../assets/notice.png";
 
 const BASE_URL = process.env.REACT_APP_API_URL;

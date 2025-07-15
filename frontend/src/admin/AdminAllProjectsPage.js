@@ -3,7 +3,7 @@ import {
   Box, Typography, Paper, Grid, Chip, Stack, Button, IconButton, Dialog, DialogTitle,
   DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
 import pjadd from '../icon/pjadd.png';

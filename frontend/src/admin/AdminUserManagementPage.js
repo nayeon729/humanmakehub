@@ -4,7 +4,7 @@ import {
   Paper, Button, Select, MenuItem, Chip, Tabs, Tab, Dialog, DialogTitle,
   DialogContent, DialogContentText, DialogActions, Stack, TextField, Pagination
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

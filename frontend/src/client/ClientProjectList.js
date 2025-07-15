@@ -1,6 +1,17 @@
+/**
+ * 파일명: ClientProjectList.js
+ * 설명: 클라이언트(고객)의 프로젝트 목록을 조회하여 카드 형식으로 표시하는 페이지.
+ * 주요 기능:
+ *   - /client/list 경로로 로그인된 사용자의 프로젝트 목록을 조회
+ *   - 각 프로젝트의 긴급도, 상태, 카테고리, 예산, 기간, 설명 등 출력
+ *   - 상태/긴급도 별로 Chip 컬러 매핑, 진행률은 LinearProgress로 시각화
+ * 비고:
+ *   - 긴급도(U01~U03), 상태(W01~W03)에 따른 색상표 설정 포함
+ */
+
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import Folder from "../assets/folder.png"
 
 const ClientProjectList = () => {

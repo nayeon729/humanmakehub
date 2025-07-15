@@ -13,7 +13,7 @@ import {
   Button,
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import add from "../assets/create.png"
 

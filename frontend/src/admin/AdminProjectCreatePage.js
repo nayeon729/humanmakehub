@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";  // 공통코드용 Combo 컴포넌트
 import { useNavigate } from "react-router-dom";
 import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';

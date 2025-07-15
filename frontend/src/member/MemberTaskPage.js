@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, List, ListItem, ListItemText, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import DevIcon from "../assets/dev-icon.png";
 import AlertCard from "../components/AlertCard";
 

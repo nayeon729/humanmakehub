@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, IconButton, Button,
-  Typography, Grid, Stack, Chip, TextField
+  Box
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
@@ -11,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
-import axios from "axios";
+import axios from "../axiosInstance"
 
 export default function HomePage() {
   const BASE_URL = process.env.REACT_APP_API_URL;

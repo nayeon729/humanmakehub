@@ -1,3 +1,15 @@
+/**
+ * 파일명: ClientUserInfo.js
+ * 설명: 클라이언트(고객)의 회원정보 조회 및 탈퇴 처리 페이지.
+ * 주요 기능:
+ *   - /client/userinfo: 로그인된 사용자의 정보 조회 (JWT 기반 인증)
+ *   - 회원정보 수정 버튼 → /client/userupdate 페이지로 이동
+ *   - 회원탈퇴 버튼 클릭 시 PasswordConfirmDialog를 통해 비밀번호 확인 후 탈퇴 요청
+ *   - 탈퇴 완료 시 세션 삭제 후 메인 페이지로 이동
+ * 비고:
+ *   - 수정 전 비밀번호 확인을 위한 PasswordConfirmDialog 컴포넌트 포함
+ *   - 탈퇴 시 /client/verify-password → /client/withdraw 순차 호출
+ */
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -7,7 +19,7 @@ import {
   Stack,
   Divider,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

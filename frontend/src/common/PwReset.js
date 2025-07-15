@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 export default function LoginPage() {
   const navigate = useNavigate();

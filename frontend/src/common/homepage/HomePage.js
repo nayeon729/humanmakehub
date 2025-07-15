@@ -13,7 +13,7 @@ import "swiper/css/navigation";
 import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
-import axios from "axios";
+import axios from "../axiosInstance"
 import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
 

@@ -1,7 +1,20 @@
+/**
+ * 파일명: LoginPage.js
+ * 설명: 이메일 인증 기반 아이디 찾기 페이지 (아이디 분실 시 사용).
+ * 주요 기능:
+ *   - 이메일 입력 후 존재 여부 확인 (/user/Find-email)
+ *   - 존재할 경우 인증 코드 발송 → 타이머 시작
+ *   - 인증 코드 검증 (/user/verify-email)
+ *   - 인증 완료 후 아이디 및 가입일자 조회 (/user/idFind)
+ * 비고:
+ *   - EmailTimer 컴포넌트 사용 (3분 타이머)
+ *   - 인증 확인 후에만 아이디 찾기 가능 (버튼 비활성화로 제어)
+ *   - axiosInstance 사용 및 토큰 없이 동작
+ */
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import EmailTimer from "./EmailTimer";
 
 export default function LoginPage() {
@@ -10,11 +23,11 @@ export default function LoginPage() {
   const [code, setCode] = useState("");
   const [emailChecked, setEmailChecked] = useState(false);
   const [startTimer, setStartTimer] = useState(false);
-  const [resultVisible, setResultVisible] = useState(false); // ✅ 결과 보이기 여부
+  const [resultVisible, setResultVisible] = useState(false);
   const [userInfo, setUserInfo] = useState({ userId: "", joinDate: "" });
 
 
-  const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
+  const BASE_URL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async () => {
     try {
@@ -80,7 +93,6 @@ export default function LoginPage() {
       <Container component="main" maxWidth="sm">
         <Paper elevation={3} sx={{ borderRadius: 4, p: 4, mb: 10 }}>
           {resultVisible ? (
-            // ✅ 결과 화면
             <Box textAlign="center">
               <Typography variant="h6" fontWeight="bold" sx={{mb:3, }}>아이디 찾기</Typography>
               <Typography sx={{fontWeight:"600" }}>회원님의 아이디는 다음과 같습니다.</Typography>

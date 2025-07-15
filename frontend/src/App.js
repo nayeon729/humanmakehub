@@ -10,7 +10,6 @@ import PwReset from "./common/PwReset";
 import PortfolioListTest from "../src/common/homepage/PortfolioListTest"
 
 import ClientDashBoard from "./client/ClientDashboard";
-import ClientNoticeBoard from "./client/ClientNoticeBoard";
 import ClientProjectCreatePage from "./client/ClientProjectCreatePage";
 import ClientProjectList from "./client/ClientProjectList";
 import ClientUserInfo from "./client/ClinetUserInfo";
@@ -86,7 +85,6 @@ function App() {
           }
         >
           <Route path="dashboard" element={<ClientDashBoard />} />
-          <Route path="notice" element={<ClientNoticeBoard />} />
           <Route path="create" element={<ClientProjectCreatePage />} />
           <Route path="list" element={<ClientProjectList />} />
           <Route path="project/:id" element={<ClientProjectList />} /> {/* 프로젝트 상세 페이지 */}
@@ -101,7 +99,7 @@ function App() {
         <Route
           path="/admin/users/:user_id"
           element={
-            <PrivateRoute allowedRoles={["R03"]}>  {/* 관리자 전용 */}
+            <PrivateRoute allowedRoles={["R03","R04"]}>  {/* 관리자 전용 */}
               <MemberUserInfo />
             </PrivateRoute>
           }
@@ -137,7 +135,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <PrivateRoute allowedRoles={["R03"]}>
+            <PrivateRoute allowedRoles={["R03" ,"R04"]}>
               <SidebarLayout role="PM(Admin)" />
 
             </PrivateRoute>
@@ -162,7 +160,7 @@ function App() {
 
         </Route>
         <Route path="admin/channel/:project_id" element={
-          <PrivateRoute allowedRoles={["R03"]}>
+          <PrivateRoute allowedRoles={["R03","R04"]}>
             <ProjectChannel role="R03" />
           </PrivateRoute>
         }>

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 const MemberProjectList = () => {
   const navigate = useNavigate();

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Box, Grid, Paper, Typography, List, ListItem, ListItemText } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
-import PaidIcon from "@mui/icons-material/Paid";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import AlertCard from "../components/AlertCard";
 
 export default function AdminDashboard() {
@@ -15,9 +13,9 @@ export default function AdminDashboard() {
     project: 0,
   });
   const categoryColors = {
-    project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
-    ask: "#ff9800",   // 주황 (예: 문의사항 알림)
-    chat: "#ff9800",   // 주황 (예: 문의사항 알림)
+    project: "#1976d2",   // 파랑 
+    ask: "#ff9800",   // 주황
+    chat: "#ff9800",   // 주황
     default: "#9e9e9e",   // 회색 (기본)
   };
   const navigate = useNavigate();

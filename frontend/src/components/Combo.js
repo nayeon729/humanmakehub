@@ -1,7 +1,7 @@
 // Combo.js
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material"; 
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import CommonComboBox from "./CommonComboBox";
 
 // Combo 컴포넌트가 sx prop을 받도록 정의

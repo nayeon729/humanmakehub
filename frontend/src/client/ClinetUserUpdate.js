@@ -1,3 +1,15 @@
+/**
+ * 파일명: ClientUserEditPage.js
+ * 설명: 클라이언트(고객)의 회원정보(휴대전화, 회사명)를 수정하는 페이지.
+ * 주요 기능:
+ *   - /client/userinfo: 로그인된 사용자 정보 조회 후 초기값 세팅
+ *   - /client/verify-password: 비밀번호 확인 후 수정 허용
+ *   - /client/userupdate: 입력값을 PUT 요청으로 전송하여 정보 수정
+ *   - 수정 완료 후 /client/userinfo로 이동
+ * 비고:
+ *   - 수정 전 비밀번호 확인을 위한 PasswordConfirmDialog 컴포넌트 포함
+ *   - axiosInstance 사용, JWT 토큰 헤더 자동 포함
+ */
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -9,7 +21,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 

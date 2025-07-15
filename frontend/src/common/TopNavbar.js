@@ -10,6 +10,9 @@ import CreateIcon from '@mui/icons-material/Create';
 import MenuIcon from '@mui/icons-material/Menu';
 import PaidIcon from '@mui/icons-material/Paid';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ListIcon from '@mui/icons-material/List';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function TopNavbar() {
   const navigate = useNavigate();
@@ -17,10 +20,13 @@ export default function TopNavbar() {
   const [role, setRole] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [nickname, setNickname] = useState("");
   useEffect(() => {
     const storedRole = sessionStorage.getItem("role");
+    const storedNickname = sessionStorage.getItem("nickname");
     setRole(storedRole);
+    setNickname(storedNickname);
+
   }, [location]);
 
   const handleLogout = () => {
@@ -62,8 +68,8 @@ export default function TopNavbar() {
       } : {}
     });
 
-    
-    if (role === "admin") {
+    {/* PM */ }
+    if (role === "R03") {
       return (
         <>
           <MenuItem {...commonProps("/admin/dashboard")}>
@@ -72,96 +78,83 @@ export default function TopNavbar() {
           </MenuItem>
           <MenuItem {...commonProps("/admin/users")}>
             <ListItemIcon><GroupIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>회원 관리</ListItemText>
+            <ListItemText>사용자 관리</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/admin/projects/all")}>
+            <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>전체 프로젝트</ListItemText>
           </MenuItem>
           <MenuItem {...commonProps("/admin/projects")}>
-            <ListItemIcon><FolderIcon fontSize="small" /></ListItemIcon>
+            <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
             <ListItemText>프로젝트 관리</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/admin/agreements")}>
-            <ListItemIcon><PaidIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>정산 관리</ListItemText>
-          </MenuItem>
-          <MenuItem {...commonProps("/admin/reports")}>
+          <MenuItem {...commonProps("/admin/askList")}>
             <ListItemIcon><ReportProblemIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>신고 관리</ListItemText>
+            <ListItemText>문의사항 목록</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/admin/logs")}>
+          <MenuItem {...commonProps("/admin/portfolioList")}>
             <ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>로그 보기</ListItemText>
+            <ListItemText>포트폴리오 목록</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/admin/notice/list")}>
+            <ListItemIcon><AnnouncementIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>공지사항</ListItemText>
           </MenuItem>
         </>
       );
     }
 
-    if (role === "pm") {
-      return (
-        <>
-          <MenuItem {...commonProps("/pm/dashboard")}>
-            <ListItemIcon><DashboardIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>PM 대시보드</ListItemText>
-          </MenuItem>
-          <MenuItem {...commonProps("/pm/team")}>
-            <ListItemIcon><BuildIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>팀 빌더</ListItemText>
-          </MenuItem>
-          <MenuItem {...commonProps("/pm/projects")}>
-            <ListItemIcon><FolderIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>프로젝트 관리</ListItemText>
-          </MenuItem>
-          <MenuItem {...commonProps("/pm/agreements")}>
-            <ListItemIcon><PaidIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>정산 요청</ListItemText>
-          </MenuItem>
-        </>
-      );
-    }
-
-    if (role === "member") {
+    {/* Member */ }
+    if (role === "R02") {
       return (
         <>
           <MenuItem {...commonProps("/member/tasks")}>
-            <ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>작업 목록</ListItemText>
+            <ListItemIcon><DashboardIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>대시보드</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/member/portfolio")}>
-            <ListItemIcon><CreateIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>포트폴리오 작성</ListItemText>
+          <MenuItem {...commonProps("/member/userinfo")}>
+            <ListItemIcon><AccountCircleIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>회원정보</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/member/requests")}>
-            <ListItemIcon><GroupIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>참여 요청</ListItemText>
+          <MenuItem {...commonProps("/member/projectlist")}>
+            <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>프로젝트 목록</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/member/agreements")}>
-            <ListItemIcon><PaidIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>정산 내역</ListItemText>
-          </MenuItem>
-          <MenuItem {...commonProps("/member/profile")}>
-            <ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon>
-            <ListItemText>내 프로필</ListItemText>
+          <MenuItem {...commonProps("/member/notice")}>
+            <ListItemIcon><AnnouncementIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>공지사항</ListItemText>
           </MenuItem>
         </>
       );
     }
 
-    // {
-    //   role === "client" && (
-    //     <Box sx={{ display: "flex", gap: 1 }}>
-    //       <Button color="inherit" component={Link} to="/client/dashboard">
-    //         클라이언트 대시보드
-    //       </Button>
-    //       <Button color="inherit" component={Link} to="/client/create">
-    //         프로젝트 등록
-    //       </Button>
-    //       <Button color="inherit" component={Link} to="/client/projects">
-    //         내 프로젝트
-    //       </Button>
-    //       <Button color="inherit" component={Link} to="/client/agreements">
-    //         정산 확인
-    //       </Button>
-    //     </Box>
-    //   )
-    // }
+    {/* Client */ }
+    if (role === "R01") {
+      return (
+        <>
+          <MenuItem {...commonProps("/client/dashboard")}>
+            <ListItemIcon><DashboardIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>대시보드</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/client/userinfo")}>
+            <ListItemIcon><AccountCircleIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>회원정보</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/client/create")}>
+            <ListItemIcon><CreateIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>프로젝트 생성</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/client/list")}>
+            <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>프로젝트 목록</ListItemText>
+          </MenuItem>
+          <MenuItem {...commonProps("/client/notice/list")}>
+            <ListItemIcon><AnnouncementIcon fontSize="small" /></ListItemIcon>
+            <ListItemText>공지사항</ListItemText>
+          </MenuItem>
+        </>
+      );
+    }
 
     return null;
   };
@@ -178,32 +171,15 @@ export default function TopNavbar() {
           <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
             {role ? (
               <>
-                {(role === "admin" || role === "pm" || role === "member") && (
+                {(role === "R03" || role === "R02" || role === "R01") && (
                   <>
                     <Button
                       color="inherit"
-                      onMouseEnter={handleMenuOpen}
-                      onClick={handleMenuOpen}
+
                     >
-                      {role === "admin" ? "관리자 페이지" : role === "pm" ? "PM 페이지" : "팀원 페이지"}
+                      {role === "R03" ? `PM ${nickname}님 환영합니다.` : role === "R02" ? `개발자 ${nickname}님 환영합니다.` : `고객 ${nickname}님 환영합니다.`}
                     </Button>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                      TransitionComponent={Fade}
-                      MenuListProps={{
-                        onMouseLeave: handleMenuClose,
-                      }}
-                    >
-                      {renderMenuItems(false)}
-                    </Menu>
-                  </>
-                )}
-                {role === "client" && (
-                  <>
-                    <Button color="inherit" component={Link} to="/client/dashboard">클라이언트 대시보드</Button>
-                    <Button color="inherit" component={Link} to="/client/create">프로젝트 등록</Button>
+
                   </>
                 )}
                 <Button color="inherit" onClick={handleLogout}>로그아웃</Button>

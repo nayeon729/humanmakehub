@@ -1,7 +1,7 @@
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Divider, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 export default function ProjectChannel({ role }) {
   const location = useLocation();

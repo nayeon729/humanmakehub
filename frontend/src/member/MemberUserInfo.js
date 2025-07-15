@@ -9,7 +9,7 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import Combo from "../components/Combo";  // Combo 컴포넌트 경로 맞게 수정!

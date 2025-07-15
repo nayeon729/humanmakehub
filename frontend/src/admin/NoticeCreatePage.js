@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
     Box, TextField, Typography, Button, MenuItem, Paper
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import Combo from "../components/Combo";
 

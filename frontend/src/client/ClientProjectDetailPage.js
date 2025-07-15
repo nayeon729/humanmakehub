@@ -1,8 +1,17 @@
+/**
+ * 파일명: ClientProjectDetailPage.js
+ * 설명: 클라이언트가 프로젝트 상세 정보를 확인하고 메시지를 주고받는 페이지.
+ * 주요 기능:
+ *   - /projects/:projectId 경로로 프로젝트 상세 정보 조회
+ *   - /messages/:projectId 경로로 메시지 목록 조회 및 출력
+ *   - 메시지 입력 후 Enter 또는 전송 버튼으로 POST 요청
+ *   - 본인의 메시지와 상대 메시지를 구분하여 스타일링
+ *   - 채팅창 자동 스크롤 기능 포함 (useRef 활용)
+ */
 import React, { useEffect, useState, useRef } from "react";
-
 import { Box, Typography, Paper, Divider, Button, TextField, Stack } from "@mui/material";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 
 function DetailItem({ label, value }) {
   return (

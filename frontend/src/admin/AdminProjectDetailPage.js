@@ -3,7 +3,7 @@ import {
     Box, Typography, Paper, TextField, Button, Select, MenuItem,
     LinearProgress, Slider, Divider, Stack
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useParams } from "react-router-dom";
 
 export default function AdminProjectDetailPage() {

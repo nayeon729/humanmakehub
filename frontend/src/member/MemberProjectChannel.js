@@ -6,7 +6,7 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
-import axios from "axios";
+import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
 
