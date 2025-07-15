@@ -16,6 +16,8 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "../axiosInstance"
 import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
+import { useAlert } from "../components/CommonAlert";
+
 
 export default function HomePage() {
   const BASE_URL = process.env.REACT_APP_API_URL;
@@ -26,6 +28,7 @@ export default function HomePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));       // ≤600px
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // 601px~900px
+  const { showAlert } = useAlert();
 
   const techStacks = [
     "React-native", "Firebase", "Kotlin", "Node.js", "React", "Django",
@@ -64,13 +67,13 @@ export default function HomePage() {
 
     for (let field of requiredFields) {
       if (!formData.get(field)?.trim()) {
-        alert("⚠️ 필수 항목을 모두 입력해 주세요!");
+        showAlert("⚠️ 필수 항목을 모두 입력해 주세요!");
         return;
       }
     }
 
     if (!privacyChecked) {
-      alert("⚠️ 개인정보 수집 및 이용에 동의해 주세요.");
+      showAlert("⚠️ 개인정보 수집 및 이용에 동의해 주세요.");
       return;
     }
 
@@ -88,7 +91,7 @@ export default function HomePage() {
         formValues
       );
 
-      alert("🎉 문의가 성공적으로 접수되었습니다!");
+      showAlert("🎉 문의가 성공적으로 접수되었습니다!");
 
     } catch (err) {
       console.log(err.response?.data?.detail || "문의사항전송중 오류");

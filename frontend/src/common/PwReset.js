@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Container, Paper, Stack } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import { useAlert } from "../components/CommonAlert";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function LoginPage() {
 
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
+  const { showAlert } = useAlert();
 
   const handleSubmit = async () => {
     if (password == confirmPassword) {
@@ -23,13 +25,13 @@ export default function LoginPage() {
       console.log(payload);
       try {
         const res = await axios.post(`${BASE_URL}/user/pwFind`, payload);
-        alert("비밀번호 재설정 성공!");
+        showAlert("비밀번호 재설정 성공!");
         navigate("/login");
       } catch (error) {
-        alert("비밀번호 재설정 실패: ");
+        showAlert("비밀번호 재설정 실패: ");
       }
     } else {
-      alert("비밀번호가 일치하지 않습니다.");
+      showAlert("비밀번호가 일치하지 않습니다.");
     }
   };
 

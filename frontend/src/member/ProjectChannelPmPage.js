@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import chatting from "../assets/chatting.png";
 import create from "../assets/create.png";
+import { useAlert } from "../components/CommonAlert";
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -26,7 +27,8 @@ export default function ProjectChannelPmPage() {
   const BASE_URL = process.env.REACT_APP_API_URL;
   const context = useOutletContext() || {};
   const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
-
+  const { showAlert } = useAlert();
+  
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) {
@@ -130,10 +132,10 @@ export default function ProjectChannelPmPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchMessages();
-      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
     } catch (error) {
       console.error("❌ 프로젝트 삭제 실패", error);
-      alert("❌ 프로젝트 삭제에 실패했습니다.");
+      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
     }
   };
 

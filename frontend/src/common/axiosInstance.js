@@ -4,10 +4,12 @@
  * 참고: 모든 API 요청에 공통으로 사용됨
  */
 import axios from "axios";
+import { useAlert } from "../components/CommonAlert";
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
+const { showAlert } = useAlert();
 let isAlertShown = false;
 // 응답 인터셉터 추가
 axiosInstance.interceptors.response.use(
@@ -15,7 +17,7 @@ axiosInstance.interceptors.response.use(
   error => {
     if (error.response?.status === 401 && !isAlertShown) {
       isAlertShown = true;
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       sessionStorage.clear();
       window.location.href = "/login";
     }

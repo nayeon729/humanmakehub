@@ -5,6 +5,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
+import { useAlert } from "../components/CommonAlert";
 
 
 export default function ProjectChannelCreatePage() {
@@ -17,12 +18,13 @@ export default function ProjectChannelCreatePage() {
   const [projectTitle, setProjectTitle] = useState("");
   const { project_id } = useParams();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      alert("모든 필수 항목을 입력해주세요.");
+      showAlert("모든 필수 항목을 입력해주세요.");
       return;
     }
 
@@ -38,11 +40,11 @@ export default function ProjectChannelCreatePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("글이 등록되었습니다.");
+      showAlert("글이 등록되었습니다.");
       navigate(`/member/channel/${project_id}/pm/${userId}`); // 공지사항 목록 페이지로 이동
     } catch (error) {
       console.error("글 등록 실패", error);
-      alert("글 등록 중 오류가 발생했습니다.");
+      showAlert("글 등록 중 오류가 발생했습니다.");
     }
   };
 

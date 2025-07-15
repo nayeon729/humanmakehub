@@ -5,6 +5,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
+import { useAlert } from "../components/CommonAlert";
 
 export default function AdminNoticeCreatePage() {
     const { noticeId } = useParams();
@@ -12,6 +13,7 @@ export default function AdminNoticeCreatePage() {
     const [targetType, setTargetType] = useState("");
     const [content, setContent] = useState("");
     const navigate = useNavigate();
+    const { showAlert } = useAlert();
 
     const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
     useEffect(() => {
@@ -37,7 +39,7 @@ export default function AdminNoticeCreatePage() {
 
     const handleUpdate = async () => {
         if (!title || !targetType || !content) {
-            alert("모든 필수 항목을 입력해주세요.");
+            showAlert("모든 필수 항목을 입력해주세요.");
             return;
         }
         try {
@@ -51,11 +53,11 @@ export default function AdminNoticeCreatePage() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            alert("✅ 공지사항이 수정되었습니다.");
+            showAlert("✅ 공지사항이 수정되었습니다.");
             navigate(`/admin/notice/${noticeId}`);
         } catch (error) {
             console.error("❌ 공지사항 수정 실패", error);
-            alert("공지사항 수정에 실패했습니다.");
+            showAlert("공지사항 수정에 실패했습니다.");
         }
     };
 

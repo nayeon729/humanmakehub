@@ -30,7 +30,7 @@ def list_routes():
 
 # CORS 설정
 origins = [
-    "http://localhost:3001",
+    "http://localhost:3000",
     "http://127.0.0.1:3001",
     "http://124.58.88.165:3001",
     "http://192.168.0.97:3001",
@@ -71,4 +71,4 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

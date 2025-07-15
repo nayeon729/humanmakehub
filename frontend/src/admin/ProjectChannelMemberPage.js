@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import add from "../assets/create.png"
+import { useAlert } from "../components/CommonAlert";
 
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
@@ -29,6 +30,7 @@ export default function ProjectChannelMemberPage() {
 
   const context = useOutletContext() || {};
   const setIsChecked = context.setIsChecked || (() => {});
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
@@ -112,10 +114,10 @@ export default function ProjectChannelMemberPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchMessages();
-      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
     } catch (error) {
       console.error("❌ 프로젝트 삭제 실패", error);
-      alert("❌ 프로젝트 삭제에 실패했습니다.");
+      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
     }
   };
 

@@ -17,6 +17,7 @@ import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';
 import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
 import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
 import Folder from "../assets/folder.png"
+import { useAlert } from "../components/CommonAlert";
 
 
 const ClientUserInfo = () => {
@@ -31,7 +32,7 @@ const ClientUserInfo = () => {
     estimatedDuration: "",
     ugencyLevel: "",
   });
-
+  const { showAlert } = useAlert();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -53,11 +54,11 @@ const ClientUserInfo = () => {
           Authorization: `Bearer ${token}`, // JWT 토큰을 헤더에 포함시킴
         },
       });
-      alert("프로젝트가 생성되었습니다.");
+      showAlert("프로젝트가 생성되었습니다.");
       console.log(response.data);
     } catch (error) {
       console.error("프로젝트 생성 실패:", error);
-      alert("프로젝트 생성에 실패했습니다.");
+      showAlert("프로젝트 생성에 실패했습니다.");
     }
   };
 

@@ -5,6 +5,7 @@ import {
   Chip, Button, Select, MenuItem, CircularProgress, Dialog, DialogTitle, DialogContent
 } from "@mui/material";
 import axios from "../common/axiosInstance"
+import { useAlert } from "../components/CommonAlert";
 
 export default function AdminAgreementPage() {
   const [agreements, setAgreements] = useState([]);
@@ -13,6 +14,7 @@ export default function AdminAgreementPage() {
   const [logOpen, setLogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const BASE_URL = process.env.REACT_APP_API_URL;
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     fetchAgreements();
@@ -40,10 +42,10 @@ export default function AdminAgreementPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchAgreements();
-      alert("상태가 성공적으로 변경되었습니다.");
+      showAlert("상태가 성공적으로 변경되었습니다.");
     } catch (err) {
       console.error("상태 변경 실패", err);
-      alert("상태 변경 실패");
+      showAlert("상태 변경 실패");
     }
   };
 
@@ -58,7 +60,7 @@ export default function AdminAgreementPage() {
       setLogOpen(true);
     } catch (err) {
       console.error("로그 불러오기 실패", err);
-      alert("로그 조회 실패");
+      showAlert("로그 조회 실패");
     }
   };
 

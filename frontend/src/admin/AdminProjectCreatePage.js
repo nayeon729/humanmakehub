@@ -8,11 +8,13 @@ import LooksTwoRoundedIcon from '@mui/icons-material/LooksTwoRounded';
 import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
 import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
 import Folder from "../assets/folder.png"
+import { useAlert } from "../components/CommonAlert";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function AdminProjectCreatePage() {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     projectName: "",
     projectType: "",
@@ -44,12 +46,12 @@ export default function AdminProjectCreatePage() {
         },
       });
 
-      alert("프로젝트가 성공적으로 등록되었습니다!");
+      showAlert("프로젝트가 성공적으로 등록되었습니다!");
       console.log(response.data);
       navigate("/admin/projects/all");
     } catch (err) {
       console.error("프로젝트 등록 실패", err);
-      alert("등록 중 오류가 발생했습니다.");
+      showAlert("등록 중 오류가 발생했습니다.");
     }
   };
 

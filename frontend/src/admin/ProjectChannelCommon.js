@@ -16,6 +16,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import add from "../assets/create.png"
+import { useAlert } from "../components/CommonAlert";
 
 export default function ProjectChannelCommonPage() {
   const [posts, setPosts] = useState([]);
@@ -25,6 +26,7 @@ export default function ProjectChannelCommonPage() {
   const [projectTitle, setProjectTitle] = useState("");
   console.log("프로젝트 id:" + project_id);
   const BASE_URL = process.env.REACT_APP_API_URL;
+  const { showAlert } = useAlert();
 
   useEffect(() => {
   const id = sessionStorage.getItem("user_id");
@@ -73,10 +75,10 @@ export default function ProjectChannelCommonPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchPosts();
-      alert("✅ 프로젝트가 삭제(표시)되었습니다.")
+      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
     } catch (error) {
       console.error("❌ 프로젝트 삭제 실패", error);
-      alert("❌ 프로젝트 삭제에 실패했습니다.");
+      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
     }
   };
 

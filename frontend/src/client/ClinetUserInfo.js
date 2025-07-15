@@ -23,7 +23,7 @@ import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import { useAlert } from "../components/CommonAlert";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -31,7 +31,7 @@ export default function ClientUserInfo() {
   const [userInfo, setUserInfo] = useState(null);
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const { showAlert } = useAlert();
 
 
   useEffect(() => {
@@ -75,11 +75,11 @@ export default function ClientUserInfo() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert("탈퇴가 완료되었습니다.");
+      showAlert("탈퇴가 완료되었습니다.");
       sessionStorage.removeItem("token");
       navigate("/");
     } catch (err) {
-      alert("비밀번호가 일치하지 않거나 오류 발생");
+      showAlert("비밀번호가 일치하지 않거나 오류 발생");
       console.error(err);
     }
   };
