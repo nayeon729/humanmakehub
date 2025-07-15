@@ -31,6 +31,7 @@ def list_routes():
 # CORS 설정
 origins = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "http://124.58.88.165:3001",
     "http://192.168.0.97:3001",
