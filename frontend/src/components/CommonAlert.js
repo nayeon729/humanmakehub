@@ -6,6 +6,9 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/
 // 1. Context 생성
 const AlertContext = createContext();
 
+// ✅ 외부에서도 접근 가능한 showAlert 함수 (초기값 null)
+let externalShowAlert = null;
+
 // 2. Provider 컴포넌트
 export const AlertProvider = ({ children }) => {
   const [alertState, setAlertState] = useState({
@@ -18,8 +21,11 @@ export const AlertProvider = ({ children }) => {
     setAlertState({ open: true, message, callback });
   };
 
+  // 외부에서 접근할 수 있도록 함수 할당
+  externalShowAlert = showAlert;
+
   const handleClose = () => {
-    setAlertState({ ...alertState, open: false });
+    setAlertState((prev) => ({ ...prev, open: false }));
     if (alertState.callback) alertState.callback();
   };
 
@@ -37,5 +43,14 @@ export const AlertProvider = ({ children }) => {
   );
 };
 
-// 3. 훅으로 사용하게 export
+// 3. 컴포넌트 내부 전용 훅
 export const useAlert = () => useContext(AlertContext);
+
+// 4. 외부 JS 파일에서 사용 가능한 alert 함수
+export const showAlertExternally = (message, callback = null) => {
+  if (externalShowAlert) {
+    externalShowAlert(message, callback);
+  } else {
+    console.warn("AlertProvider가 아직 마운트되지 않았습니다.");
+  }
+};

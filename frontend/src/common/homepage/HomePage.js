@@ -16,7 +16,7 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "../axiosInstance"
 import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
-import { useAlert } from "../components/CommonAlert";
+import { useAlert } from "../../components/CommonAlert";
 
 
 export default function HomePage() {
