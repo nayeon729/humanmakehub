@@ -162,7 +162,7 @@ export default function AdminProjectManagementPage() {
           project.project_id === project_id ? { ...project, status: newStatus } : project
         )
       );
-      showAlert("✅ 상태이 성공적으로 수정되었습니다.");
+      showAlert("✅ 상태가 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("❌ 상태 수정 실패", error);
       const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";

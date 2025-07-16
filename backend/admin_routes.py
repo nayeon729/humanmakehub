@@ -1546,7 +1546,7 @@ def get_user_info(user_id: str, user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("""
-                SELECT u.user_id, u.nickname, u.email, u.phone, u.tech, u.experience, u.git, u.portfolio
+                SELECT u.user_id, u.nickname, u.email, u.role, u.phone, u.company, u.tech, u.experience, u.git, u.portfolio
                 FROM user u
                 WHERE u.user_id = %s AND del_yn = 'N'
             """, (user_id,))

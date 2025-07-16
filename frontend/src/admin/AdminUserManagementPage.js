@@ -201,11 +201,11 @@ export default function AdminUserManagementPage() {
   };
   return (
     <Box sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", gap:1}}>
+      <Box sx={{ display: "flex", gap: 1 }}>
         <AccountCircleIcon sx={{ fontSize: 40 }} />
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-       사용자 관리
-      </Typography>
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          사용자 관리
+        </Typography>
       </Box>
 
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
@@ -215,7 +215,7 @@ export default function AdminUserManagementPage() {
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
       </Tabs>
-      <Stack direction="row" spacing={1} mb={2}alignItems={"center"}  justifyContent='center'>
+      <Stack direction="row" spacing={1} mb={2} alignItems={"center"} justifyContent='center'>
         <TextField
           placeholder="아이디 또는 닉네임 검색"
           value={searchKeyword}
@@ -252,12 +252,17 @@ export default function AdminUserManagementPage() {
                     textDecoration: "none",
                     "&:hover": { color: "primary.dark" }
                   }}
-                  onClick={() => navigate(`/admin/users/${user.user_id}?readonly=1`)}
+                  onClick={() => {
+                    const path = user.role === "R01"
+                      ? `/admin/client/${user.user_id}?readonly=1`
+                      : `/admin/member/${user.user_id}?readonly=1`;
+                    navigate(path);
+                  }}
                 >
                   {user.nickname}
                 </Typography></TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
-                  {user.role === "R02" ? (  // R02는 member
+                  {user.role === "R02" ? (
                     <Box>
                       <Combo
                         groupId="USER_GRADE"
@@ -273,18 +278,18 @@ export default function AdminUserManagementPage() {
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   {userRole === "R04" ? (
-                  <Box>
-                    <Combo
-                      groupId="USER_ROLE"
-                      defaultValue={user.role}
-                      onSelectionChange={(val) => handleRoleChange(user.user_id, val)}
-                      sx={{ minWidth: 50 }}
-                    />
-                  </Box>
+                    <Box>
+                      <Combo
+                        groupId="USER_ROLE"
+                        defaultValue={user.role}
+                        onSelectionChange={(val) => handleRoleChange(user.user_id, val)}
+                        sx={{ minWidth: 50 }}
+                      />
+                    </Box>
                   ) : (
-                      <Typography>
-                        {getRoleLabel(user.role)}
-                      </Typography>
+                    <Typography>
+                      {getRoleLabel(user.role)}
+                    </Typography>
                   )}
                 </TableCell >
                 <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
