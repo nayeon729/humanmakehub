@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Fade, IconButton, Drawer, List, ListItem, ListItemButton} from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Fade, IconButton, Drawer, List, ListItem, ListItemButton } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
@@ -161,41 +161,9 @@ export default function TopNavbar() {
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        sx={{
-          width: "100vw",
-          maxWidth: "100%",
-          overflowX: "hidden",
-          boxShadow: 1,
-          zIndex: 1201, // Drawer보다 위에
-        }}
-      >
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            px: { xs: 1, sm: 3 },
-            minHeight: { xs: 56, sm: 64 },
-            flexWrap: "wrap", // 좁아지면 줄바꿈
-          }}
-        >
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            noWrap
-            sx={{
-              maxWidth: { xs: 140, sm: 240 },
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              color: "inherit",
-              textDecoration: "none",
-              fontSize: { xs: "1rem", sm: "1.25rem" },
-            }}
-          >
+      <AppBar position="static" >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h6" component={Link} to="/" sx={{ color: "inherit", textDecoration: "none" }}>
             HumanMakeHub
           </Typography>
 
@@ -233,13 +201,6 @@ export default function TopNavbar() {
               anchor="right"
               open={mobileOpen}
               onClose={toggleDrawer(false)}
-              PaperProps={{
-                sx: {
-                  width: { xs: "80vw", sm: 320 }, // xs에선 80% 뷰포트, sm 이상은 320px
-                  maxWidth: "100vw",              // 절대 화면 밖으로 안 나가게
-                  overflowX: "hidden",
-                },
-              }}
             >
               <Box
                 sx={{ width: 250 }}
@@ -277,8 +238,6 @@ export default function TopNavbar() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Toolbar /> {/* 이게 공간 확보용용 */}
-<Box></Box>
     </>
   );
 }
