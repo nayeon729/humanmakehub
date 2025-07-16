@@ -921,7 +921,7 @@ def update_project_channel(
             """, (title, user_id, content, user["user_id"], channel_id))
 
             # 3. 삭제할 이미지 파일 처리
-            for file_id in delete_ids:
+            for file_id in delete_ids or []:
                 cursor.execute("SELECT file_path FROM post_file WHERE file_id = %s", (file_id,))
                 result = cursor.fetchone()
                 if result and os.path.exists(result["file_path"]):
