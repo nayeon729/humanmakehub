@@ -1,7 +1,9 @@
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import { Box, Typography, List, ListItem, ListItemButton, ListItemText, Divider, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axios from "../common/axiosInstance"
+import axios from "../common/axiosInstance";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
 export default function ProjectChannel({ role }) {
   const location = useLocation();
@@ -14,6 +16,8 @@ export default function ProjectChannel({ role }) {
   const [alertsCount, setAlertCount] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [filteredMembers, setFilteredMembers] = useState([]);
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -125,8 +129,10 @@ export default function ProjectChannel({ role }) {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      
       {/* 사이드바 */}
-      <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2 }}>
+       {isDesktop && (
+      <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2, mr:4 }}>
         <Typography variant="h6" fontWeight="bold" mb={2}>
           PROJECT<br />CHANNEL
         </Typography>
@@ -165,36 +171,37 @@ export default function ProjectChannel({ role }) {
             </Typography>
             <List>
               {filteredMembers.map((member) => {
-                  const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
-                  const isActive = location.pathname === memberPath;
-                  return (
-                    <ListItem key={member.user_id} disablePadding>
-                      <ListItemButton
-                        component={Link}
-                        to={memberPath}
-                        sx={{
-                          backgroundColor: isActive ? "#D9D9D9" : "transparent",
-                          fontWeight: isActive ? "bold" : "normal",
-                          width: "100%",
-                          display: "flex", // 👉 직접 flex 적용
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
-                        <Typography> {member.count > 0 ? member.count : ""}</Typography>
-                      </ListItemButton>
-                    </ListItem>
-                  );
-                })}
+                const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
+                const isActive = location.pathname === memberPath;
+                return (
+                  <ListItem key={member.user_id} disablePadding>
+                    <ListItemButton
+                      component={Link}
+                      to={memberPath}
+                      sx={{
+                        backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                        fontWeight: isActive ? "bold" : "normal",
+                        width: "100%",
+                        display: "flex", // 👉 직접 flex 적용
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
+                      <Typography> {member.count > 0 ? member.count : ""}</Typography>
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
             </List>
           </>
         )}
       </Box>
+       )}
 
       {/* 본문 */}
-      <Box sx={{ flexGrow: 1, p: 4 }}>
+      <Box sx={{ flexGrow: 1}}>
         <Outlet context={{ setIsChecked }} />
       </Box>
     </Box>
