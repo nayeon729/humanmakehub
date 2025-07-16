@@ -13,6 +13,7 @@ export default function ProjectChannel({ role }) {
   const [teamMemberId, setTeamMemberId] = useState("");
   const [alertsCount, setAlertCount] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [filteredMembers, setFilteredMembers] = useState([]);
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -26,27 +27,27 @@ export default function ProjectChannel({ role }) {
 
   useEffect(() => {
     const getTeamMemberId = async () => {
-    if(myUserId != "" && project_id != null){
+      if (myUserId != "" && project_id != null) {
         try {
-        const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${myUserId}`, {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        });
-        console.log("res : ", res);
-        console.log("project_id" , project_id);
-        console.log("userId", myUserId);
-        console.log("res.data.team_memeber_id", res.data.team_member_id);
-        console.log("type", typeof(res.data.team_member_id));
-        setTeamMemberId(res.data.team_member_id);
-        setPmId(res.data.pm_id);
-      } catch (err) {
-        console.error("프로젝트 팀멤버아이디 조회 실패", err);
-      }
+          const res = await axios.get(`${BASE_URL}/common/teamMemberId/${project_id}/${myUserId}`, {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+            },
+          });
+          console.log("res : ", res);
+          console.log("project_id", project_id);
+          console.log("userId", myUserId);
+          console.log("res.data.team_memeber_id", res.data.team_member_id);
+          console.log("type", typeof (res.data.team_member_id));
+          setTeamMemberId(res.data.team_member_id);
+          setPmId(res.data.pm_id);
+        } catch (err) {
+          console.error("프로젝트 팀멤버아이디 조회 실패", err);
+        }
       }
     }
     getTeamMemberId();
-  },[project_id, myUserId])
+  }, [project_id, myUserId])
 
   useEffect(() => {
     if (isChecked) {
@@ -58,25 +59,25 @@ export default function ProjectChannel({ role }) {
 
   useEffect(() => {
     getalertCount();
-  },[teamMemberId, pmId])
+  }, [teamMemberId, pmId])
 
   const getalertCount = async () => {
 
-    if(myUserId != "" && role != "R03"){  // App.js 에서 R03, R04 체크해서 R03으로 넘김
-        try {
-          const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
-            headers: {
-              Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-            },
-          });
-          console.log("1대1 알림 갯수 : ", res.data.count);
-          setAlertCount(res.data.count);
-        } catch (err) {
-          console.error("알림 갯수 조회 실패", err);
-        }
-      } else {
-        console.log("PM입니다.");
+    if (myUserId != "" && role != "R03") {  // App.js 에서 R03, R04 체크해서 R03으로 넘김
+      try {
+        const res = await axios.get(`${BASE_URL}/common/alerts/${teamMemberId}/${pmId}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        });
+        console.log("1대1 알림 갯수 : ", res.data.count);
+        setAlertCount(res.data.count);
+      } catch (err) {
+        console.error("알림 갯수 조회 실패", err);
       }
+    } else {
+      console.log("PM입니다.");
+    }
   }
 
   // 🔧 메뉴 경로 설정
@@ -106,8 +107,13 @@ export default function ProjectChannel({ role }) {
           },
         })
         .then((res) => {
+          const members = res.data.members ?? [];
+          const pm = res.data.pm_id;
           setMembers(res.data.members ?? []);
           setPmId(res.data.pm_id);
+          // 여기서 필터링까지 완료 후 저장
+          const filtered = members.filter((member) => member.user_id !== pm);
+          setFilteredMembers(filtered);
         })
         .catch((err) => {
           console.error("팀원 불러오기 실패", err);
@@ -142,7 +148,7 @@ export default function ProjectChannel({ role }) {
                     alignItems: "center",
                   }}
                 >
-                  <ListItemText primary={item.text} sx={{ pl: 1, width: "75%", }}/>
+                  <ListItemText primary={item.text} sx={{ pl: 1, width: "75%", }} />
                   <Typography>{item.text == "PM" ? alertsCount || "" : ""}</Typography>
                 </ListItemButton>
               </ListItem>
@@ -151,36 +157,34 @@ export default function ProjectChannel({ role }) {
         </List>
 
         {/* 🔍 관리자용 팀원 목록 */}
-        {role === "R03" && members.length > 0 && (  // App.js 에서 R03, R04 체크해서 R03으로 넘김
+        {role === "R03" && filteredMembers.length > 0 && (  // App.js 에서 R03, R04 체크해서 R03으로 넘김
           <>
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
               팀원 목록
             </Typography>
             <List>
-              {members
-                .filter((member) => member.user_id !== pmId) // PM 제외
-                .map((member) => {
+              {filteredMembers.map((member) => {
                   const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
                   const isActive = location.pathname === memberPath;
                   return (
                     <ListItem key={member.user_id} disablePadding>
-                        <ListItemButton
-                          component={Link}
-                          to={memberPath}
-                          sx={{
-                            backgroundColor: isActive ? "#D9D9D9" : "transparent",
-                            fontWeight: isActive ? "bold" : "normal",
-                            width: "100%",
-                            display: "flex", // 👉 직접 flex 적용
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
-                          <Typography> {member.count > 0 ? member.count : ""}</Typography>
-                        </ListItemButton>
+                      <ListItemButton
+                        component={Link}
+                        to={memberPath}
+                        sx={{
+                          backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                          fontWeight: isActive ? "bold" : "normal",
+                          width: "100%",
+                          display: "flex", // 👉 직접 flex 적용
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
+                        <Typography> {member.count > 0 ? member.count : ""}</Typography>
+                      </ListItemButton>
                     </ListItem>
                   );
                 })}
@@ -191,7 +195,7 @@ export default function ProjectChannel({ role }) {
 
       {/* 본문 */}
       <Box sx={{ flexGrow: 1, p: 4 }}>
-        <Outlet context={{ setIsChecked }}/>
+        <Outlet context={{ setIsChecked }} />
       </Box>
     </Box>
   );

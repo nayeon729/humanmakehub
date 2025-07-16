@@ -782,6 +782,8 @@ def create_with_file(
     if user["role"] != "R03":
         raise HTTPException(status_code=403, detail="관리자만 작성 가능합니다.")
 
+    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
@@ -797,6 +799,8 @@ def create_with_file(
             # 파일 저장
             if files:
                 for file in files:
+                    if file.content_type not in allowed_types:
+                        raise HTTPException(status_code=400, detail="이미지 파일만 등록하실 수 있습니다.")
                     filename = file.filename
                     filepath = os.path.join(UPLOAD_DIR, filename)
                     with open(filepath, "wb") as buffer:
@@ -882,12 +886,21 @@ def get_channel_by_id(channel_id: int, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.put("/projectchannel/{channel_id}/update")
-def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+def update_project_channel(
+    channel_id: int,
+    title: str = Form(...),
+    user_id: str = Form(...),
+    content: str = Form(...),
+    delete_ids: Optional[List[int]] = Form(None),  # 삭제할 기존 이미지 file_id 리스트
+    files: Optional[List[UploadFile]] = File(None),
+    user: dict = Depends(get_current_user)
+):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 1. 게시글 존재 & 작성자 확인
             cursor.execute("""
                 SELECT create_id FROM project_channel
                 WHERE channel_id = %s AND del_yn = 'N'
@@ -896,35 +909,46 @@ def update_project_channel(channel_id: int, projectChannel: ProjectChannel, user
 
             if not row:
                 raise HTTPException(status_code=404, detail="글을 찾을 수 없습니다.")
-            if row["create_id"] != user["create_id"]:
+            if row["create_id"] != user["user_id"]:
                 raise HTTPException(status_code=403, detail="작성자만 수정할 수 있습니다.")
 
-            sql = """
+            # 2. 글 수정
+            cursor.execute("""
                 UPDATE project_channel
-                SET title = %s,
-                    user_id = %s,
-                    content = %s,
-                    update_dt = %s,
-                    update_id = %s
+                SET title = %s, user_id = %s, content = %s,
+                    update_dt = NOW(), update_id = %s
                 WHERE channel_id = %s
-            """
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            cursor.execute(sql, (
-                projectChannel.title,
-                projectChannel.user_id,
-                projectChannel.content,
-                now,
-                user["user_id"],
-                channel_id  
-            ))
+            """, (title, user_id, content, user["user_id"], channel_id))
+
+            # 3. 삭제할 이미지 파일 처리
+            for file_id in delete_ids:
+                cursor.execute("SELECT file_path FROM post_file WHERE file_id = %s", (file_id,))
+                result = cursor.fetchone()
+                if result and os.path.exists(result["file_path"]):
+                    os.remove(result["file_path"])
+                cursor.execute("DELETE FROM post_file WHERE file_id = %s", (file_id,))
+
+            # 4. 새 이미지 파일 저장
+            if files:
+                upload_dir = "C:/Users/admin/uploads"
+                for file in files:
+                    filename = file.filename
+                    file_path = os.path.join(upload_dir, filename)
+                    with open(file_path, "wb") as buffer:
+                        shutil.copyfileobj(file.file, buffer)
+
+                    cursor.execute("""
+                        INSERT INTO post_file (channel_id, file_name, file_path)
+                        VALUES (%s, %s, %s)
+                    """, (channel_id, filename, file_path))
 
         conn.commit()
-        return {"message": "공지사항이 수정되었습니다."}
+        return {"message": "공지사항이 성공적으로 수정되었습니다!"}
+    
     except Exception as e:
-        import traceback
-        print("❌ 예외 발생:", e)
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        print("❌ 게시글 수정 중 오류:", e)
+        raise HTTPException(status_code=500, detail="게시글 수정 중 서버 오류 발생")
+    
     finally:
         conn.close()
 
@@ -984,7 +1008,7 @@ def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.get("/project/{project_id}/user/{user_id}/{teamMemberId}")
-def get_channel_messages(project_id: int, user_id: str, teamMemberId:int):
+def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:

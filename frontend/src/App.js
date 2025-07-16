@@ -178,6 +178,7 @@ function App() {
             <Route path="common" element={<ProjectChannelCommon />} />
             <Route path="member/:user_id" element={<ProjectChannelMember />} />
             <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
+            <Route path="view/:channel_id" element={<ProjectChannelView/>}/>
 
           </Route>
           <Route path="admin/channel/:channel_id/update" element={<ProjectChannelUpdate />} />
