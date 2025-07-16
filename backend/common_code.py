@@ -1,3 +1,38 @@
+"""
+----------------------------------------------------------------------
+파일명     : common_routes.py
+설명       : 공통 기능(코드, 알림, 팀원 정보 등)을 제공하는 FastAPI 라우터
+
+주요 기능
+----------------------------------------------------------------------
+1. 공통 코드 조회
+   - 단일 그룹 코드 조회 (/codes/{group_id})
+   - 전체 그룹 및 공통코드 조회 (/groups)
+
+2. 알림 관리
+   - 사용자 알림 조회 (/alerts)
+   - 알림 개별 삭제 (/alerts/{alert_id}/delete)
+   - 특정 팀원에 대한 알림 개수 조회 (/alerts/{teamMemberId}/{pmId})
+   - 알림 체크 상태 처리 (/alertsCheck)
+
+3. 팀원 ID 조회
+   - 프로젝트 ID와 사용자 ID 기준으로 팀원 ID 조회 (/teamMemberId/{project_id}/{user_id})
+
+권한 제어
+----------------------------------------------------------------------
+- 대부분의 기능은 JWT 인증 필수 (`Depends(get_current_user)`)
+- 알림 기능은 역할(role)에 따라 분기 처리 (예: R03/R04는 공통 알림 포함 조회)
+
+기타
+----------------------------------------------------------------------
+- DB 연결은 pymysql 사용, DictCursor 설정 포함
+- SQL 실행 후 커넥션은 반드시 close 처리
+- 알림 테이블은 `alerts`, 공통코드는 `group_code`, `common_code` 사용
+- 알림 값은 `target_user`, `create_id`, `value_id`, `category` 기준으로 필터링
+----------------------------------------------------------------------
+"""
+
+
 from fastapi import APIRouter, HTTPException, Depends, Body
 import pymysql
 from pydantic import BaseModel
@@ -8,7 +43,7 @@ from jwt_auth import get_current_user
  
 router = APIRouter(prefix="", tags=["공통코드"])
 
-# ✅ Pydantic 모델
+
 class CommonCode(BaseModel):
     code_id: str
     code_name: str
