@@ -295,7 +295,7 @@ export default function HomePage() {
         style={{
           backgroundColor: "#1976d2",
           color: "#fff",
-          padding: "60px 20px",
+          padding: "60px 0px",
           textAlign: "center",
           position: "relative",
         }}

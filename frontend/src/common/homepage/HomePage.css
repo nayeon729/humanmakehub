@@ -132,25 +132,6 @@ section {
     --text-muted: #666;
 }
 
-.hero_wrap {
-    position: relative;
-    background-color: #2a2d3e;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-    overflow: hidden;
-}
-
-.hero_wrap::before,
-.hero_wrap::after {
-    content: "";
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 1;
-}
-
 
 /* 기본 스타일 (다른 섹션은 그대로 유지됨) */
 .swiper-slide {

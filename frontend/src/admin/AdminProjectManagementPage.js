@@ -620,8 +620,7 @@ export default function AdminProjectManagementPage() {
                 <Typography
                   sx={{
                     cursor: "pointer",
-                    textDecoration: "underline",
-                    color: "primary.main",
+                    textDecoration: "none",
                     "&:hover": { color: "primary.dark" }
                   }}
                   onClick={() => window.open(`/admin/users/${dev.user_id}?readonly=1`, "_blank")}

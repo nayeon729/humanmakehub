@@ -104,7 +104,7 @@ export default function AdminProjectManagementPage() {
             const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
             return (
               <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 248 }}>
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 400}}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
                     <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{backgroundColor:urgencyColor(proj.urgency), color:'white'}} size="small" />
                     <Typography variant="caption" color="text.secondary">
@@ -139,7 +139,7 @@ export default function AdminProjectManagementPage() {
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
                     </Typography>
-                    <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '227px', height: '100px' }}>
+                    <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '380px', height: '100px' }}>
                       {proj.description}
                     </Box>
                   <Box sx={{ textAlign:'center'}}>
