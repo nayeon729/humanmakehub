@@ -48,7 +48,7 @@ export default function AdminNoticeViewPage() {
             fetchNotice();
             setDeleteDialogOpen(false);
             showAlert("✅ 공지가 삭제(표시)되었습니다.")
-            navigate("/notice/list");
+            navigate("/admin/notice/list");
         } catch (error) {
             console.error("❌ 공지 삭제 실패", error);
             showAlert("❌ 공지 삭제에 실패했습니다.");
@@ -70,7 +70,7 @@ export default function AdminNoticeViewPage() {
                 </Typography>
 
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box display="flex" direction="row">
                         <Chip
                             label={noticeTypeMap[notice.target_type] || notice.target_type}
@@ -83,7 +83,7 @@ export default function AdminNoticeViewPage() {
                         </Box>
                         <Box>
                             {["R03", "R04"].includes(userRole) && (
-                            <Box mt={2} sx={{ display: "flex", flex: '1', flexDirection: "row"}}>
+                            <Box mt={5}  sx={{ display: "flex", flexDirection: "row"}}>
                                 <button
                                     style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor:'pointer'}}
                                     onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
@@ -98,16 +98,18 @@ export default function AdminNoticeViewPage() {
                                 </button>
                             </Box>
                             )}
-                            <Box mt={1}>
-                            <Typography variant="caption" color="text.secondary">
-                                {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
-                            </Typography>
-                            </Box>
+                            
                             
                         </Box>
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
-                    <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
+                    
+                    <Box mt={1} sx={{display:'flex', justifyContent:'end'}}>
+                            <Typography variant="caption" color="text.secondary">
+                                {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
+                            </Typography>
+                            </Box>
+                            <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
                         {notice.content}
                     </Typography>
                 </Paper>

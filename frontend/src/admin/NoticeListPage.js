@@ -51,6 +51,12 @@ export default function AdminNoticeListPage() {
         N02: "점검"
     }
 
+    const getNoticeDetailPath = (role, noticeId) => {
+        if (role === "R02") return `/member/notice/${noticeId}`;
+        if (role === "R01") return `/client/notice/${noticeId}`;
+        return `/admin/notice/${noticeId}`; // R03, R04
+    };
+
     return (
         <Box sx={{ p: 2 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -90,15 +96,20 @@ export default function AdminNoticeListPage() {
                             const fomattedDate = `${dateObj.getFullYear()}.${(dateObj.getMonth() + 1)
                                 .toString()
                                 .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
-                                return(
-                            <TableRow key={notice.id} onClick={() => navigate(`/admin/notice/${notice.notice_id}`)} sx={{ cursor: 'pointer' }}>
-                                <TableCell sx={{ textAlign: 'center', width: '140px' }}>
-                                    <Chip label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: '65px' }}/>
-                                </TableCell>
-                                <TableCell sx={{ textAlign: 'center' }} >{notice.title}</TableCell>
-                                <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>
-                            </TableRow>
-                        );
+                            return (
+                                <TableRow
+                                    key={notice.id}
+                                    onClick={() => navigate(getNoticeDetailPath(userRole, notice.notice_id))}
+                                    sx={{ cursor: 'pointer' }}
+                                >
+
+                                    <TableCell sx={{ textAlign: 'center', width: '140px' }}>
+                                        <Chip label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: '65px' }} />
+                                    </TableCell>
+                                    <TableCell sx={{ textAlign: 'center' }} >{notice.title}</TableCell>
+                                    <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>
+                                </TableRow>
+                            );
                         })}
                     </TableBody>
                 </Table>

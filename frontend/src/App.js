@@ -25,8 +25,6 @@ import MemberTaskPage from "./member/MemberTaskPage";
 import MemberUserInfo from "./member/MemberUserInfo";
 import MemberUserUpdate from "./member/MemberUserUpdate";
 import MemberProjectList from "./member/MemberProjectList";
-import MemberNoticeBoard from "./member/MemberNoticeBoard";
-import MemberNoticeViewPage from "./member/MemberNoticeViewPage"
 import ProjectChannelPmCreatePage from "./member/ProjectChannelPmCreatePage";
 import ProjectChannelPmUpdatePage from "./member/ProjectChannelPmUpdatePage";
 
@@ -94,6 +92,7 @@ function App() {
             <Route path="userinfo" element={<ClientUserInfo />} />
             <Route path="userupdate" element={<ClientUserUpdate />} /> {/* 회원 정보 수정 페이지 */}
             <Route path="notice/list" element={<NoticeListPage />} />
+            <Route path="notice/:noticeId" element={<NoticeViewPage />} />
 
           </Route>
 
@@ -128,8 +127,8 @@ function App() {
             <Route path="userinfo" element={<MemberUserInfo />} />
             <Route path="userupdate" element={<MemberUserUpdate />} />
             <Route path="projectlist" element={<MemberProjectList />} />
-            <Route path="notice" element={<MemberNoticeBoard />} />
-            <Route path="notice/:noticeId" element={<MemberNoticeViewPage />} />
+            <Route path="notice/list" element={<NoticeListPage />} />
+            <Route path="notice/:noticeId" element={<NoticeViewPage />} />
           </Route>
           <Route path="member/channel/:project_id" element={
             <PrivateRoute allowedRoles={["R02"]}>

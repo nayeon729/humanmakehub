@@ -16,6 +16,7 @@ import {
 import CreateIcon from "@mui/icons-material/Create";
 import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
@@ -105,21 +106,7 @@ export default function ProjectChannelMemberPage() {
     fetchProjectTitle();
   }, [project_id]);
   
-  const handleDelete=async(channel_id)=>{
-     const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  if (!confirmed) return;
-    try {
-      const token = sessionStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchMessages();
-      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
-    } catch (error) {
-      console.error("❌ 프로젝트 삭제 실패", error);
-      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
-    }
-  };
+  
 
   useEffect(() => {
     if(messages != []) {
@@ -165,30 +152,23 @@ export default function ProjectChannelMemberPage() {
                 label={msg.create_id === pmId ? "PM" : msg.nickname}
               />
               <Box display='flex' flexDirection='row' justifyContent='space-between' width="100%">
-                <Typography variant="subtitle1" fontWeight="bold" ml={1}>{msg.title}</Typography>
-                <Typography variant="caption" sx={{ color: "gray" }}>
-                  {msg.create_dt?.slice(0, 10).replace(/-/g, '.')}
-                </Typography>
-              </Box>
+  <Stack direction="row" alignItems="center">
+    <Typography variant="subtitle1" fontWeight="bold" ml={1}>
+      {msg.title}
+    </Typography>
+    {msg.has_image && (
+      <ImageIcon sx={{ fontSize: 20, color: 'gray', ml: 1 }} />
+    )}
+  </Stack>
+  <Typography variant="caption" sx={{ color: "gray" }}>
+    {msg.create_dt?.slice(0, 10).replace(/-/g, '.')}
+  </Typography>
+</Box>
             </Box>
 
             <Typography variant="body2" color="text.secondary" mt={2}>
               {msg.content}
             </Typography>
-            {msg.create_id === myUserId && (
-              <Stack direction="row" justifyContent='end' sx={{ mb: '-16px', mr: '-8px' }}>
-                <Button
-                  sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
-                  onClick={() => navigate(`/admin/channel/${project_id}/update/${msg.channel_id}`)}>
-                  수정
-                </Button>
-                <Button
-                  sx={{ color: '#d32f2f', fontSize: '12px', minWidth: '20px' }}
-                  onClick={() => handleDelete(msg.channel_id)}>
-                  삭제
-                </Button>
-              </Stack>
-            )}
           </Paper>
         ))}
       </Stack>

@@ -5,16 +5,18 @@ import {
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
-
+import { useAlert } from "../components/CommonAlert";
 
 
 export default function ProjectChannelViewPage() {
     const { project_id, channel_id } = useParams();
     console.log("🧭 useParams channel_id:", channel_id);
+    const [myUserId, setMyUserId] = useState("");
     const [channel, setChannel] = useState([]);
     const [images, setImages] = useState([]);
     const [projectTitle, setProjectTitle] = useState("");
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const { showAlert } = useAlert();
     const BASE_URL = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
 
@@ -26,6 +28,12 @@ export default function ProjectChannelViewPage() {
             fetchProjectTitle(project_id);
         }
     }, [project_id]);
+    useEffect(() => {
+        const id = sessionStorage.getItem("user_id");
+        if (id) {
+            setMyUserId(id);
+        }
+    }, []);
     const fetchChannel = async (channelId) => {
         try {
             const token = sessionStorage.getItem("token");
@@ -54,20 +62,19 @@ export default function ProjectChannelViewPage() {
             console.error("❌ 프로젝트 제목 가져오기 실패:", err);
         }
     };
-    const handleDeleteNotice = async (notice_id) => {
+    const handleDelete = async (channel_id) => {
+        const confirmed = window.confirm("정말 삭제하시겠습니까?");
+        if (!confirmed) return;
         try {
             const token = sessionStorage.getItem("token");
-            await axios.delete(`${BASE_URL}/admin/notices/${notice_id}/delete`, {
+            await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            fetchNotice();
-            setDeleteDialogOpen(false);
-            alert("✅ 공지가 삭제(표시)되었습니다.")
-            navigate("/notice/list");
+            fetchMessages();
+            showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
         } catch (error) {
-            console.error("❌ 공지 삭제 실패", error);
-            alert("❌ 공지 삭제에 실패했습니다.");
-
+            console.error("❌ 프로젝트 삭제 실패", error);
+            showAlert("❌ 프로젝트 삭제에 실패했습니다.");
         }
     };
 
@@ -80,14 +87,36 @@ export default function ProjectChannelViewPage() {
                 </Typography>
 
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-                        <Box display="flex" direction="row">
-                            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
-                                {channel.title}
-                            </Typography>
+                    
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
+                            {channel.title}
+                        </Typography>
                         </Box>
+                        <Box>
+                            {channel.create_id === myUserId && (
+                                <Box mt={5} sx={{ display: "flex", flexDirection: "row", mr:'-5px' }}>
+                                    <Button
+                                        sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
+                                        onClick={() => navigate(`/admin/channel/${project_id}/update/${channel.channel_id}`)}>
+                                        수정
+                                    </Button>
+                                    <Button
+                                        sx={{ color: '#d32f2f', fontSize: '12px', minWidth: '20px' }}
+                                        onClick={() => handleDelete(channel.channel_id)}>
+                                        삭제
+                                    </Button>
+                                </Box>
+                            )}
+                            </Box>
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
+                    <Box sx={{display:'flex', justifyContent:'end'}}>
+                    <Typography variant="caption" color="text.secondary">
+                        {channel.create_dt?.slice(0, 10).replace(/-/g, ".")}
+                    </Typography>
+                    </Box>
                     <Box mt={3}>
                         {images.length > 0 && (
                             <>
@@ -99,7 +128,7 @@ export default function ProjectChannelViewPage() {
                                             src={img.file_path.replace("C:/Users/admin/uploads", `${BASE_URL}/static`)}
                                             alt={`file-${idx}`}
                                             style={{
-                                                width:'100%',
+                                                width: '100%',
 
                                                 borderRadius: "8px",
                                                 // objectFit: "cover"
@@ -115,20 +144,7 @@ export default function ProjectChannelViewPage() {
                         {channel.content}
                     </Typography>
                 </Paper>
-                <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                    <DialogTitle>공지 삭제 확인</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            정말로 이 공지를 삭제하시겠습니까?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
-                        <Button onClick={() => handleDeleteNotice(notice.notice_id)} color="error" variant="contained">
-                            삭제 확인
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                
             </Box>
 
         </>

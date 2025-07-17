@@ -492,8 +492,6 @@ def create_notice(notice: Notice, user: dict = Depends(get_current_user)):
 
 @router.get("/notices")
 def get_notices(page: int = 1, keyword: str = "", user: dict = Depends(get_current_user)):
-    if user["role"] not in ("R03", "R04"):
-        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -533,8 +531,6 @@ def get_notices(page: int = 1, keyword: str = "", user: dict = Depends(get_curre
         conn.close()
 @router.get("/notices/{notice_id}")
 def get_notice_detail(notice_id: int, user: dict = Depends(get_current_user)):
-    if user["role"] not in ("R03", "R04"):
-        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -826,7 +822,7 @@ def get_project_channel_detail(channel_id: int, user: dict = Depends(get_current
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             # 채널 게시글 정보 조회
             cursor.execute("""
-                SELECT channel_id, title, content, user_id, create_dt, value_id, category
+                SELECT channel_id, title, content, user_id, create_dt, value_id, category, create_id
                 FROM project_channel
                 WHERE channel_id = %s AND del_yn = 'N'
             """, (channel_id,))
@@ -984,7 +980,12 @@ def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
                     pc.user_id, 
                     u.nickname,
                     pc.create_id,
-                    pc.create_dt
+                    pc.create_dt,
+                    EXISTS (
+                        SELECT 1
+                        FROM post_file pf
+                        WHERE pf.channel_id = pc.channel_id AND pf.del_yn = 'N'
+                    ) AS has_image
                 FROM project_channel pc
                 JOIN user u ON pc.user_id = u.user_id
                 WHERE pc.del_yn = 'N'
@@ -1022,7 +1023,12 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
                     pc.user_id,
                     u.nickname,
                     pc.create_id,
-                    pc.create_dt
+                    pc.create_dt,
+                    EXISTS (
+                        SELECT 1
+                        FROM post_file pf
+                        WHERE pf.channel_id = pc.channel_id AND pf.del_yn = 'N'
+                    ) AS has_image
                 FROM project_channel pc
                 JOIN user u ON pc.create_id = u.user_id
                 WHERE pc.del_yn = 'N'
@@ -1030,7 +1036,7 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
                   AND pc.category = "board02"
                 ORDER BY pc.create_dt DESC
             """
-            cursor.execute(sql, (teamMemberId))
+            cursor.execute(sql, (teamMemberId,))
             items = cursor.fetchall()
 
             cursor.execute("""

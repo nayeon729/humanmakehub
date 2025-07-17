@@ -17,6 +17,7 @@ import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function ProjectChannelCommonPage() {
   const [posts, setPosts] = useState([]);
@@ -29,9 +30,9 @@ export default function ProjectChannelCommonPage() {
   const { showAlert } = useAlert();
 
   useEffect(() => {
-  const id = sessionStorage.getItem("user_id");
-  if (id) setMyUserId(id);
-}, []);
+    const id = sessionStorage.getItem("user_id");
+    if (id) setMyUserId(id);
+  }, []);
   const fetchPosts = async () => {
     try {
       const token = sessionStorage.getItem("token");
@@ -66,21 +67,6 @@ export default function ProjectChannelCommonPage() {
     fetchProjectTitle();
   }, [project_id]);
 
-  const handleDelete=async(channel_id)=>{
-     const confirmed = window.confirm("정말 삭제하시겠습니까?");
-  if (!confirmed) return;
-    try {
-      const token = sessionStorage.getItem("token");
-      await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchPosts();
-      showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
-    } catch (error) {
-      console.error("❌ 프로젝트 삭제 실패", error);
-      showAlert("❌ 프로젝트 삭제에 실패했습니다.");
-    }
-  };
 
   return (
     <Box sx={{ flex: 1, p: 3 }}>
@@ -89,7 +75,7 @@ export default function ProjectChannelCommonPage() {
           💬 {projectTitle}
         </Typography>
         <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
-          <img src={add} style={{width:'40px', hight:'40px'}}/>
+          <img src={add} style={{ width: '40px', hight: '40px' }} />
         </IconButton>
       </Stack>
 
@@ -103,38 +89,27 @@ export default function ProjectChannelCommonPage() {
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Box display='flex' flexDirection='row' justifyContent='space-between'>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {post.title}
-            </Typography>
-            <Typography variant="caption" sx={{ color: "gray" }}>
+              <Typography variant="subtitle1" fontWeight="bold" sx={{display:'flex', alignItems:'center'}}>
+                {post.title}
+                {post.has_image && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb:'5px'}} />
+                )}
+              </Typography>
+              <Typography variant="caption" sx={{ color: "gray" }}>
                 {post.create_dt?.slice(0, 10).replace(/-/g, '.')}
               </Typography>
-              </Box>
+            </Box>
             {/* <Typography variant="body2" sx={{ color: "gray" }}>
               {post.content}
             </Typography> */}
             <Typography variant="body2" sx={{ color: "gray" }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
-            
-            
+
+
             <Stack direction="row" justifyContent="space-between" mt={1}>
 
             </Stack>
-            {post.create_id === myUserId && (
-                          <Stack direction="row" justifyContent='end' sx={{mb:'-16px', mr:'-8px'}}>
-                            <Button 
-                              sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
-                              onClick={() => navigate(`/admin/channel/${project_id}/update/${post.channel_id}`)}>
-                              수정
-                            </Button>
-                            <Button 
-                            sx={{ color: '#d32f2f', fontSize: '12px', minWidth: '20px' }}
-                            onClick={() => handleDelete(post.channel_id)}>
-                              삭제
-                            </Button>
-                          </Stack>
-                        )}
           </Paper>
         ))}
       </Box>
