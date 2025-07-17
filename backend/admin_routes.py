@@ -695,33 +695,142 @@ def remove_member_from_project(project_id: int, user_id: str, user: dict = Depen
     finally:
         conn.close()
 
+# @router.post("/projectchannel/{project_id}/create")
+# def create_project_channel(projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
+#     print("🧾 받은 데이터:", projectChannel.dict())  # 여기 추가!
+#     if user["role"] not in ("R03", "R04"):
+#         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
+    
+#     try:
+#         conn = pymysql.connect(**db_config)
+#         with conn.cursor() as cursor:
+#             if projectChannel.category == "board01":
+#                 sql = """
+#                     INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+#                     VALUES (%s, %s, %s, %s, %s, %s, "board01")
+#                 """
+#                 now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#                 cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.project_id))
+
+#                 # 프로젝트에 참가한 팀멤버아이디 조회
+#                 cursor.execute("""
+#                     SELECT user_id
+#                     FROM team_member 
+#                     WHERE project_id = %s
+#                     AND del_yn = 'N'
+#                 """, (projectChannel.project_id,))
+#                 team_members = cursor.fetchall()
+
+#                 # 각 팀원에게 알림 보내기
+#                 for member in team_members:
+#                     target_user = member["user_id"]
+#                     cursor.execute("""
+#                         INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+#                         VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+#                     """, (
+#                         target_user,
+#                         projectChannel.project_id,
+#                         "chat",
+#                         "시스템 알림제목",
+#                         "프로젝트에서 PM이 공지사항을 작성하였습니다.",
+#                         f"http://localhost:3000/member/channel/{projectChannel.project_id}/common",
+#                         user["user_id"]
+#                     ))
+
+#             else:
+#                 sql = """
+#                     INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+#                     VALUES (%s, %s, %s, %s, %s, %s, "board02")
+#                 """
+#                 now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#                 cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.value_id))
+
+#                 cursor.execute("""
+#                         INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+#                         VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+#                     """, (
+#                         "",
+#                         projectChannel.value_id,
+#                         "chat",
+#                         "시스템 알림제목",
+#                         "시스템 알림내용",
+#                         f"http://localhost:3000/member/channel/{projectChannel.project_id}/pm/{projectChannel.user_id}",
+#                         user["user_id"]
+#                     ))
+
+#         conn.commit()
+#         return {"message": "게시글이 등록되었습니다."}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#     finally:
+#         conn.close()
+
 @router.post("/projectchannel/{project_id}/create")
-def create_project_channel(projectChannel: ProjectChannel, user: dict = Depends(get_current_user)):
-    print("🧾 받은 데이터:", projectChannel.dict())  # 여기 추가!
+async def create_project_channel(
+    project_id: int,
+    title: str = Form(...),
+    user_id: str = Form(...),
+    content: str = Form(...),
+    value_id: int = Form(...),
+    category: str = Form(...),
+    files: Optional[List[UploadFile]] = File(None),
+    user: dict = Depends(get_current_user)
+):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
-    
+
+    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    UPLOAD_DIR = "C:/Users/admin/uploads/projectchannel"
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+
     try:
         conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
-            if projectChannel.category == "board01":
-                sql = """
-                    INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
-                    VALUES (%s, %s, %s, %s, %s, %s, "board01")
-                """
-                now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.project_id))
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                # 프로젝트에 참가한 팀멤버아이디 조회
+            # 🔸 게시글 등록
+            cursor.execute("""
+                INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (title, user_id, content, now, user["user_id"], value_id, category))
+            channel_id = cursor.lastrowid
+
+            # 📎 이미지 파일 저장
+            if files:
+                for file in files:
+                    if file.content_type not in allowed_types:
+                        raise HTTPException(status_code=400, detail="이미지 파일만 등록 가능합니다.")
+
+                    filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{file.filename}"
+                    filepath = os.path.join(UPLOAD_DIR, filename)
+
+                    with open(filepath, "wb") as buffer:
+                        shutil.copyfileobj(file.file, buffer)
+
+                    cursor.execute("""
+                        INSERT INTO post_file (channel_id, file_name, file_path, create_dt, create_id, del_yn)
+                        VALUES (%s, %s, %s, %s, %s, 'N')
+                    """, (channel_id, file.filename, filepath, now, user["user_id"]))
+
+            # 프로젝트에 참가한 팀멤버아이디 조회
                 cursor.execute("""
                     SELECT user_id
                     FROM team_member 
                     WHERE project_id = %s
                     AND del_yn = 'N'
-                """, (projectChannel.project_id,))
+                """, (project_id,))
                 team_members = cursor.fetchall()
 
-                # 각 팀원에게 알림 보내기
+            # 🔔 알림 전송 (이 부분은 그린 코드 그대로!)
+            if category == "board01":
+                cursor.execute("""
+                    SELECT user_id
+                    FROM team_member 
+                    WHERE project_id = %s
+                    AND del_yn = 'N'
+                """, (project_id,))
+                team_members = cursor.fetchall()
+
                 for member in team_members:
                     target_user = member["user_id"]
                     cursor.execute("""
@@ -729,90 +838,36 @@ def create_project_channel(projectChannel: ProjectChannel, user: dict = Depends(
                         VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
                     """, (
                         target_user,
-                        projectChannel.project_id,
-                        "chat",
-                        "시스템 알림제목",
+                        project_id,
+                        "commonChat",
+                        "프로젝트 공지",
                         "프로젝트에서 PM이 공지사항을 작성하였습니다.",
-                        f"http://localhost:3000/member/channel/{projectChannel.project_id}/common",
+                        f"http://localhost:3000/member/channel/{project_id}/common",
                         user["user_id"]
                     ))
-
             else:
-                sql = """
-                    INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
-                    VALUES (%s, %s, %s, %s, %s, %s, "board02")
-                """
-                now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                cursor.execute(sql, (projectChannel.title, projectChannel.user_id, projectChannel.content, now, user["user_id"], projectChannel.value_id))
-
                 cursor.execute("""
-                        INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
-                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
-                    """, (
-                        "",
-                        projectChannel.value_id,
-                        "chat",
-                        "시스템 알림제목",
-                        "시스템 알림내용",
-                        f"http://localhost:3000/member/channel/{projectChannel.project_id}/pm/{projectChannel.user_id}",
-                        user["user_id"]
-                    ))
+                    INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
+                """, (
+                    user_id,
+                    value_id,
+                    "chat",
+                    "프로젝트 PM",
+                    "프로젝트에서 PM이 개인채널에 글을 작성하였습니다.",
+                    f"http://localhost:3000/member/channel/{project_id}/pm/{user_id}",
+                    user["user_id"]
+                ))
 
         conn.commit()
-        return {"message": "게시글이 등록되었습니다."}
+        return {"message": "게시글과 이미지가 등록되었습니다."}
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
-@router.post("/projectchannel/{project_id}/create-with-file")
-def create_with_file(
-    project_id: int,
-    title: str = Form(...),
-    user_id: str = Form(...),
-    content: str = Form(...),
-    value_id: int = Form(...),
-    category: str = Form(...),
-    files: List[UploadFile] = File(None),
-    user: dict = Depends(get_current_user)
-):
-    if user["role"] != "R03":
-        raise HTTPException(status_code=403, detail="관리자만 작성 가능합니다.")
 
-    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
-
-    try:
-        conn = pymysql.connect(**db_config)
-        with conn.cursor() as cursor:
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            # 게시글 삽입
-            cursor.execute("""
-                INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (title, user_id, content, now, user["user_id"], value_id, category))
-            channel_id = cursor.lastrowid
-
-            # 파일 저장
-            if files:
-                for file in files:
-                    if file.content_type not in allowed_types:
-                        raise HTTPException(status_code=400, detail="이미지 파일만 등록하실 수 있습니다.")
-                    filename = file.filename
-                    filepath = os.path.join(UPLOAD_DIR, filename)
-                    with open(filepath, "wb") as buffer:
-                        shutil.copyfileobj(file.file, buffer)
-
-                    cursor.execute("""
-                        INSERT INTO post_file (channel_id, file_name, file_path, create_dt, create_id, del_yn)
-                        VALUES (%s, %s, %s, %s, %s, 'N')
-                    """, (channel_id, filename, filepath, now, user["user_id"]))
-
-        conn.commit()
-        return {"message": "게시글과 파일이 등록되었습니다."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        conn.close()
 
 @router.get("/projectchannel/{channel_id}/view")
 def get_project_channel_detail(channel_id: int, user: dict = Depends(get_current_user)):

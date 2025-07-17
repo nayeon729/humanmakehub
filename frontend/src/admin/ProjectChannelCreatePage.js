@@ -60,7 +60,7 @@ export default function ProjectChannelCreatePage() {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.post(
-        `${BASE_URL}/admin/projectchannel/${project_id}/create-with-file`,
+        `${BASE_URL}/admin/projectchannel/${project_id}/create`,
         formData,
         {
           headers: {

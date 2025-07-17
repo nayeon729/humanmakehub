@@ -89,10 +89,10 @@ export default function ProjectChannelCommonPage() {
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Box display='flex' flexDirection='row' justifyContent='space-between'>
-              <Typography variant="subtitle1" fontWeight="bold" sx={{display:'flex', alignItems:'center'}}>
+              <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
                 {post.title}
-                {post.has_image && (
-                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb:'5px'}} />
+                {Number(post.has_image) === 1 && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
                 )}
               </Typography>
               <Typography variant="caption" sx={{ color: "gray" }}>
