@@ -53,6 +53,20 @@ export default function TopNavbar() {
     setMobileOpen(open);
   };
 
+  const handleLogoClick = () => {
+    const storedRole = sessionStorage.getItem("role");
+
+    if (storedRole === "R04" || storedRole === "R03") {
+      navigate("/admin/dashboard");
+    } else if (storedRole === "R01") {
+      navigate("/client/dashboard");
+    } else if (storedRole === "R02") {
+      navigate("/member/tasks");
+    } else {
+      navigate("/"); // 로그인 전이면 홈으로
+    }
+  };
+
   const renderMenuItems = (isMobile = false) => {
     const commonProps = (path) => ({
       component: Link,
@@ -163,10 +177,13 @@ export default function TopNavbar() {
     <>
       <AppBar position="static" >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h6" component={Link} to="/" sx={{ color: "inherit", textDecoration: "none" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "inherit", textDecoration: "none", cursor: "pointer" }}
+            onClick={handleLogoClick}
+          >
             HumanMakeHub
           </Typography>
-
           {/* PC 화면 */}
           <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}>
             {role ? (

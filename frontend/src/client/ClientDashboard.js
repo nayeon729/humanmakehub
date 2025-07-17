@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import AlertCard from "../components/AlertCard";
 import Folder from "../assets/folder.png"
+import MobileFullPageLayout from "../common/MobileFullPageLayout";
 
 export default function ClientDashboard() {
   const navigate = useNavigate();
@@ -53,7 +54,8 @@ export default function ClientDashboard() {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
+    <MobileFullPageLayout>
+    <Box>
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         🛡️ 고객 대시보드
       </Typography>
@@ -75,5 +77,6 @@ export default function ClientDashboard() {
 
 
     </Box>
+    </MobileFullPageLayout>
   );
 }
