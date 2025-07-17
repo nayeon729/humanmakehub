@@ -14,7 +14,8 @@ export default function MemberDashboard() {
   const categoryColors = {
     project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
     ask: "#ff9800",   // 주황 (예: 문의사항 알림)
-    chat: "#89d665",   // 주황 (예: 문의사항 알림)
+    commonChat: "#89d665",   // 주황 (예: 문의사항 알림)
+    chat:"#9065d6ff",
     default: "#9e9e9e",   // 회색 (기본)
   };
   const navigate = useNavigate();

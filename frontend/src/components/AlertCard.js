@@ -22,26 +22,28 @@ export default function AlertBox({
     <Paper
       elevation={3}
       sx={{
-        backgroundColor: color,
-        color: "white",
+        backgroundColor:"rgba(255, 255, 255, 1)",
+        color: "black",
         p: 1,
         mt: 2,
         mb: 2,
         borderRadius: 2,
         position: "relative",
-        height: 60
+        height: 60,
+        border:'4px solid ',
+        borderColor: color,
       }}
     >
       {/* 닫기 버튼 */}
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", top: -2, right: 2, color: "white" }}
+        sx={{ position: "absolute", top: -2, right: 2, color: color }}
       >
         <CloseIcon />
       </IconButton>
 
       <Stack direction="row" spacing={2} alignItems="flex-start">
-        <CheckCircleIcon sx={{ fontSize: 26, mt:1}} />
+        <CheckCircleIcon sx={{ fontSize: 26, mt:1, color:color}} />
 
         <Box flexGrow={1}>
           <Typography variant="h8" fontWeight="bold">
@@ -55,7 +57,7 @@ export default function AlertBox({
             {/* 버튼 영역 */}
               <Button
                 variant="text"
-                sx={{ backgroundColor: "transparent", color: "white", border:"1px solid white", borderRadius:"10px", position:'absolute', top:'40px',right:'10px', height:'25px'}}
+                sx={{ backgroundColor: "transparent", color: color, border:"1px solid",borderColor:color, borderRadius:"10px", position:'absolute', top:'40px',right:'10px', height:'25px'}}
                 onClick={onConfirm}
               >
                 {confirmText}

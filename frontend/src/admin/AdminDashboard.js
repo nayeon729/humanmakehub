@@ -8,15 +8,16 @@ import AlertCard from "../components/AlertCard";
 import { useAlert } from "../components/CommonAlert";
 
 export default function AdminDashboard() {
-  
+
   const [stats, setStats] = useState({
     user: 0,
     project: 0,
   });
   const categoryColors = {
-    project: "#1976d2",   // 파랑 
-    ask: "#ff9800",   // 주황
-    chat: "#ff9800",   // 주황
+    project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
+    ask: "#ff9800",   // 주황 (예: 문의사항 알림)
+    commonChat: "#89d665",   // 주황 (예: 문의사항 알림)
+    chat: "#9065d6ff",
     default: "#9e9e9e",   // 회색 (기본)
   };
   const navigate = useNavigate();
@@ -89,10 +90,10 @@ export default function AdminDashboard() {
 
 
 
-      <Grid container spacing={2} mt={1}>
+      <Grid container spacing={3} mt={1}>
         {cards.map((card, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
-            <Paper sx={{ p: 10, px: 24, borderRadius: 2, textAlign: "center", boxShadow: 2 }}>
+            <Paper sx={{ py:8,borderRadius: 2, textAlign: "center", boxShadow: 2, minWidth:'470px' }}>
               {card.icon}
               <Typography variant="subtitle1" fontWeight={600} mt={1}>
                 {card.title}
@@ -108,15 +109,15 @@ export default function AdminDashboard() {
         const color = categoryColors[alert.category] || categoryColors.default;
 
         return (
-        <AlertCard
-          key={alert.alert_id}
-          title={alert.title}
-          description={alert.message}
-          confirmText="바로가기"
-          onConfirm={() => window.location.href = alert.link}
-          onClose={() => handleCloseshowAlert(alert.alert_id)}
-          color={color}
-        />
+          <AlertCard
+            key={alert.alert_id}
+            title={alert.title}
+            description={alert.message}
+            confirmText="바로가기"
+            onConfirm={() => window.location.href = alert.link}
+            onClose={() => handleCloseshowAlert(alert.alert_id)}
+            color={color}
+          />
         )
       })}
     </Box>
