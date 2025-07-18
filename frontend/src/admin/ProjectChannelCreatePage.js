@@ -15,7 +15,7 @@ export default function ProjectChannelCreatePage() {
   const [members, setMembers] = useState([]);
   const [pmId, setPmId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
-  const { project_id } = useParams();
+  const { project_id, user_id } = useParams();
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [images, setImages] = useState([]);
@@ -99,6 +99,12 @@ export default function ProjectChannelCreatePage() {
 
     fetchProjectTitle();
   }, [project_id]);
+
+  useEffect(() => {
+  if (user_id && members.length > 0) {
+    setUserId((prev) => prev || user_id); // 이미 선택되어 있으면 유지
+  }
+}, [user_id, members]);
 
   useEffect(() => {
     const getTeamMemberId = async () => {

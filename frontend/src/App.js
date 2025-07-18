@@ -137,7 +137,7 @@ function App() {
           }>
             <Route path="common" element={<MemberProjectChannel />} />
             <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
-            <Route path="create" element={<ProjectChannelPmCreatePage />} />
+            <Route path="create/" element={<ProjectChannelPmCreatePage />} />
             <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />
             <Route path="view/:channel_id" element={<ProjectChannelView/>}/>
           </Route>
@@ -174,7 +174,7 @@ function App() {
               <ProjectChannel role="R03" />  {/* 위에서 R03이나 R04면 관리자인값 R03넘기는거라 상관없음 */}
             </PrivateRoute>
           }>
-            <Route path="create" element={<ProjectChannelCreate />} />
+            <Route path="create/:user_id" element={<ProjectChannelCreate />} />
             <Route path="common" element={<ProjectChannelCommon />} />
             <Route path="member/:user_id" element={<ProjectChannelMember />} />
             <Route path="update/:channel_id" element={<ProjectChannelUpdate />} />
