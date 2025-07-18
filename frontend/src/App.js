@@ -139,6 +139,7 @@ function App() {
             <Route path="pm/:user_id" element={<ProjectChannelMemberPage />} />
             <Route path="create" element={<ProjectChannelPmCreatePage />} />
             <Route path="update/:channel_id" element={<ProjectChannelPmUpdatePage />} />
+            <Route path="view/:channel_id" element={<ProjectChannelView/>}/>
           </Route>
 
           {/* 관리자 */}

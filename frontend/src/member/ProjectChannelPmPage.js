@@ -165,7 +165,8 @@ export default function ProjectChannelPmPage() {
               borderRadius: 2,
               position: "relative",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            }}>
+            }}
+            onClick={() => navigate(`/member/channel/${project_id}/view/${msg.channel_id}`)}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
@@ -194,24 +195,6 @@ export default function ProjectChannelPmPage() {
               }}>
               {msg.content}
             </Typography>
-            {msg.create_id === myUserId && (
-              <Stack direction="row" spacing={1} mt={1}
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  right: 12,
-                }}>
-                <Button onClick={() => navigate(`/member/channel/${project_id}/update/${msg.channel_id}`)}>
-                  수정
-                </Button>
-                <Button onClick={() => handleDelete(msg.channel_id)}
-                  sx={{
-                    color: "red",
-                  }}>
-                  삭제
-                </Button>
-              </Stack>
-            )}
           </Paper>
         ))}
       </Stack>

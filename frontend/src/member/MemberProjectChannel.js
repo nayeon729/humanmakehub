@@ -79,6 +79,7 @@ export default function MemberProjectChannel() {
               position: "relative",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             }}
+            onClick={() => navigate(`/member/channel/${project_id}/view/${post.channel_id}`)}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Typography variant="subtitle1" fontWeight="bold"

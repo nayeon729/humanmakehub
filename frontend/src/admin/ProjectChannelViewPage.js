@@ -65,18 +65,30 @@ export default function ProjectChannelViewPage() {
     const handleDelete = async (channel_id) => {
         const confirmed = window.confirm("정말 삭제하시겠습니까?");
         if (!confirmed) return;
+
         try {
             const token = sessionStorage.getItem("token");
-            await axios.delete(`${BASE_URL}/admin/projectchannel/${channel_id}/delete`, {
+            const userRole = sessionStorage.getItem("role");  // 예: "R03", "R02" 등
+
+            // 역할에 따라 경로 결정
+            const rolePath = (userRole === "R02")
+                ? "member"
+                : "admin";
+
+            await axios.delete(`${BASE_URL}/${rolePath}/projectchannel/${channel_id}/delete`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            fetchMessages();
-            showAlert("✅ 프로젝트가 삭제(표시)되었습니다.")
+            showAlert("✅ 글이 삭제(표시)되었습니다.");
+            navigate(-1);
+
+
+
         } catch (error) {
-            console.error("❌ 프로젝트 삭제 실패", error);
-            showAlert("❌ 프로젝트 삭제에 실패했습니다.");
+            console.error("❌ 글 삭제 실패", error);
+            showAlert("❌ 글 삭제에 실패했습니다.");
         }
     };
+
 
 
     return (
@@ -87,19 +99,24 @@ export default function ProjectChannelViewPage() {
                 </Typography>
 
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
-                    
+
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box>
-                        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
-                            {channel.title}
-                        </Typography>
+                            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
+                                {channel.title}
+                            </Typography>
                         </Box>
                         <Box>
                             {channel.create_id === myUserId && (
-                                <Box mt={5} sx={{ display: "flex", flexDirection: "row", mr:'-5px' }}>
+                                <Box mt={5} sx={{ display: "flex", flexDirection: "row", mr: '-5px' }}>
                                     <Button
                                         sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
-                                        onClick={() => navigate(`/admin/channel/${project_id}/update/${channel.channel_id}`)}>
+                                        onClick={() => {
+                                            const role = sessionStorage.getItem("role");  // or useContext or Redux에서 가져온 값도 OK
+                                            const basePath = role === "R02" ? "member" : "admin";
+                                            navigate(`/${basePath}/channel/${project_id}/update/${channel.channel_id}`);
+                                        }}
+                                    >
                                         수정
                                     </Button>
                                     <Button
@@ -109,13 +126,13 @@ export default function ProjectChannelViewPage() {
                                     </Button>
                                 </Box>
                             )}
-                            </Box>
+                        </Box>
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
-                    <Box sx={{display:'flex', justifyContent:'end'}}>
-                    <Typography variant="caption" color="text.secondary">
-                        {channel.create_dt?.slice(0, 10).replace(/-/g, ".")}
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+                        <Typography variant="caption" color="text.secondary">
+                            {channel.create_dt?.slice(0, 10).replace(/-/g, ".")}
+                        </Typography>
                     </Box>
                     <Box mt={3}>
                         {images.length > 0 && (
@@ -144,7 +161,7 @@ export default function ProjectChannelViewPage() {
                         {channel.content}
                     </Typography>
                 </Paper>
-                
+
             </Box>
 
         </>
