@@ -74,7 +74,7 @@ export default function ProjectChannelCommonPage() {
         <Typography variant="h5" fontWeight="bold">
           💬 {projectTitle}
         </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
+        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}>
           <img src={add} style={{ width: '40px', hight: '40px' }} />
         </IconButton>
       </Stack>
