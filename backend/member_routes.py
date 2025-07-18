@@ -422,23 +422,28 @@ def get_project_common(project_id: int):
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             sql = """
-                SELECT 
-                    pc.channel_id, 
-                    pc.title, 
-                    pc.content, 
-                    pc.user_id, 
-                    u.nickname,
-                    pc.create_id,
-                    pc.create_dt
-                FROM project_channel pc
-                JOIN user u ON pc.user_id = u.user_id
-                WHERE pc.del_yn = 'N'
-                  AND u.role IN ('R03', 'R04')
-                  AND pc.user_id = pc.create_id
-                  AND pc.value_id = %s
-                  AND pc.category = "board01"
-                ORDER BY pc.create_dt DESC
-            """
+                    SELECT 
+                        pc.channel_id, 
+                        pc.title, 
+                        pc.content, 
+                        pc.user_id, 
+                        u.nickname,
+                        pc.create_id,
+                        pc.create_dt,
+                        (
+                        SELECT COUNT(*) 
+                        FROM post_file f 
+                        WHERE f.channel_id = pc.channel_id AND f.del_yn = 'N'
+                        ) AS has_image
+                    FROM project_channel pc
+                    JOIN user u ON pc.user_id = u.user_id
+                    WHERE pc.del_yn = 'N'
+                    AND u.role IN ('R03', 'R04')
+                    AND pc.user_id = pc.create_id
+                    AND pc.value_id = %s
+                    AND pc.category = "board01"
+                    ORDER BY pc.create_dt DESC
+                """
             cursor.execute(sql, (project_id,))
             items = cursor.fetchall()
 
@@ -758,7 +763,8 @@ def get_user_project_channel(project_id: int, user_id: str, teamMemberId: int, u
             # items = cursor.fetchall()
 
             cursor.execute("""
-                SELECT pm_id FROM project
+                SELECT pm_id 
+                FROM project
                 WHERE project_id = %s
             """, (project_id,))
             pm_row = cursor.fetchone()
@@ -766,17 +772,28 @@ def get_user_project_channel(project_id: int, user_id: str, teamMemberId: int, u
 
             # 🔍 user_id 또는 pm_id가 작성한 글만 가져오기
             cursor.execute("""
-                SELECT 
-                    c.channel_id, c.value_id, c.title, c.content,
-                    c.user_id, c.create_dt, c.create_id, u.nickname
-                FROM project_channel c
-                JOIN user u ON c.create_id = u.user_id
-                WHERE c.value_id = %s
-                  AND c.create_id IN (%s, %s)
-                  AND c.del_yn = 'N'
-                  AND c.category = "board02"
-                ORDER BY c.create_dt DESC
-            """, (teamMemberId, user_id, pm_id))
+                    SELECT 
+                        c.channel_id, 
+                        c.value_id, 
+                        c.title, 
+                        c.content,
+                        c.user_id, 
+                        c.create_dt, 
+                        c.create_id, 
+                        u.nickname,
+                        (
+                            SELECT COUNT(*) 
+                            FROM post_file f 
+                            WHERE f.channel_id = c.channel_id AND f.del_yn = 'N'
+                        ) AS has_image
+                    FROM project_channel c
+                    JOIN user u ON c.create_id = u.user_id
+                    WHERE c.value_id = %s
+                    AND c.create_id IN (%s, %s)
+                    AND c.del_yn = 'N'
+                    AND c.category = "board02"
+                    ORDER BY c.create_dt DESC
+                """, (teamMemberId, user_id, pm_id))
             channels = cursor.fetchall()
         
             return {"items": channels, "pm_id": pm_id, "total": len(channels)}

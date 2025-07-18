@@ -9,6 +9,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function MemberProjectChannel() {
   const [posts, setPosts] = useState([]);
@@ -87,6 +88,9 @@ export default function MemberProjectChannel() {
                 fontSize: "25px",
               }}>
               {post.title}
+              {Number(post.has_image) === 1 && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+                )}
             </Typography>
             <Typography variant="body2"
               sx={{

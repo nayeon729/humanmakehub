@@ -15,6 +15,7 @@ import {
 import chatting from "../assets/chatting.png";
 import create from "../assets/create.png";
 import { useAlert } from "../components/CommonAlert";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -175,6 +176,9 @@ export default function ProjectChannelPmPage() {
               <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
                 {msg.title}
                 </Typography>
+                {Number(msg.has_image) === 1 && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+                )}
               <Typography variant="body2" color="text.secondary"
                 sx={{
                   position: "absolute",
