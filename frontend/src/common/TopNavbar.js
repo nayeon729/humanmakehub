@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Fade, IconButton, Drawer, List, ListItem, ListItemButton } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Fade, Divider, IconButton, Drawer, List, ListItem, ListItemButton } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
@@ -13,6 +13,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ListIcon from '@mui/icons-material/List';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import PeopleIcon from "@mui/icons-material/People";
 
 export default function TopNavbar() {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ export default function TopNavbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [nickname, setNickname] = useState("");
+  const isChannelPage = location.pathname.includes("/channel");
+  const [channelMenuOpen, setChannelMenuOpen] = useState(false);
   useEffect(() => {
     const storedRole = sessionStorage.getItem("role");
     const storedNickname = sessionStorage.getItem("nickname");
@@ -28,6 +31,8 @@ export default function TopNavbar() {
     setNickname(storedNickname);
 
   }, [location]);
+
+
 
   const handleLogout = () => {
     sessionStorage.removeItem("token");
@@ -252,7 +257,57 @@ export default function TopNavbar() {
                     </>
                   )}
                 </List>
+                {isChannelPage && (role === "R03" || role === "R04") && (
+                  <>
+                    <Divider sx={{ my: 1 }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>채널 메뉴</Typography>
+                    {/* ✅ 공용 메뉴 */}
+                    <List>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          component={Link}
+                          to={`/admin/channel/${sessionStorage.getItem("project_channel_project_id")}/common`}
+                        >
+                          <ListItemText primary="공용" />
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
+                    <List>
+                      {(JSON.parse(sessionStorage.getItem("project_channel_members")) || []).map((member) => (
+                        <ListItem key={member.user_id} disablePadding>
+                          <ListItemButton
+                            component={Link}
+                            to={`/admin/channel/${member.project_id}/member/${member.user_id}`}
+                          >
+                            <ListItemText primary={member.nickname} />
+                            <Typography>{member.count > 0 ? member.count : ""}</Typography>
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </>
+                )}
+                {isChannelPage && role === "R02" && (
+                  <>
+                    <Divider sx={{ my: 1 }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>채널 메뉴</Typography>
+                    <List>
+                      {(JSON.parse(sessionStorage.getItem("project_channel_menus")) || []).map((item, index) => (
+                        <ListItem key={index} disablePadding>
+                          <ListItemButton
+                            component={Link}
+                            to={item.path}
+                          >
+                            <ListItemText primary={item.text} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </>
+                )}
               </Box>
+
+
             </Drawer>
           </Box>
         </Toolbar>
