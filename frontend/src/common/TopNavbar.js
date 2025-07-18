@@ -32,8 +32,10 @@ export default function TopNavbar() {
   const handleLogout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("role");
+    sessionStorage.removeItem("nickname");
     setRole(null);
-    navigate("/login");
+    setNickname("");
+    navigate("/");
   };
 
   const handleMenuOpen = (event) => {

@@ -74,16 +74,16 @@ const MemberProjectList = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={Folder} alt="폴더" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-        프로젝트 목록
-      </Typography>
-      <Grid container spacing={3}>
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <img src={Folder} alt="" style={{ height: "35px" }} />
+              <Typography variant="h4" fontWeight="bold" gutterBottom>프로젝트 목록</Typography>
+            </Box>
+      <Grid container spacing={5}>
         {invites.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>
             <Paper elevation={4} sx={{
               p: 2, borderRadius: 3, display: "flex", flexDirection: "column", justifyContent: "space-between",
-              gap: 1, width: 250, height: 520, overflow: "hidden",
+              gap: 1, width: 400, height: 520, overflow: "hidden",
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />

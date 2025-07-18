@@ -2,7 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./HeroSlider.css"; // 커스텀 스타일 넣을 곳
+import "./HomePage.css";
 
 const heroSlides = [
   {

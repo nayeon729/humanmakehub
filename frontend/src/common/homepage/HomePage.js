@@ -16,6 +16,8 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "../axiosInstance"
 import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
+import PortfolioListTest from "./PortfolioListTest";
+import PortfolioVerticalSlider from "./PortfolioVerticalSlider";
 import { useAlert } from "../../components/CommonAlert";
 
 
@@ -674,138 +676,9 @@ export default function HomePage() {
       </section>
 
       {/* PORTFOLIO Section */}
-      <section
-        className="portfolio_wrap"
-        id="portfolioSection"
-        style={{ backgroundColor: "#f5f5f5", padding: "80px 0" }}
-      >
-        <div
-          className="portfolio_inner"
-          style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}
-        >
-          <div className="portfolio_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
-            <h3 style={{ fontSize: 24, color: "#1976d2" }}>PORTFOLIO</h3>
-            <strong style={{ fontSize: 32, color: "#111", fontWeight: "bold" }}>
-              HumanMakeHub 포트폴리오 사례
-            </strong>
-          </div>
+    
+       <PortfolioVerticalSlider/>
 
-          <Swiper
-            direction="vertical"
-            slidesPerView={3}
-            slidesPerGroup={1}
-            spaceBetween={0}
-            loop={true}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: false
-            }}
-            modules={[Autoplay]}
-            style={{
-              height: "min(540px, 80vh)", // ✅ 반응형: 최대 540px, 최소 80% viewport
-              overflow: "hidden"
-            }}
-          >
-            {[
-              {
-                title: "정부지원 사업 신청 시스템",
-                desc: "정부 보조금, 창업지원금, 고용지원금 등 다양한 정책 사업을 한 플랫폼에서 신청하고 관리할 수 있도록 통합 구축한 시스템입니다. 신청서 양식 자동화, 단계별 진행 현황, 사용자 맞춤 알림 기능 포함.",
-                tags: ["Vue.js", "Pinia", "PostgreSQL", "FastAPI", "Docker", "Nginx", "AWS EC2", "Slack Webhook"],
-                budget: "예산: 약 1,800만원",
-                duration: "개발기간: 3개월"
-              },
-              {
-                title: "스타트업 IR 페이지 구축",
-                desc: "투자 유치를 위한 스타트업 전용 IR 웹페이지로, 회사 소개, 핵심 지표, 팀 구성, 사업 계획 등을 한눈에 보여주는 구성입니다. 발표 영상 삽입, PDF 다운로드, 모바일 최적화 구현.",
-                tags: ["React", "Next.js", "Figma", "Tailwind CSS", "Vercel", "Google Analytics"],
-                budget: "예산: 약 500만원",
-                duration: "개발기간: 1개월"
-              },
-              {
-                title: "프리랜서 매칭 플랫폼",
-                desc: "클라이언트가 프로젝트 등록 시 기술·분야·예산 기반으로 최적의 프리랜서를 자동 추천하는 시스템입니다. 프로필 평가, 채팅 기능, 정산 자동화까지 통합된 플랫폼 구축.",
-                tags: ["Node.js", "NestJS", "MongoDB", "Next.js", "Redis", "Socket.IO", "Stripe", "AWS S3"],
-                budget: "예산: 약 1,200만원",
-                duration: "개발기간: 2.5개월"
-              },
-              {
-                title: "교육생 출석관리 & LMS",
-                desc: "출석 체크, 강의 자료 업로드, 과제 제출, 진도율 확인, 성적 관리 등 통합 학습관리 기능을 제공하는 교육기관 전용 플랫폼. 관리자·학생·강사 권한 분리 및 모바일 대응 포함.",
-                tags: ["Spring Boot", "MyBatis", "Vue.js", "MySQL", "Jenkins", "Kubernetes", "Firebase", "Chart.js"],
-                budget: "예산: 약 2,400만원",
-                duration: "개발기간: 4개월"
-              },
-              {
-                title: "AI 챗봇 고객응대 시스템",
-                desc: "GPT 기반의 고객 문의 자동응답 챗봇을 구축하여, 실시간 질의 응답, 사내 매뉴얼 자동 학습, 사용 로그 분석 기능 포함. Slack 연동 및 다국어 처리 기능 지원.",
-                tags: ["Python", "LangChain", "OpenAI API", "Slack API", "FastAPI", "Redis", "Docker", "Supabase"],
-                budget: "예산: 약 900만원",
-                duration: "개발기간: 1.5개월"
-              }
-            ].map((item, idx) => (
-              <SwiperSlide key={idx}>
-                <div
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: 0,
-                    padding: "16px",
-                    boxShadow: "none",
-                    borderBottom: "1px solid #eee",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    wordBreak: "break-word",           // ✅ 줄바꿈 방지
-                    whiteSpace: "normal",              // ✅ 줄바꿈 허용
-                  }}
-                >
-                  <h4 style={{
-                    fontSize: "clamp(16px, 2.5vw, 18px)", // ✅ 반응형 폰트 크기
-                    fontWeight: 700,
-                    marginBottom: 6
-                  }}>{item.title}</h4>
-
-                  <p style={{
-                    fontSize: "clamp(13px, 2.5vw, 14px)",
-                    color: "#444",
-                    marginBottom: 8
-                  }}>{item.desc}</p>
-
-                  <div style={{
-                    display: "flex",
-                    gap: 8,
-                    flexWrap: "wrap",
-                    marginBottom: 8
-                  }}>
-                    {item.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          fontSize: "clamp(11px, 2.3vw, 12px)",
-                          backgroundColor: "#e3f2fd",
-                          color: "#1976d2",
-                          padding: "4px 10px",
-                          borderRadius: 20
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div style={{
-                    fontSize: "clamp(13px, 2.4vw, 14px)",
-                    color: "#222",
-                    fontWeight: 600
-                  }}>
-                    {item.duration} · {item.budget}
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </section>
 
       {/* ABOUT Section */}
       <section className="about_wrap" id="aboutSection" style={{ backgroundColor: "#f9f9f9", padding: "80px 20px" }}>
@@ -966,7 +839,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>
               <TextField fullWidth name="username" variant="outlined" required
                 sx={{
-                  backgroundColor: "#fff", width: "500px",
+                  backgroundColor: "#fff",width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -975,7 +848,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>회사명*</Typography>
               <TextField fullWidth name="company" variant="outlined" required
                 sx={{
-                  backgroundColor: "#fff", width: "500px",
+                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -984,7 +857,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>연락처*</Typography>
               <TextField fullWidth name="phone" placeholder="010-1234-5678" variant="outlined" required
                 sx={{
-                  backgroundColor: "#fff", width: "500px",
+                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -993,7 +866,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>소속/직책</Typography>
               <TextField fullWidth name="position" variant="outlined"
                 sx={{
-                  backgroundColor: "#fff", width: "500px",
+                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -1002,7 +875,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이메일*</Typography>
               <TextField fullWidth name="email" variant="outlined" required
                 sx={{
-                  backgroundColor: "#fff", width: "500px",
+                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -1017,7 +890,7 @@ export default function HomePage() {
 
                 <Box
                   sx={{
-                    width: "520px",
+                    width: { xs: 350, md: 600 },
                     display: "flex",
                     flexWrap: "wrap",
                     gap: 1.5,
@@ -1064,7 +937,7 @@ export default function HomePage() {
                 minRows={8}
                 placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
                 variant="outlined"
-                sx={{ backgroundColor: "#fff", width: "500px", borderRadius: "5px", }}
+                sx={{ backgroundColor: "#fff", width: { xs: 350, md: 600 }, borderRadius: "5px", }}
               />
 
               {/* 개인정보 동의 */}

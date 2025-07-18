@@ -45,13 +45,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchAlerts = async () => {
-      const token = sessionStorage.getItem("token"); // 또는 sessionStorage.getItem()
-      const res = await axios.get(`${BASE_URL}/common/alerts`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAlerts(res.data);
-      console.log("alerts :", res.data);
+      try {
+        const token = sessionStorage.getItem("token");
+        const res = await axios.get(`${BASE_URL}/common/alerts`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAlerts(res.data);
+        console.log("alerts :", res.data);
+      } catch (error) {
+        if (error.response?.status !== 401) {
+          console.error("알림 목록 불러오기 실패", error);
+        }
+      }
     };
+
     fetchAlerts();
   }, []);
 
@@ -93,7 +100,7 @@ export default function AdminDashboard() {
       <Grid container spacing={3} mt={1}>
         {cards.map((card, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
-            <Paper sx={{ py:8,borderRadius: 2, textAlign: "center", boxShadow: 2, minWidth:'470px' }}>
+            <Paper sx={{ py: 8, borderRadius: 2, textAlign: "center", boxShadow: 2, minWidth: '470px' }}>
               {card.icon}
               <Typography variant="subtitle1" fontWeight={600} mt={1}>
                 {card.title}

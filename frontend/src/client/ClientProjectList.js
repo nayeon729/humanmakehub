@@ -18,7 +18,7 @@ import { useAlert } from "../components/CommonAlert";
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
   useEffect(() => {
@@ -68,16 +68,16 @@ const ClientProjectList = () => {
   }
 
   return (
-    <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
+    <Box sx={{ px: 4, py: 3 }}>
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <img src={Folder} alt="" style={{ height: "35px" }} />
         <Typography variant="h4" fontWeight="bold" gutterBottom>프로젝트 목록</Typography>
       </Box>
       <Box sx={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Grid container spacing={5} sx={{}} >
+        <Grid container spacing={5} >
           {projects.map((project) => (
-            <Grid item xs={12} sm={6} md={4} key={project.id} sx={{ width: '410px' }}>
-              <Paper elevation={2} sx={{ px: 3, py: 4 }}>
+            <Grid item xs={12} sm={6} md={4} key={project.id} >
+              <Paper elevation={4} sx={{ p:2, width:"400px", borderRadius: 3 }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Chip
@@ -90,38 +90,46 @@ const ClientProjectList = () => {
                       }}
                       size="small"
                     />
-                    <Typography color="text.secondary">작성일: {project.create_date}</Typography>
+                    <Typography variant="caption" color="black">접수일: {project.create_date}</Typography>
                   </Box>
                   <Typography sx={{ fontSize: "20px", fontWeight: "600" }}>{project.title}</Typography>
-                  <Typography ><strong>카테고리:</strong> {project.category_name}</Typography>
-                  <Typography ><strong>예상 기간:</strong> {project.estimated_duration}일</Typography>
-                  <Typography ><strong>예산:</strong> {project.budget.toLocaleString()}원</Typography>
-                  <Typography ><strong>요구사항</strong></Typography>
-                  <Box sx={{border:"1px solid grey", borderRadius:"5px", height:"100px", padding:"5px"}}>
-                    <Typography >{project.description}</Typography>
+                  <Typography variant="body2">카테고리:{project.category_name}</Typography>
+                  <Typography variant="body2">예상 기간: {project.estimated_duration}일</Typography>
+                  <Typography variant="body2">예산:{project.budget.toLocaleString()}원</Typography>
+                  <Typography variant="body2">요구사항</Typography>
+                  <Box sx={{border: "1px solid #ccc", borderRadius: 2,
+                padding: 1.5, mt: 0.3, bgcolor: "#f9f9f9", height: 100}}>
+                    <Typography variant="body2">{project.description}</Typography>
                   </Box>
-                  <Box sx={{ display: "flex"}}>
-                    <Typography><strong>진행상황</strong></Typography>
-                    <Chip
-                      label={statusMap[project.status]?.label || "대기중"}
-                      sx={{
-                        backgroundColor: statusMap[project.status]?.color || "#ddd",
-                        color: "#fff",
-                        fontWeight: "bold",
-                        height: 24,
-                        marginLeft:"10px"
-                      }}
-                      size="small"
-                    />
-                  </Box>
-                </Box>
-                <LinearProgress
-                  variant="determinate"
-                  value={project.progress || 0}  // progress가 없으면 0으로 처리
-                  sx={{ mt: 2, mb: 1 }}
-                />
-                <Typography color="text.secondary">{project.progress || 0}%</Typography>
+                  <Box sx={{
+                    mt: 1, p: 1, bgcolor: "#f9f9f9",
+                    border: "1px solid #ddd", borderRadius: 2
+                  }}>
+                    <Box sx={{ display: "flex" }}>
+                      <Typography><strong>진행상황</strong></Typography>
+                      <Chip
+                        label={statusMap[project.status]?.label || "대기중"}
+                        sx={{
+                          backgroundColor: statusMap[project.status]?.color || "#ddd",
+                          color: "#fff",
+                          fontWeight: "bold",
+                          height: 24,
+                          marginLeft: "10px"
+                        }}
+                        size="small"
+                      />
+                    </Box>
 
+                    <LinearProgress
+                      variant="determinate"
+                      value={project.progress || 0}  // progress가 없으면 0으로 처리
+                      sx={{ height: 8, borderRadius: 5, mt: 1, mb:1 }}
+                    />
+                    {/* <Typography color="text.secondary">{project.progress || 0}%</Typography> */}
+
+                  </Box>
+
+                </Box>
 
               </Paper>
             </Grid>
@@ -129,7 +137,7 @@ const ClientProjectList = () => {
           ))}
         </Grid>
       </Box>
-    </Box>
+    </Box >
   );
 };
 

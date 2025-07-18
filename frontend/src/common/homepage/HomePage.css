@@ -133,43 +133,143 @@ section {
 }
 
 
-/* 기본 스타일 (다른 섹션은 그대로 유지됨) */
-.swiper-slide {
-    filter: brightness(0.5) grayscale(0.3);
-    transition: all 0.4s ease;
+
+
+/*HeroSlider 화면 CSS START*/
+
+.hero-slider-container {
+    margin: 0 auto;
+    padding: 60px 10px;
+    background: white;
+    overflow: hidden;
 }
 
-.swiper-slide-active {
-    filter: none;
-    transform: scale(1.05);
-    z-index: 2;
+
+.slide-card {
+    background: #cecdcd;
+    border-radius: 16px;
+    padding: 30px 10px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.4s ease-in-out;
+    transform: scale(0.8);
+    opacity: 0.6;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: -45px;
+    max-width: 420px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* 포트폴리오 섹션만 예외 처리 */
-.portfolio_wrap .swiper-slide {
-    filter: none !important;
-    transform: none !important;
-    z-index: auto !important;
-    height: auto !important;
-    /* 🔵 슬라이드 높이 자동 */
-    padding: 0 !important;
-    /* 🔵 상하 여백 제거 */
-    margin: 0 !important;
+
+/* slick-track이 너무 넓어져서 잘리는 걸 방지 */
+.hero-slider-container .slick-slide>div {
+    display: flex;
+    justify-content: center;
 }
 
-.swiper-button-prev,
-.swiper-button-next {
-    color: #ffffff;
-    font-size: 24px;
-    transition: all 0.3s ease;
+.slick-center .slide-card {
+    transform: scale(1);
+    opacity: 1;
+    background-color: #ffb300;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e0e0e0;
+    z-index: 3;
 }
 
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
-    color: #ffb300;
-    transform: scale(1.2);
+.slide-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
 }
 
-.swiper-slide {
-    height: 320px !important;
+.slide-card h3 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #212121;
+    line-height: 1.4;
+}
+
+.slide-card p {
+    font-size: 17px;
+    line-height: 1.6;
+    color: #616161;
+}
+
+/* dots 커스텀 */
+.slick-dots li button:before {
+    color: #b0bec5;
+    font-size: 12px;
+}
+
+.slick-dots li.slick-active button:before {
+    color: #1976d2;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    .slide-card {
+        margin: 0 10px;
+        padding: 40px 25px;
+    }
+
+    .slick-center .slide-card {
+        transform: scale(1.02);
+    }
+}
+
+/*HeroSlider 화면 CSS END*/
+
+
+/* 🔧 슬라이더 높이 조정 */
+.portfolio-slider-container {
+    max-height: 800px;
+    /* 최대 높이 제한 */
+    height: 100%;
+    /* 부모 높이에 맞추기 */
+    overflow: hidden;
+    padding: 0 16px;
+}
+
+/* 🔧 슬라이드 안 요소 정렬 */
+.portfolio-slider-container .slick-slide>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.portfolio-slide-card {
+    height: 200px;
+    /* ✅ 이걸 고정해야 밀리지 않음 */
+    overflow: hidden;
+    /* 글자가 넘치면 말줄임 처리 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin: 8px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.slick-slide>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .portfolio-slider-container {
+        height: calc(100vh - 200px);
+        /* 헤더/마진 고려 */
+    }
 }
