@@ -88,7 +88,7 @@ export default function MemberProjectChannel() {
                 fontSize: "25px",
               }}>
               {post.title}
-              {Number(post.has_image) === 1 && (
+              {Number(post.has_image) > 0 && (
                   <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
                 )}
             </Typography>

@@ -176,7 +176,7 @@ export default function ProjectChannelPmPage() {
               <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
                 {msg.title}
                 </Typography>
-                {Number(msg.has_image) === 1 && (
+                {Number(msg.has_image) > 0 && (
                   <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
                 )}
               <Typography variant="body2" color="text.secondary"

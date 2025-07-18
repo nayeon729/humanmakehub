@@ -589,8 +589,6 @@ def update_notice(notice_id: int, notice: Notice, user:dict = Depends(get_curren
 
 @router.get("/project/{project_id}/projecttitle")
 def get_project_title(project_id: int, user: dict = Depends(get_current_user)):
-    if user["role"] not in ("R03", "R04"):
-        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
