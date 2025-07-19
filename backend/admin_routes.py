@@ -1770,3 +1770,28 @@ def get_haveProject(user_id: str, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+
+
+@router.get("/project/pmCheck/{project_id}/{user_id}")
+def get_project_common(project_id: int, user_id: str, user: dict = Depends(get_current_user)):
+    if user["role"] not in ("R03", "R04"):
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT *
+                FROM project
+                WHERE project_id = %s AND pm_id = %s AND del_yn = 'N'
+            """
+            cursor.execute(sql, (project_id, user_id))
+
+            result = cursor.fetchone()
+
+            return {"pmCheck": bool(result)}  # 👈 결과가 있으면 True, 없으면 False
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()

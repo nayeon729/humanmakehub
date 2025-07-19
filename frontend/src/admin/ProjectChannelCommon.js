@@ -28,10 +28,27 @@ export default function ProjectChannelCommonPage() {
   console.log("프로젝트 id:" + project_id);
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
+  const [pmCheck, setPmCheck] = useState(false);
 
   useEffect(() => {
-    const id = sessionStorage.getItem("user_id");
-    if (id) setMyUserId(id);
+    const fetchPmCheck = async () => {
+      const id = sessionStorage.getItem("user_id");
+      if (id) setMyUserId(id);
+
+      try {
+        const token = sessionStorage.getItem("token");
+        const user_id = sessionStorage.getItem("user_id");
+        const res = await axios.get(`${BASE_URL}/admin/project/pmCheck/${project_id}/${user_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("PM 확인 :", res.data.pmCheck);
+        setPmCheck(res.data.pmCheck);
+      } catch (error) {
+        console.error("PM확인 실패", error);
+      }
+    };
+
+    fetchPmCheck(); // 내부에서 호출
   }, []);
   const fetchPosts = async () => {
     try {
@@ -74,9 +91,14 @@ export default function ProjectChannelCommonPage() {
         <Typography variant="h5" fontWeight="bold">
           💬 {projectTitle}
         </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}>
-          <img src={add} style={{ width: '40px', hight: '40px' }} />
-        </IconButton>
+        {pmCheck && (
+          <IconButton
+            color="primary"
+            onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}
+          >
+            <img src={add} style={{ width: '40px', height: '40px' }} />
+          </IconButton>
+        )}
       </Stack>
 
       {/* 📃 게시글 리스트 */}
