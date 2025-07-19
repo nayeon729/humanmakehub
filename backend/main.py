@@ -21,7 +21,6 @@ load_dotenv()
 app = FastAPI(title="HumanMakeHub 메인")
 
 
-
 @app.get("/routes")
 def list_routes():
     routes = [route.path for route in app.routes]

@@ -44,6 +44,7 @@ import shutil, os
 from jwt_auth import get_current_user
 from typing import Optional
 from typing import List
+from config import FRONT_BASE_URL
 import json
 
 router = APIRouter( tags=["Admin"])
@@ -346,13 +347,15 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             if project.status is not None:
-
+                link = f"{FRONT_BASE_URL}/client/list"
                 # ⭐ 상태가 '진행중' (W02)일 경우 클라이언트에게 알림 전송
                 if project.status == 'W02':
-                     cursor.execute("""
+                    
+                    cursor.execute("""
                         INSERT INTO alerts (
                             target_user, title, message, link, create_dt, create_id
                         )
@@ -360,12 +363,12 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
                             p.client_id,
                             '시스템 알람',
                             '등록하신 프로젝트가 시작되었습니다.',
-                            'http://localhost:3000/client/list',
+                            %s,
                             NOW(),
                             %s
                         FROM project p
                         WHERE p.project_id = %s
-                    """, (user["user_id"], project_id))
+                    """, (link, user["user_id"], project_id))
                 if project.status == 'W03':
                     cursor.execute("""
                         INSERT INTO alerts (
@@ -375,12 +378,12 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
                             p.client_id,
                             '시스템 알람',
                             '프로젝트가 완료되었습니다.',
-                            'http://localhost:3000/client/list',
+                            %s,
                             NOW(),
                             %s
                         FROM project p
                         WHERE p.project_id = %s
-                    """, (user["user_id"], project_id))
+                    """, (link,user["user_id"], project_id))
                         
                 cursor.execute("UPDATE project SET status = %s WHERE project_id = %s", (project.status, project_id))
 
@@ -821,7 +824,7 @@ async def create_project_channel(
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+            link = f"{FRONT_BASE_URL}/client/list"
             # 🔸 게시글 등록
             cursor.execute("""
                 INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
@@ -864,7 +867,8 @@ async def create_project_channel(
                     AND del_yn = 'N'
                 """, (project_id,))
                 team_members = cursor.fetchall()
-
+                link1 = f"{FRONT_BASE_URL}/member/channel/{project_id}/common"
+                link2 = f"{FRONT_BASE_URL}/member/channel/{project_id}/pm/{user_id}"
                 for member in team_members:
                     target_user = member["user_id"]
                     cursor.execute("""
@@ -876,7 +880,7 @@ async def create_project_channel(
                         "commonChat",
                         "프로젝트 공지",
                         "프로젝트에서 PM이 공지사항을 작성하였습니다.",
-                        f"http://localhost:3000/member/channel/{project_id}/common",
+                        link1,
                         user["user_id"]
                     ))
             else:
@@ -889,7 +893,7 @@ async def create_project_channel(
                     "chat",
                     "프로젝트 PM",
                     "프로젝트에서 PM이 개인채널에 글을 작성하였습니다.",
-                    f"http://localhost:3000/member/channel/{project_id}/pm/{user_id}",
+                    link2,
                     user["user_id"]
                 ))
 
@@ -1177,7 +1181,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
             """, (project_id, body["member_id"]))
             if cursor.fetchone():
                 raise HTTPException(status_code=400, detail="이미 팀원으로 등록된 사용자입니다.")
-
+            link = f"{FRONT_BASE_URL}/member/projectlist"
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
@@ -1191,7 +1195,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 "project",
                 "시스템 알람",
                 "PM이 프로젝트에 초대하였습니다. 프로젝트 목록에서 확인 후 수락 또는 거절할 수 있습니다.",
-                "http://localhost:3000/member/projectlist",
+                link,
                 user["user_id"]  # 알림 보낸 사람
             ))
 

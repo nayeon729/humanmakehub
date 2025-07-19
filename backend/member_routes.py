@@ -7,6 +7,7 @@ from database import db_config
 from jwt_auth import get_current_user
 from typing import List
 import bcrypt
+from config import FRONT_BASE_URL
 from typing import Optional
 
 router = APIRouter(tags=["Member"])
@@ -339,13 +340,13 @@ def respond_to_invite(
                 SET del_yn ='Y', update_dt = NOW(), update_id = %s
                 WHERE value_id = %s AND category="project"
             """, (user["user_id"], request_id))
-
+            
             # 3. 승인일 경우 알림 추가
             if is_accept:
                 pm_id = request_row["pm_id"]
                 nickname = user.get("nickname", user["user_id"])  # 닉네임이 없으면 user_id 사용
                 message = f"{nickname}님이 프로젝트 참여를 승인 요청했습니다."
-
+                link = f"{FRONT_BASE_URL}/admin/projects"
                 cursor.execute("""
                     INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
                     VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
@@ -355,7 +356,7 @@ def respond_to_invite(
                     "project",
                     "시스템 알림",
                     message,
-                    "http://localhost:3000/admin/projects",
+                    link,
                     user["user_id"]
                 ))
 
@@ -577,7 +578,7 @@ async def create_project_channel_with_file(
                         INSERT INTO post_file (channel_id, file_name, file_path, create_dt, create_id, del_yn)
                         VALUES (%s, %s, %s, NOW(), %s, 'N')
                     """, (channel_id, file.filename, filepath, user["user_id"]))
-
+            link = f"{FRONT_BASE_URL}/admin/projects"
             # 3. 알림 등록
             cursor.execute("""
                 INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
@@ -588,7 +589,7 @@ async def create_project_channel_with_file(
                 "chat", 
                 "시스템 알림제목",
                 "시스템 알림내용",
-                "http://localhost:3000/admin/projects", 
+                link, 
                 user["user_id"]))
 
         conn.commit()

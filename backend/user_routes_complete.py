@@ -11,6 +11,7 @@ import random, string
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from email_utils import send_verification_email  # 위에서 만든 이메일 함수
+from config import FRONT_BASE_URL
 
 router = APIRouter(prefix="", tags=["User"])
 
@@ -437,7 +438,7 @@ def askSending(data: askSend):
             """, (data.username, data.company, data.phone, data.position, data.email, data.category, data.askMessage,))
 
             ask_id = cursor.lastrowid
-
+            link = f"{FRONT_BASE_URL}/admin/askList"
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
@@ -451,7 +452,7 @@ def askSending(data: askSend):
                 "ask",
                 "시스템 알람",
                 "새로운 문의사항이 등록되었습니다.",
-                "http://localhost:3000/admin/askList",
+                link,
                 "client"  # 알림 보낸 사람
             ))
             conn.commit()
