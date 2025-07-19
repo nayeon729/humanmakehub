@@ -90,17 +90,6 @@ export default function ProjectChannelCommonPage() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
-        </Typography>
-        {pmCheck && (
-          <IconButton
-            color="primary"
-            onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}
-          >
-            <img src={add} style={{ width: '40px', height: '40px' }} />
-          </IconButton>
-        )}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
@@ -124,9 +113,14 @@ export default function ProjectChannelCommonPage() {
             </Box>
           </Tooltip>
         </Box>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}>
-          <img src={add} style={{ width: '40px', hight: '40px' }} />
-        </IconButton>
+        {pmCheck && (
+          <IconButton
+            color="primary"
+            onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}
+          >
+            <img src={add} style={{ width: '40px', height: '40px' }} />
+          </IconButton>
+        )}
       </Stack>
 
       {/* 📃 게시글 리스트 */}

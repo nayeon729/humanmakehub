@@ -156,14 +156,6 @@ export default function ProjectChannelMemberPage() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
-        </Typography>
-        {pmCheck && (
-          <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
-            <img src={add} style={{ width: '40px', hight: '40px' }} />
-          </IconButton>
-        )}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Tooltip
@@ -189,9 +181,11 @@ export default function ProjectChannelMemberPage() {
             </Tooltip>
           </Box>
         </Stack>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
-          <img src={add} style={{ width: '40px', hight: '40px' }} />
-        </IconButton>
+        {pmCheck && (
+          <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
+            <img src={add} style={{ width: '40px', hight: '40px' }} />
+          </IconButton>
+        )}
       </Stack>
 
 
