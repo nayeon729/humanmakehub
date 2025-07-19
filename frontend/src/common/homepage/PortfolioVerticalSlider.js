@@ -21,6 +21,13 @@ export default function HomePage() {
 
     const navigate = useNavigate();
 
+    const getValidLink = (url) => {
+        if (!url) return "";
+        return url.startsWith("http://") || url.startsWith("https://")
+            ? url
+            : `https://${url}`;
+    };
+
     useEffect(() => {
         axios.get(`${BASE_URL}/user/portfoliotest`)
             .then(res => {
@@ -75,19 +82,33 @@ export default function HomePage() {
                             },
                         ]}
                     >
-                        {portfolio.map((item, idx) => (
-                            <div key={idx} className="portfolio-slide-card">
-                                <h4>{item.title}</h4>
-                                <p>{item.content}</p>
-                                <div style={{
-                                    display: "flex",
-                                    gap: 8,
-                                    flexWrap: "wrap",
-                                    marginBottom: 8
-                                }}>
-                                    {item?.tags && (
-                                        <>
-                                            {item.tags.map((tag, i) => (
+                        {portfolio.map((item, idx) => {
+                            const hasLink = !!getValidLink(item.link); // 링크 존재 여부
+                            const isChecked = item.checking === "Y";
+                            const isClickable = hasLink && isChecked;
+
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`portfolio-slide-card ${isClickable ? "clickable" : ""}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (isClickable) window.open(getValidLink(item.link), "_blank");
+                                    }}
+                                >
+                                    <h4>{item.title}</h4>
+                                    <p>{item.content}</p>
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            gap: 8,
+                                            flexWrap: "wrap",
+                                            marginBottom: 8,
+                                        }}
+                                    >
+                                        {item?.tags &&
+                                            item.tags.map((tag, i) => (
                                                 <span
                                                     key={i}
                                                     style={{
@@ -95,26 +116,26 @@ export default function HomePage() {
                                                         backgroundColor: "#e3f2fd",
                                                         color: "#1976d2",
                                                         padding: "4px 10px",
-                                                        borderRadius: 20
+                                                        borderRadius: 20,
                                                     }}
                                                 >
                                                     {tag}
                                                 </span>
                                             ))}
-                                        </>
-                                    )}
-                                </div>
+                                    </div>
 
-                                <div style={{
-                                    fontSize: "clamp(13px, 2.4vw, 14px)",
-                                    color: "#222",
-                                    fontWeight: 600
-                                }}>
-                                    {item.estimated_dt} · {item.budget}
+                                    <div
+                                        style={{
+                                            fontSize: "clamp(13px, 2.4vw, 14px)",
+                                            color: "#222",
+                                            fontWeight: 600,
+                                        }}
+                                    >
+                                        {item.estimated_dt} · {item.budget}
+                                    </div>
                                 </div>
-                                {/* 태그, 날짜 등도 추가 */}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </Slider>
                 </div>
             </div>

@@ -92,7 +92,12 @@ class Portfolio(BaseModel):
     content: Optional[str] = None
     estimated_dt: Optional[str] = None
     budget: Optional[str] = None
+    link: Optional[str] = None
     skills: Optional[List[SkillItem]] = None
+    checking: Optional[bool] = None
+    
+
+
 
 
 # --- 관리자(Admin, PM) 전용 라우터 ---
@@ -1460,13 +1465,14 @@ def portfolio_Create(data:Portfolio ,user: dict = Depends(get_current_user)):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
+            checking = "Y" if data.checking else "N"
 
             sql = '''
-                INSERT INTO portfolio (title, content, estimated_dt, budget, create_dt, create_id, del_yn)
-                VALUES (%s, %s, %s, %s, NOW(), %s, 'N')
+                INSERT INTO portfolio (title, content, estimated_dt, budget, link, checking, create_dt, create_id, del_yn)
+                VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s, 'N')
             '''
             cursor.execute(sql, (
-                data.title, data.content, data.estimated_dt, data.budget, user["user_id"],
+                data.title, data.content, data.estimated_dt, data.budget, data.link, checking, user["user_id"],
             ))
 
             # ✅ 여기서 바로 ID 가져오기!
@@ -1575,13 +1581,15 @@ def portfolio_Update(portfolio_id:int, data:Portfolio ,user: dict = Depends(get_
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
+            checking = "Y" if data.checking else "N"
+
 
             # 1. 포트폴리오 기본 정보 업데이트
             cursor.execute("""
                 UPDATE portfolio
-                SET title = %s, content = %s, estimated_dt = %s, budget = %s, update_dt = NOW(), update_id = %s
+                SET title = %s, content = %s, estimated_dt = %s, budget = %s, link = %s, checking = %s, update_dt = NOW(), update_id = %s
                 WHERE portfolio_id = %s AND del_yn = 'N'
-            """, (data.title, data.content, data.estimated_dt, data.budget, user["user_id"], portfolio_id))
+            """, (data.title, data.content, data.estimated_dt, data.budget, data.link, checking, user["user_id"], portfolio_id))
 
             # 2. 기존 기술 목록 조회
             cursor.execute("""

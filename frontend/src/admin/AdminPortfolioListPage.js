@@ -22,6 +22,13 @@ const MemberProjectList = () => {
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
+  const getValidLink = (url) => {
+    if (!url) return "";
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
+  };
+
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) setMyUserId(id);
@@ -50,8 +57,8 @@ const MemberProjectList = () => {
 
     const token = sessionStorage.getItem("token");
     axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {}, {
-                headers: { Authorization: `Bearer ${token}` },
-              })
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(res => {
         console.log("res", res);
         console.log("res.data", res.data);
@@ -89,38 +96,59 @@ const MemberProjectList = () => {
             <Typography variant="body2" sx={{ color: "gray" }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
-                <div style={{
-                    display: "flex",
-                    gap: 8,
-                    flexWrap: "wrap",
-                    marginBottom: 8
-                }}>
-                    {post?.tags && (
-                        <>
-                        {post.tags.map((tag, i) => (
-                        <span
-                            key={i}
-                            style={{
-                            fontSize: "clamp(11px, 2.3vw, 12px)",
-                            backgroundColor: "#e3f2fd",
-                            color: "#1976d2",
-                            padding: "4px 10px",
-                            borderRadius: 20
-                            }}
-                        >
-                            {tag}
-                        </span>
-                        ))}
-                        </>
-                    )}
-                </div>
-                <div style={{
-                    fontSize: "clamp(13px, 2.4vw, 14px)",
-                    color: "#222",
-                    fontWeight: 600
-                }}>
-                    {post.estimated_dt} · {post.budget}
-                </div>
+            <div style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              marginBottom: 8
+            }}>
+              {post?.tags && (
+                <>
+                  {post.tags.map((tag, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        fontSize: "clamp(11px, 2.3vw, 12px)",
+                        backgroundColor: "#e3f2fd",
+                        color: "#1976d2",
+                        padding: "4px 10px",
+                        borderRadius: 20
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </>
+              )}
+            </div>
+            <div style={{
+              fontSize: "clamp(13px, 2.4vw, 14px)",
+              color: "#222",
+              fontWeight: 600
+            }}>
+              {post.estimated_dt} · {post.budget}
+            </div>
+
+            {post.link && (
+              <Typography
+                component="a"
+                href={getValidLink(post.link)}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  mt: 1,
+                  display: "inline-block",
+                  color: "#1976d2",
+                  textDecoration: "underline",
+                  fontSize: 14,
+                  wordBreak: "break-all"
+                }}
+              >
+                {getValidLink(post.link)}
+              </Typography>
+
+            )}
+
 
             <Stack direction="row" justifyContent="space-between" mt={1}>
               <Typography variant="caption" sx={{ color: "gray" }}>
@@ -128,15 +156,15 @@ const MemberProjectList = () => {
               </Typography>
             </Stack>
             {post.create_id === myUserId && (
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
-                              수정
-                            </Button>
-                            <Button onClick={() => handleDelete(post.portfolio_id)}>
-                              삭제
-                            </Button>
-                          </Stack>
-                        )}
+              <Stack direction="row" spacing={1} mt={1}>
+                <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
+                  수정
+                </Button>
+                <Button onClick={() => handleDelete(post.portfolio_id)}>
+                  삭제
+                </Button>
+              </Stack>
+            )}
           </Paper>
         ))}
       </Box>
