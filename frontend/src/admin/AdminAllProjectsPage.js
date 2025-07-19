@@ -17,8 +17,11 @@ export default function AdminProjectManagementPage() {
   const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const { showAlert } = useAlert();
+  const [role, setRole] = useState("");
 
   useEffect(() => {
+    const role = sessionStorage.getItem("role");
+    setRole(role);
     fetchProjects();
   }, []);
 
@@ -74,6 +77,14 @@ export default function AdminProjectManagementPage() {
     A07: "플랫폼 구축",
     A08: "기타"
   }
+  const statusLabel = {
+    null : "PM 미지정",
+    "검토 중" : "검토 중",
+    W01: "대기중",
+    W02: "진행중",
+    W03: "완료",
+    W04: "기존PM해지 새PM임명중",
+  };
 
   const urgencyColor = (urgency) => {
     if (urgency === "U01") return "#46D828";
@@ -107,6 +118,9 @@ export default function AdminProjectManagementPage() {
                 <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 400}}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
                     <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{backgroundColor:urgencyColor(proj.urgency), color:'white'}} size="small" />
+                    <Typography variant="caption" color="text.secondary">
+                      진행도 : {statusLabel[proj.status] || "알 수 없음"}
+                    </Typography>
                     <Typography variant="caption" color="text.secondary">
                       접수일: {formattedDate}
                     </Typography>
@@ -142,20 +156,66 @@ export default function AdminProjectManagementPage() {
                     <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '380px', height: '100px' }}>
                       {proj.description}
                     </Box>
-                  <Box sx={{ textAlign:'center'}}>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{ mt: 2, borderRadius:'20px', height:'45px', width:'250px',fontSize:'16px',}}
-                    onClick={() => {
-                      setSelectedProjectId(proj.project_id);
-                      setPmDialogOpen(true);
-                    }}
-                    disabled={isManaged}
+                  <Stack
+                    direction="row"
+                    justifyContent={role === "R04" ? "space-between" : "center"}
+                    alignItems="center"
+                    spacing={2}
+                    mb={1}
+                    mt={2}
                   >
-                    {isManaged ? "관리 중" : "관리하기"}
-                  </Button>
-                  </Box>
+                    {role === "R04" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            borderRadius: "20px",
+                            height: "45px",
+                            width: "250px",
+                            fontSize: "16px",
+                          }}
+                          onClick={() => {
+                            setSelectedProjectId(proj.project_id);
+                            setPmDialogOpen(true);
+                          }}
+                          disabled={isManaged}
+                        >
+                          {isManaged ? `관리자(PM) : ${proj.pm_id}` : "관리하기"}
+                        </Button>
+
+                        <Button
+                          variant="contained"
+                          sx={{
+                            borderRadius: "20px",
+                            height: "45px",
+                            width: "250px",
+                            fontSize: "16px",
+                          }}
+                          onClick={() => navigate(`/admin/channel/${proj.project_id}/common`)}
+                          disabled={!isManaged}
+                        >
+                          프로젝트채널
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          borderRadius: "20px",
+                          height: "45px",
+                          width: "250px",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => {
+                          setSelectedProjectId(proj.project_id);
+                          setPmDialogOpen(true);
+                        }}
+                        disabled={isManaged}
+                      >
+                        {isManaged ? `관리자(PM) : ${proj.pm_id}` : "관리하기"}
+                      </Button>
+                    )}
+                  </Stack>
                 </Paper>
               </Grid>
             );
