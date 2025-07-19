@@ -6,6 +6,8 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import SmsIcon from '@mui/icons-material/Sms';
 
 
 export default function ProjectChannelViewPage() {
@@ -93,12 +95,33 @@ export default function ProjectChannelViewPage() {
 
     return (
         <>
-            <Box sx={{ p: 2 }}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                    💬 {projectTitle}
-                </Typography>
-
-                <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
+            <Box sx={{ flex:1, p: 3 }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Tooltip
+                            title={
+                                <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                                    This little budf is <b>really cute</b> 🐤
+                                </Typography>
+                            }
+                            placement="right"
+                            arrow
+                        >
+                            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                                <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                                <Typography
+                                    variant="h4"
+                                    fontWeight="bold"
+                                    gutterBottom
+                                    sx={{ mb: 0, cursor: "help", }}
+                                >
+                                    {projectTitle}
+                                </Typography>
+                            </Box>
+                        </Tooltip>
+                    </Box>
+                </Stack>
+                <Paper sx={{ p: 3, pt: 0, borderRadius: 2, mt:3 }}>
 
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box>

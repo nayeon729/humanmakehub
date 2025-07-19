@@ -18,6 +18,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
+import Tooltip from "@mui/material/Tooltip";
+import SmsIcon from '@mui/icons-material/Sms';
 
 export default function ProjectChannelCommonPage() {
   const [posts, setPosts] = useState([]);
@@ -71,9 +73,29 @@ export default function ProjectChannelCommonPage() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                {projectTitle}
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
         <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${myUserId}`)}>
           <img src={add} style={{ width: '40px', hight: '40px' }} />
         </IconButton>

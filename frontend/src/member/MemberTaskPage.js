@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import { Box, Typography, List, ListItem, ListItemText, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import DevIcon from "../assets/dev-icon.png";
 import AlertCard from "../components/AlertCard";
+import Tooltip from "@mui/material/Tooltip";
+import BeenhereIcon from '@mui/icons-material/Beenhere';
+
 
 export default function MemberDashboard() {
 
@@ -15,7 +18,7 @@ export default function MemberDashboard() {
     project: "#1976d2",   // 파랑 (예: 프로젝트 알림)
     ask: "#ff9800",   // 주황 (예: 문의사항 알림)
     commonChat: "#89d665",   // 주황 (예: 문의사항 알림)
-    chat:"#9065d6ff",
+    chat: "#9065d6ff",
     default: "#9e9e9e",   // 회색 (기본)
   };
   const navigate = useNavigate();
@@ -47,12 +50,32 @@ export default function MemberDashboard() {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
 
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <BeenhereIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              개발자 대시보드
+            </Typography>
+          </Box>
+        </Tooltip>
+      </Box>
 
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        🛡️ 개발자 대시보드
-      </Typography>
 
       {alerts.map((alert) => {
         const color = categoryColors[alert.category] || categoryColors.default;

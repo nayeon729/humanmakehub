@@ -2,9 +2,19 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import qrImage from "../../assets/kakao_qr.png";  // QR 이미지 경로 맞춰줘!
+import Tooltip from "@mui/material/Tooltip";
 
 export default function FloatingQRCode() {
     return (
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="left"
+          arrow
+        >
         <Box
             sx={{
                 position: "fixed",
@@ -29,5 +39,6 @@ export default function FloatingQRCode() {
                 style={{ width: "100%", height: "100%" }}
             />
         </Box>
+        </Tooltip>
     );
 }

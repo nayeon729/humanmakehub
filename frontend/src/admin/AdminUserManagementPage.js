@@ -9,6 +9,8 @@ import Combo from "../components/Combo";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -200,14 +202,30 @@ export default function AdminUserManagementPage() {
     }
   };
   return (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <AccountCircleIcon sx={{ fontSize: 40 }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          사용자 관리
-        </Typography>
+    <Box sx={{ p: 2, pt:3 }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              회원정보
+            </Typography>
+          </Box>
+        </Tooltip>
       </Box>
-
       <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
         <Tab label="전체" value="all" />
         <Tab label="ADMIN" value="R04" />

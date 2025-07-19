@@ -4,6 +4,7 @@ import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chi
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function getAskList() {
   const navigate = useNavigate();
@@ -54,17 +55,36 @@ export default function getAskList() {
 
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        문의사항 목록
-      </Typography>
+    <Box sx={{ flex: 1, p: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Tooltip
+        title={
+          <Typography sx={{ fontSize: 16, color: "#fff" }}>
+            This little budf is <b>really cute</b> 🐤
+          </Typography>
+        }
+        placement="right"
+        arrow
+      >
+        {/* <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0, cursor: "help", }}
+        >
+          문의사항 목록
+        </Typography>
+        {/* </Box> */}
+      </Tooltip>
+      </Box>
       {askList && askList.map((list, index) => {
         return (
 
           <Paper key={index} sx={{ my: 2, p: 2, border: '1px solid #ddd', borderRadius: 2, width: "400px" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography sx={{ color: "gray", fontWeight: "bold" }}>{list.del_yn == 'Y' ? "확인완료" : "보류"}</Typography>
-              <Button onClick={() => handleConfirm(list.ask_id)} sx={{marginRight:"-10px"}}>확인</Button>
+              <Button onClick={() => handleConfirm(list.ask_id)} sx={{ marginRight: "-10px" }}>확인</Button>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Typography ><strong>이름:</strong> {list?.username}</Typography>
@@ -84,7 +104,7 @@ export default function getAskList() {
               </Box>
             )}
             <Typography><strong>문의 내용</strong></Typography>
-            <Box sx={{border:"1px solid gray",borderRadius:"5px", p:1, height:"100px" }}>
+            <Box sx={{ border: "1px solid gray", borderRadius: "5px", p: 1, height: "100px" }}>
               <Typography>{list?.description}</Typography>
             </Box>
           </Paper>

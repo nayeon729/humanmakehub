@@ -6,6 +6,8 @@ import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
+import CampaignIcon from '@mui/icons-material/Campaign';
+import Tooltip from "@mui/material/Tooltip";
 
 export default function AdminNoticeCreatePage() {
     const { noticeId } = useParams();
@@ -17,10 +19,10 @@ export default function AdminNoticeCreatePage() {
 
     const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
     useEffect(() => {
-    if (noticeId) {
-        fetchNotice(noticeId);
-    }
-}, [noticeId]);
+        if (noticeId) {
+            fetchNotice(noticeId);
+        }
+    }, [noticeId]);
 
     const fetchNotice = async (notice_id) => {
         try {
@@ -62,11 +64,30 @@ export default function AdminNoticeCreatePage() {
     };
 
     return (
-        <Box sx={{p:2}}>
-            <Typography variant="h4" gutterBottom fontWeight="bold">
-                📢 공지 사항 수정
-            </Typography>
-
+        <Box sx={{ p: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <Tooltip
+                    title={
+                        <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                            This little budf is <b>really cute</b> 🐤
+                        </Typography>
+                    }
+                    placement="right"
+                    arrow
+                >
+                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                        <CampaignIcon sx={{ fontSize: 40, mr: "4px" }} />
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            gutterBottom
+                            sx={{ mb: 0, cursor: "help", }}
+                        >
+                            공지 사항 수정
+                        </Typography>
+                    </Box>
+                </Tooltip>
+            </Box>
             <Paper sx={{ p: 3, mt: 2 }}>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2" fontWeight={600}>제목</Typography>
@@ -98,10 +119,10 @@ export default function AdminNoticeCreatePage() {
                         sx={{ mb: 2 }}
                     />
                 </Box>
-                <Box sx={{textAlign:'center'}}>
-                <Button variant="contained" fullWidth onClick={handleUpdate} sx={{width:'250px',height:'45px', fontSize:'16', borderRadius:'20px'}}>
-                    글 수정 
-                </Button>
+                <Box sx={{ textAlign: 'center' }}>
+                    <Button variant="contained" fullWidth onClick={handleUpdate} sx={{ width: '250px', height: '45px', fontSize: '16', borderRadius: '20px' }}>
+                        글 수정
+                    </Button>
                 </Box>
             </Paper>
         </Box>

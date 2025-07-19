@@ -9,6 +9,8 @@ import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
 import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
 import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -56,11 +58,32 @@ export default function AdminProjectCreatePage() {
   };
 
   return (
-    <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <img src={Folder} alt="" style={{ height: "35px" }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>관리자 프로젝트 생성</Typography>
-      </Box>
+    <>
+      <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+              {/* <img src={Folder} alt="" style={{ height: "35px" }} /> */}
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                관리자 프로젝트 생성
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
       <Paper sx={{ p: 4, width: 600 }}>
         <Stack spacing={3}>
           {/* 1. 기본 정보 */}
@@ -155,6 +178,7 @@ export default function AdminProjectCreatePage() {
           </Box>
         </Stack>
       </Paper>
-    </Box>
+    </Box >
+    </>
   );
 }
