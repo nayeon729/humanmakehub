@@ -13,6 +13,7 @@ import {
 import CreateIcon from "@mui/icons-material/Create";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import Tooltip from "@mui/material/Tooltip";
 
 const MemberProjectList = () => {
   const navigate = useNavigate();
@@ -75,9 +76,28 @@ const MemberProjectList = () => {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4" fontWeight="bold">
-          포트폴리오 목록
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            {/* <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                포트폴리오 목록
+              </Typography>
+            {/* </Box> */}
+          </Tooltip>
+        </Box>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>
           <CreateIcon />
         </IconButton>

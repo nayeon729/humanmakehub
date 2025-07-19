@@ -14,6 +14,8 @@ import axios from "../common/axiosInstance"
 import AlertCard from "../components/AlertCard";
 import Folder from "../assets/folder.png"
 import MobileFullPageLayout from "../common/MobileFullPageLayout";
+import Tooltip from "@mui/material/Tooltip";
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 
 export default function ClientDashboard() {
   const navigate = useNavigate();
@@ -56,11 +58,30 @@ export default function ClientDashboard() {
 
   return (
     <MobileFullPageLayout>
-      <Box>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          🛡️ 고객 대시보드
-        </Typography>
-
+      <Box sx={{ p: 2, pt: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <BeenhereIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                고객 대시보드
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
         {alerts.map((alert) => {
           const color = categoryColors[alert.category] || categoryColors.default;
           return (

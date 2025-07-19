@@ -8,7 +8,8 @@ import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
-
+import CampaignIcon from '@mui/icons-material/Campaign';
+import Tooltip from "@mui/material/Tooltip";
 
 export default function AdminNoticeViewPage() {
     const { noticeId } = useParams();
@@ -20,9 +21,9 @@ export default function AdminNoticeViewPage() {
     const { showAlert } = useAlert();
 
     useEffect(() => {
-            const role = sessionStorage.getItem("role");
-            setUserRole(role);
-        }, []);
+        const role = sessionStorage.getItem("role");
+        setUserRole(role);
+    }, []);
     useEffect(() => {
         fetchNotice(noticeId);
     }, []);
@@ -65,51 +66,70 @@ export default function AdminNoticeViewPage() {
     return (
         <>
             <Box sx={{ p: 2 }}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                    📢 공지사항
-                </Typography>
-
+                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                    <Tooltip
+                        title={
+                            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                                This little budf is <b>really cute</b> 🐤
+                            </Typography>
+                        }
+                        placement="right"
+                        arrow
+                    >
+                        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                            <CampaignIcon sx={{ fontSize: 40, mr: "4px" }} />
+                            <Typography
+                                variant="h4"
+                                fontWeight="bold"
+                                gutterBottom
+                                sx={{ mb: 0, cursor: "help", }}
+                            >
+                                공지사항
+                            </Typography>
+                        </Box>
+                    </Tooltip>
+                </Box>
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box display="flex" direction="row">
-                        <Chip
-                            label={noticeTypeMap[notice.target_type] || notice.target_type}
-                            color="primary"
-                            sx={{ mt: 3, mr: 1, width:'65px', pb:'3px'}}
-                        />
-                        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{mt: 3}}>
-                            {notice.title}
-                        </Typography>
+                            <Chip
+                                label={noticeTypeMap[notice.target_type] || notice.target_type}
+                                color="primary"
+                                sx={{ mt: 3, mr: 1, width: '65px', pb: '3px' }}
+                            />
+                            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
+                                {notice.title}
+                            </Typography>
                         </Box>
                         <Box>
                             {["R03", "R04"].includes(userRole) && (
-                            <Box mt={5}  sx={{ display: "flex", flexDirection: "row"}}>
-                                <button
-                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor:'pointer'}}
-                                    onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
-                                >
-                                    수정
-                                </button>
-                                <button
-                                    style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'red', cursor:'pointer' }}
-                                    onClick={() => setDeleteDialogOpen(true)}
-                                >
-                                    삭제
-                                </button>
-                            </Box>
+                                <Box mt={5} sx={{ display: "flex", flexDirection: "row" }}>
+                                    <button
+                                        style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor: 'pointer' }}
+                                        onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
+                                    >
+                                        수정
+                                    </button>
+                                    <button
+                                        style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'red', cursor: 'pointer' }}
+                                        onClick={() => setDeleteDialogOpen(true)}
+                                    >
+                                        삭제
+                                    </button>
+                                </Box>
                             )}
-                            
-                            
+
+
                         </Box>
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
-                    
-                    <Box mt={1} sx={{display:'flex', justifyContent:'end'}}>
-                            <Typography variant="caption" color="text.secondary">
-                                {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
-                            </Typography>
-                            </Box>
-                            <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
+
+                    <Box mt={1} sx={{ display: 'flex', justifyContent: 'end' }}>
+                        <Typography variant="caption" color="text.secondary">
+                            {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
+                        </Typography>
+                    </Box>
+                    <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
                         {notice.content}
                     </Typography>
                 </Paper>

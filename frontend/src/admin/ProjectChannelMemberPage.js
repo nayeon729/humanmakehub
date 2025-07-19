@@ -17,7 +17,8 @@ import CreateIcon from "@mui/icons-material/Create";
 import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
-
+import Tooltip from "@mui/material/Tooltip";
+import SmsIcon from '@mui/icons-material/Sms';
 
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
@@ -33,12 +34,32 @@ export default function ProjectChannelMemberPage() {
   const context = useOutletContext() || {};
   const setIsChecked = context.setIsChecked || (() => { });
   const { showAlert } = useAlert();
+  const [pmCheck, setPmCheck] = useState(false);
 
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) {
       setMyUserId(id);
     }
+
+    const fetchPmCheck = async () => {
+      const id = sessionStorage.getItem("user_id");
+      if (id) setMyUserId(id);
+
+      try {
+        const token = sessionStorage.getItem("token");
+        const user_id = sessionStorage.getItem("user_id");
+        const res = await axios.get(`${BASE_URL}/admin/project/pmCheck/${project_id}/${user_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("PM 확인 :", res.data.pmCheck);
+        setPmCheck(res.data.pmCheck);
+      } catch (error) {
+        console.error("PM확인 실패", error);
+      }
+    };
+
+    fetchPmCheck(); // 내부에서 호출
   }, []);
 
   const fetchMessages = async () => {
@@ -135,12 +156,36 @@ export default function ProjectChannelMemberPage() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h5" fontWeight="bold">
-          💬 {projectTitle}
-        </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
-          <img src={add} style={{ width: '40px', hight: '40px' }} />
-        </IconButton>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Tooltip
+              title={
+                <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                  This little budf is <b>really cute</b> 🐤
+                </Typography>
+              }
+              placement="right"
+              arrow
+            >
+              <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ mb: 0, cursor: "help", }}
+                >
+                  {projectTitle}
+                </Typography>
+              </Box>
+            </Tooltip>
+          </Box>
+        </Stack>
+        {pmCheck && (
+          <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
+            <img src={add} style={{ width: '40px', hight: '40px' }} />
+          </IconButton>
+        )}
       </Stack>
 
 

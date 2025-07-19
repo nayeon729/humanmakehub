@@ -44,7 +44,7 @@ export default function CommonComboBox({
             {placeholder}
           </MenuItem>
           {options.map((opt) => (
-            <MenuItem key={opt.value} value={opt.value}>
+            <MenuItem key={opt.value} value={opt.value} disabled={opt.value == "R01" || opt.value == "R04"}>
               {opt.label}
             </MenuItem>
           ))}

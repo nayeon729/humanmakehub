@@ -16,6 +16,8 @@ import chatting from "../assets/chatting.png";
 import create from "../assets/create.png";
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
+import Tooltip from "@mui/material/Tooltip";
+import SmsIcon from '@mui/icons-material/Sms';
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -27,9 +29,9 @@ export default function ProjectChannelPmPage() {
   const [teamMemberId, setTeamMemberId] = useState("");
   const BASE_URL = process.env.REACT_APP_API_URL;
   const context = useOutletContext() || {};
-  const setIsChecked = context.setIsChecked || (() => {}); // 이 부분!
+  const setIsChecked = context.setIsChecked || (() => { }); // 이 부분!
   const { showAlert } = useAlert();
-  
+
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) {
@@ -56,32 +58,32 @@ export default function ProjectChannelPmPage() {
   };
 
   useEffect(() => {
-    if(messages != []) {
+    if (messages != []) {
       const messagesCheck = async () => {
-          try {
-            const token = sessionStorage.getItem("token");
-            await axios.post(`${BASE_URL}/common/alertsCheck`, {
-              user_id: pmId,
-              teamMemberId: teamMemberId,
-            }, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            console.log("알람체크 성공");
-            setIsChecked(true);
-          } catch (error) {
-            console.error("알람체크 실패", error);
-          }
+        try {
+          const token = sessionStorage.getItem("token");
+          await axios.post(`${BASE_URL}/common/alertsCheck`, {
+            user_id: pmId,
+            teamMemberId: teamMemberId,
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("알람체크 성공");
+          setIsChecked(true);
+        } catch (error) {
+          console.error("알람체크 실패", error);
+        }
       }
       messagesCheck();
     }
-  },[messages, pmId])
+  }, [messages, pmId])
 
   useEffect(() => {
     if (!teamMemberId) return; // 값 없으면 무시
     fetchMessages();
-  },[teamMemberId])
+  }, [teamMemberId])
 
   useEffect(() => {
     const getTeamMemberId = async () => {
@@ -91,10 +93,10 @@ export default function ProjectChannelPmPage() {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
-        console.log("project_id" , project_id);
+        console.log("project_id", project_id);
         console.log("userId", user_id);
         console.log("res", res.data.team_member_id);
-        console.log("type", typeof(res.data.team_member_id));
+        console.log("type", typeof (res.data.team_member_id));
         setTeamMemberId(res.data.team_member_id);
       } catch (err) {
         console.error("프로젝트 팀멤버아이디 조회 실패", err);
@@ -141,12 +143,32 @@ export default function ProjectChannelPmPage() {
   };
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-          {projectTitle}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
+              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }}/>
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0,cursor: "help", }}
+              >
+                {projectTitle}
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
         <IconButton
           onClick={() => navigate(`/member/channel/${project_id}/create`)}
           sx={{ p: 0.5 }}
@@ -175,10 +197,10 @@ export default function ProjectChannelPmPage() {
               />
               <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
                 {msg.title}
-                </Typography>
-                {Number(msg.has_image) > 0 && (
-                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
-                )}
+              </Typography>
+              {Number(msg.has_image) > 0 && (
+                <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+              )}
               <Typography variant="body2" color="text.secondary"
                 sx={{
                   position: "absolute",

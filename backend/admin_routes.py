@@ -44,6 +44,7 @@ import shutil, os
 from jwt_auth import get_current_user
 from typing import Optional
 from typing import List
+from config import FRONT_BASE_URL
 import json
 
 router = APIRouter( tags=["Admin"])
@@ -185,9 +186,29 @@ def update_user_role(user_id: str, update: RoleUpdate, user: dict = Depends(get_
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
-            cursor.execute("UPDATE user SET role = %s WHERE user_id = %s", (update.role, user_id))
+
+            # ✅ R02(개발자)로 변경될 경우, 해당 유저가 PM으로 있는 프로젝트 조회
+            if update.role == "R02":
+                cursor.execute("""
+                    SELECT * 
+                    FROM project 
+                    WHERE pm_id = %s AND del_yn = 'N' AND status != 'W03'
+                """, (user_id,))
+                pm_projects = cursor.fetchone()
+
+                if pm_projects:
+                    raise HTTPException(status_code=400, detail="프로젝트 보유중")
+                
+                # ✅ 보유중인 프로젝트 없으면 PM으로 바꾸기
+                cursor.execute("UPDATE user SET role = %s WHERE user_id = %s", (update.role, user_id))
+            
+            # ✅ R03(PM)으로 변경될 경우 그냥 PM으로 바꾸기
+            else:
+                cursor.execute("UPDATE user SET role = %s WHERE user_id = %s", (update.role, user_id))
         conn.commit()
         return {"message": "사용자 역할이 수정되었습니다."}
+    except HTTPException as http_err:
+        raise http_err  # ✅ HTTP 예외는 그대로 던짐!
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -276,7 +297,7 @@ def get_pm_projects(user: dict = Depends(get_current_user)):
             sql = """
                 SELECT 
                     p.project_id, p.title, p.status, p.description,
-                    p.category, p.estimated_duration, p.budget, p.create_dt, p.urgency, p.progress,
+                    p.category, p.estimated_duration, p.budget, p.create_dt, p.urgency, p.progress, p.pm_id,
                     u.user_id AS client_id, u.nickname AS client_nickname,
                     u.email AS client_email, u.company AS client_company, u.phone AS client_phone
                 FROM project p
@@ -301,8 +322,24 @@ def assign_pm(data: PMAssignRequest, user: dict = Depends(get_current_user)):
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             # pm_id를 현재 로그인한 사용자로 지정
-            cursor.execute("UPDATE project SET pm_id = %s, status = '검토 중' WHERE project_id = %s",
-                           (user["user_id"], data.project_id))
+            cursor.execute("UPDATE project SET pm_id = %s, status = '검토 중', update_dt = NOW(), update_id = %s WHERE project_id = %s",
+                           (user["user_id"], user["user_id"], data.project_id))
+            
+            # 프로젝트에 팀멤버가 존재하는지 확인
+            cursor.execute("""
+                SELECT * FROM team_member
+                WHERE project_id = %s AND pm_id IS NULL AND del_yn = 'N'
+            """, (data.project_id,))
+            team_members = cursor.fetchall()
+
+
+            if team_members:
+                #  존재하면 team_member 테이블에서도 pm_id 지정
+                cursor.execute("""
+                    UPDATE team_member
+                    SET pm_id = %s, update_dt = NOW(), update_id = %s
+                    WHERE project_id = %s AND del_yn = 'N'
+                """, (user["user_id"], user["user_id"], data.project_id))
         conn.commit()
         return {"message": "PM으로 지정되었습니다."}
     except Exception as e:
@@ -315,13 +352,15 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             if project.status is not None:
-
+                link = f"{FRONT_BASE_URL}/client/list"
                 # ⭐ 상태가 '진행중' (W02)일 경우 클라이언트에게 알림 전송
                 if project.status == 'W02':
-                     cursor.execute("""
+                    
+                    cursor.execute("""
                         INSERT INTO alerts (
                             target_user, title, message, link, create_dt, create_id
                         )
@@ -329,12 +368,12 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
                             p.client_id,
                             '시스템 알람',
                             '등록하신 프로젝트가 시작되었습니다.',
-                            'http://localhost:3000/client/list',
+                            %s,
                             NOW(),
                             %s
                         FROM project p
                         WHERE p.project_id = %s
-                    """, (user["user_id"], project_id))
+                    """, (link, user["user_id"], project_id))
                 if project.status == 'W03':
                     cursor.execute("""
                         INSERT INTO alerts (
@@ -344,12 +383,12 @@ def update_project(project_id: int, project: ProjectFlexibleUpdate, user:dict = 
                             p.client_id,
                             '시스템 알람',
                             '프로젝트가 완료되었습니다.',
-                            'http://localhost:3000/client/list',
+                            %s,
                             NOW(),
                             %s
                         FROM project p
                         WHERE p.project_id = %s
-                    """, (user["user_id"], project_id))
+                    """, (link,user["user_id"], project_id))
                         
                 cursor.execute("UPDATE project SET status = %s WHERE project_id = %s", (project.status, project_id))
 
@@ -790,7 +829,7 @@ async def create_project_channel(
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+            link = f"{FRONT_BASE_URL}/client/list"
             # 🔸 게시글 등록
             cursor.execute("""
                 INSERT INTO project_channel (title, user_id, content, create_dt, create_id, value_id, category)
@@ -833,7 +872,8 @@ async def create_project_channel(
                     AND del_yn = 'N'
                 """, (project_id,))
                 team_members = cursor.fetchall()
-
+                link1 = f"{FRONT_BASE_URL}/member/channel/{project_id}/common"
+                link2 = f"{FRONT_BASE_URL}/member/channel/{project_id}/pm/{user_id}"
                 for member in team_members:
                     target_user = member["user_id"]
                     cursor.execute("""
@@ -845,7 +885,7 @@ async def create_project_channel(
                         "commonChat",
                         "프로젝트 공지",
                         "프로젝트에서 PM이 공지사항을 작성하였습니다.",
-                        f"http://localhost:3000/member/channel/{project_id}/common",
+                        link1,
                         user["user_id"]
                     ))
             else:
@@ -853,12 +893,12 @@ async def create_project_channel(
                     INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
                     VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
                 """, (
-                    user_id,
+                    "",
                     value_id,
                     "chat",
                     "프로젝트 PM",
                     "프로젝트에서 PM이 개인채널에 글을 작성하였습니다.",
-                    f"http://localhost:3000/member/channel/{project_id}/pm/{user_id}",
+                    link2,
                     user["user_id"]
                 ))
 
@@ -1146,7 +1186,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
             """, (project_id, body["member_id"]))
             if cursor.fetchone():
                 raise HTTPException(status_code=400, detail="이미 팀원으로 등록된 사용자입니다.")
-
+            link = f"{FRONT_BASE_URL}/member/projectlist"
             # ✨ 알림 추가
             cursor.execute("""
                 INSERT INTO alerts (
@@ -1160,7 +1200,7 @@ def invite_member(project_id: int, body: dict = Body(...), user: dict = Depends(
                 "project",
                 "시스템 알람",
                 "PM이 프로젝트에 초대하였습니다. 프로젝트 목록에서 확인 후 수락 또는 거절할 수 있습니다.",
-                "http://localhost:3000/member/projectlist",
+                link,
                 user["user_id"]  # 알림 보낸 사람
             ))
 
@@ -1693,5 +1733,77 @@ def get_user_info(user_id: str, user: dict = Depends(get_current_user)):
             user_info["skills"] = cursor.fetchall()
 
         return user_info
+    finally:
+        conn.close()
+
+
+@router.post("/pmRemove/{user_id}")
+def get_haveProject(user_id: str, user: dict = Depends(get_current_user)):
+    if user["role"] != "R04":
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            # 1. 삭제되지않고 완료되지않은 보유 프로젝트 pmid null, 진행도도 null (PM 미지정)
+            cursor.execute("""
+                UPDATE project
+                SET pm_id = NULL, status = "W04", update_dt = NOW(), update_id = %s
+                WHERE pm_id = %s AND del_yn = 'N' AND status != 'W03'
+            """, (user["user_id"], user_id))
+            affected_rows = cursor.rowcount  # 몇 건 수정되었는지 확인용
+
+            # 2. team_member 테이블에 해당 pm_id가 존재하는지 확인
+            cursor.execute("""
+                SELECT * FROM team_member
+                WHERE pm_id = %s AND del_yn = 'N'
+            """, (user_id,))
+            team_members = cursor.fetchall()
+
+
+            if team_members:
+                # 3. 존재하면 team_member 테이블에서도 pm_id 제거
+                cursor.execute("""
+                    UPDATE team_member
+                    SET pm_id = NULL, update_dt = NOW(), update_id = %s
+                    WHERE pm_id = %s AND del_yn = 'N'
+                """, (user["user_id"], user_id))
+
+            # 4. user 테이블 등급을 R02로 변경
+            cursor.execute("""
+                UPDATE user
+                SET role = 'R02'
+                WHERE user_id = %s
+            """, (user_id,))
+
+        conn.commit()
+        return {"message": f"{affected_rows}건의 프로젝트에서 PM이 제거되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+
+@router.get("/project/pmCheck/{project_id}/{user_id}")
+def get_project_common(project_id: int, user_id: str, user: dict = Depends(get_current_user)):
+    if user["role"] not in ("R03", "R04"):
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            sql = """
+                SELECT *
+                FROM project
+                WHERE project_id = %s AND pm_id = %s AND del_yn = 'N'
+            """
+            cursor.execute(sql, (project_id, user_id))
+
+            result = cursor.fetchone()
+
+            return {"pmCheck": bool(result)}  # 👈 결과가 있으면 True, 없으면 False
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
