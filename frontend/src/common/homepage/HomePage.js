@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box, IconButton, Button,
   Typography, Grid, Stack, Chip, TextField
@@ -32,6 +32,27 @@ export default function HomePage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));       // ≤600px
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // 601px~900px
   const { showAlert } = useAlert();
+  const [role, setRole] = useState(null);
+  const [nickname, setNickname] = useState("");
+
+  useEffect(() => {
+    const storedRole = sessionStorage.getItem("role");
+    const storedNickname = sessionStorage.getItem("nickname");
+    setRole(storedRole);
+    setNickname(storedNickname);
+
+  }, [location]);
+
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("nickname");
+    setRole(null);
+    setNickname("");
+    navigate("/");
+  };
+
 
   const techStacks = [
     "React-native", "Firebase", "Kotlin", "Node.js", "React", "Django",
@@ -188,11 +209,7 @@ export default function HomePage() {
                 {sessionStorage.getItem("token") ? (
                   <a
                     style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      sessionStorage.removeItem("token");
-                      navigate("/");
-                      window.location.reload();
-                    }}
+                    onClick={handleLogout}
                   >
                     LOG-OUT
                   </a>
@@ -832,7 +849,7 @@ export default function HomePage() {
             placement="right"
             arrow
           >
-            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold",cursor: "help", }}>HumanMakeHub에 문의하기</strong>
+            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold", cursor: "help", }}>HumanMakeHub에 문의하기</strong>
           </Tooltip>
         </div>
         <form id="askSend">

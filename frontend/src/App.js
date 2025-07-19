@@ -7,7 +7,6 @@ import IdFind from "./common/IdFind";
 import PwFind from "./common/PwFind";
 // import IdFindView from "./common/IdFindView";
 import PwReset from "./common/PwReset";
-import PortfolioListTest from "../src/common/homepage/PortfolioListTest"
 import { AlertProvider } from "./components/CommonAlert";
 
 import ClientDashBoard from "./client/ClientDashboard";
@@ -73,7 +72,6 @@ function App() {
           <Route path="/pwFind" element={<PwFind />} />
           {/* <Route path="/idFindView" element={<IdFindView />} /> */}
           <Route path="/pwReset" element={<PwReset />} />
-          <Route path="/t" element={<PortfolioListTest />} />
 
 
           {/* 클라이언트 */}
