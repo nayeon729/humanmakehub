@@ -38,11 +38,6 @@ export default function ProjectChannel({ role }) {
               Authorization: `Bearer ${sessionStorage.getItem("token")}`,
             },
           });
-          console.log("res : ", res);
-          console.log("project_id", project_id);
-          console.log("userId", myUserId);
-          console.log("res.data.team_memeber_id", res.data.team_member_id);
-          console.log("type", typeof (res.data.team_member_id));
           setTeamMemberId(res.data.team_member_id);
           setPmId(res.data.pm_id);
         } catch (err) {
@@ -127,81 +122,95 @@ export default function ProjectChannel({ role }) {
     }
   }
 
+  useEffect(() => {
+    if (project_id) {
+      sessionStorage.setItem("project_channel_project_id", project_id);
+      sessionStorage.setItem("project_channel_menus", JSON.stringify(menus));
+
+      // 🛠️ members에 project_id 직접 삽입
+      const membersWithPid = filteredMembers.map(member => ({
+        ...member,
+        project_id
+      }));
+      sessionStorage.setItem("project_channel_members", JSON.stringify(membersWithPid));
+    }
+  }, [menus, filteredMembers, project_id]);
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      
-      {/* 사이드바 */}
-       {isDesktop && (
-      <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2, mr:4 }}>
-        <Typography variant="h6" fontWeight="bold" mb={2}>
-          PROJECT<br />CHANNEL
-        </Typography>
-        <List>
-          {menus.map((item, index) => {
-            const isActive = location.pathname.startsWith(item.path);
-            return (
-              <ListItem key={index} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={item.path}
-                  sx={{
-                    backgroundColor: isActive ? "#D9D9D9" : "transparent",
-                    fontWeight: isActive ? "bold" : "normal",
-                    width: "100%",
-                    display: "flex", // 👉 직접 flex 적용
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <ListItemText primary={item.text} sx={{ pl: 1, width: "75%", }} />
-                  <Typography>{item.text == "PM" ? alertsCount || "" : ""}</Typography>
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
 
-        {/* 🔍 관리자용 팀원 목록 */}
-        {role === "R03" && filteredMembers.length > 0 && (  // App.js 에서 R03, R04 체크해서 R03으로 넘김
-          <>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
-              팀원 목록
-            </Typography>
-            <List>
-              {filteredMembers.map((member) => {
-                const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
-                const isActive = location.pathname === memberPath;
-                return (
-                  <ListItem key={member.user_id} disablePadding>
-                    <ListItemButton
-                      component={Link}
-                      to={memberPath}
-                      sx={{
-                        backgroundColor: isActive ? "#D9D9D9" : "transparent",
-                        fontWeight: isActive ? "bold" : "normal",
-                        width: "100%",
-                        display: "flex", // 👉 직접 flex 적용
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
-                      <Typography> {member.count > 0 ? member.count : ""}</Typography>
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </>
-        )}
-      </Box>
-       )}
+      {/* 사이드바 */}
+      {isDesktop && (
+        <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2, mr: 4 }}>
+          <Typography variant="h6" fontWeight="bold" mb={2}>
+            PROJECT<br />CHANNEL
+          </Typography>
+          <List>
+            {menus.map((item, index) => {
+              const isActive = location.pathname.startsWith(item.path);
+              return (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton
+                    component={Link}
+                    to={item.path}
+                    sx={{
+                      backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                      fontWeight: isActive ? "bold" : "normal",
+                      width: "100%",
+                      display: "flex", // 👉 직접 flex 적용
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ListItemText primary={item.text} sx={{ pl: 1, width: "75%", }} />
+                    <Typography>{item.text == "PM" ? alertsCount || "" : ""}</Typography>
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+          </List>
+
+          {/* 🔍 관리자용 팀원 목록 */}
+          {role === "R03" && filteredMembers.length > 0 && (  // App.js 에서 R03, R04 체크해서 R03으로 넘김
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
+                팀원 목록
+              </Typography>
+              <List>
+                {filteredMembers.map((member) => {
+                  const memberPath = `/admin/channel/${project_id}/member/${member.user_id}`;
+                  const isActive = location.pathname === memberPath;
+                  return (
+                    <ListItem key={member.user_id} disablePadding>
+                      <ListItemButton
+                        component={Link}
+                        to={memberPath}
+                        sx={{
+                          backgroundColor: isActive ? "#D9D9D9" : "transparent",
+                          fontWeight: isActive ? "bold" : "normal",
+                          width: "100%",
+                          display: "flex", // 👉 직접 flex 적용
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <ListItemText primary={member.nickname} sx={{ pl: 1, width: "75%", }} />
+                        <Typography> {member.count > 0 ? member.count : ""}</Typography>
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </>
+          )}
+        </Box>
+      )}
 
       {/* 본문 */}
-      <Box sx={{ flexGrow: 1}}>
+      <Box sx={{ flexGrow: 1 }}>
         <Outlet context={{ setIsChecked }} />
       </Box>
     </Box>

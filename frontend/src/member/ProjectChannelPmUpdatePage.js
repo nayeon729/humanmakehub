@@ -15,6 +15,10 @@ export default function ProjectChannelUpdatePage() {
     const [members, setMembers] = useState([]);
     const [pmId, setPmId] = useState("");
     const [projectTitle, setProjectTitle] = useState("");
+    const [existingImages, setExistingImages] = useState([]);
+    const [images, setImages] = useState([]);
+    const [previewUrls, setPreviewUrls] = useState([]);
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
 
     const navigate = useNavigate();
     const { showAlert } = useAlert();
@@ -32,13 +36,20 @@ export default function ProjectChannelUpdatePage() {
     const fetchChannel = async (channel_id) => {
         try {
             const token = sessionStorage.getItem("token");
-            const res = await axios.get(`${BASE_URL}/member/projectchannel/${channel_id}`, {
+            const res = await axios.get(`${BASE_URL}/admin/projectchannel/${channel_id}/view`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            const data = res.data;
+            const data = res.data.channel;
             setTitle(data.title);
             setUserId(data.create_id);
             setContent(data.content);
+
+            const existingImgs = (res.data.images || []).map(img => ({
+                type: "existing",
+                file_id: img.file_id,
+                previewUrl: img.previewUrl || img.file_path || img.image_url,
+            }));
+            setImages(existingImgs);
         } catch (error) {
             console.error("글 불러오기 실패", error);
         }
@@ -65,22 +76,39 @@ export default function ProjectChannelUpdatePage() {
             showAlert("모든 필수 항목을 입력해주세요.");
             return;
         }
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("pm_id", pmId);
+        // 삭제된 기존 이미지 id
+        deletedImageIds.forEach(id => {
+            formData.append("delete_ids", id);  // FastAPI에서는 List[str]로 받기
+        });
+
+        // 새 이미지 추가
+        images.forEach(img => {
+            if (img.type === "new") {
+                formData.append("files", img.file);
+            }
+        });
         try {
             const token = sessionStorage.getItem("token");
-            await axios.put(`${BASE_URL}/member/projectchannel/${channel_id}/update`, {
-                title,
-                user_id: userId,
-                content
-            }, {
+            await axios.put(`${BASE_URL}/member/projectchannel/${channel_id}/update`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
                 },
             });
-            showAlert("✅ 공지사항이 수정되었습니다.");
-            navigate(`/member/channel/${project_id}/pm/${userId}`);
+            showAlert("✅ 글이 수정되었습니다.");
+            const role = sessionStorage.getItem("userRole");
+            if (role === "R03" || role === "R04") {
+                navigate(`/admin/channel/${project_id}/pm/${userId}`);
+            } else {
+                navigate(`/member/channel/${project_id}/pm/${userId}`);
+            }
         } catch (error) {
-            console.error("❌ 공지사항 수정 실패", error);
-            showAlert("공지사항 수정에 실패했습니다.");
+            console.error("❌ 글 수정 실패", error);
+            showAlert("글 수정에 실패했습니다.");
         }
     };
     useEffect(() => {
@@ -99,6 +127,37 @@ export default function ProjectChannelUpdatePage() {
 
         fetchProjectTitle();
     }, [project_id]);
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        const imageFiles = files.filter(file => file.type.startsWith("image/"));
+
+        if (imageFiles.length !== files.length) {
+            alert("❌ 이미지 파일만 첨부할 수 있어요!");
+            return;
+        }
+
+        const newItems = imageFiles.map(file => ({
+            type: "new",
+            file,
+            previewUrl: URL.createObjectURL(file)
+        }));
+
+        setImages(prev => [...prev, ...newItems]);
+        setPreviewUrls(prev => [...prev, ...imageFiles.map(file => URL.createObjectURL(file))]);
+    };
+    const handleDeleteImage = (index) => {
+        const img = images[index];
+
+        // 기존 이미지면 삭제 리스트에 추가
+        if (img.type === "existing" && img.file_id) {
+            setDeletedImageIds(prev => [...prev, img.file_id]);
+        }
+
+        // 이미지 리스트에서 제거
+        setImages(prev => prev.filter((_, i) => i !== index));
+    };
+
     return (
         <Box sx={{ flex: 1, p: 3 }}>
             <Typography variant="h4" gutterBottom fontWeight="bold">
@@ -143,7 +202,60 @@ export default function ProjectChannelUpdatePage() {
                         }}
                     />
                 </Box>
-
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2">이미지 첨부</Typography>
+                    <label htmlFor="file-upload" style={{
+                        display: "inline-block",
+                        padding: "10px 20px",
+                        backgroundColor: "#FFB43B",
+                        color: "#fff",
+                        borderRadius: "15px",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                        fontSize: "14px",
+                        transition: "background-color 0.3s"
+                    }}>
+                        이미지 선택하기
+                        <input
+                            id="file-upload"
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }}
+                        />
+                    </label>
+                    <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
+                        {images.map((img, index) => (
+                            <Box key={index} sx={{ position: "relative" }}>
+                                <img
+                                    src={img.previewUrl}
+                                    alt={`img-${index}`}
+                                    width={120}
+                                    height={120}
+                                    style={{ objectFit: "cover", borderRadius: "8px" }}
+                                />
+                                <Button
+                                    size="small"
+                                    color="error"
+                                    onClick={() => handleDeleteImage(index)}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 0,
+                                        right: 0,
+                                        minWidth: "24px",
+                                        padding: "0px 6px",
+                                        fontSize: "0.7rem",
+                                        fontWeight: "900",
+                                        borderRadius: "0 8px 0 8px",
+                                    }}
+                                >
+                                    ✕
+                                </Button>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2" fontWeight="bold">
                         내용*

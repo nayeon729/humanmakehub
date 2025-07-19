@@ -15,6 +15,7 @@ import {
 import chatting from "../assets/chatting.png";
 import create from "../assets/create.png";
 import { useAlert } from "../components/CommonAlert";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -165,7 +166,8 @@ export default function ProjectChannelPmPage() {
               borderRadius: 2,
               position: "relative",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            }}>
+            }}
+            onClick={() => navigate(`/member/channel/${project_id}/view/${msg.channel_id}`)}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
@@ -174,6 +176,9 @@ export default function ProjectChannelPmPage() {
               <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
                 {msg.title}
                 </Typography>
+                {Number(msg.has_image) > 0 && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+                )}
               <Typography variant="body2" color="text.secondary"
                 sx={{
                   position: "absolute",
@@ -194,24 +199,6 @@ export default function ProjectChannelPmPage() {
               }}>
               {msg.content}
             </Typography>
-            {msg.create_id === myUserId && (
-              <Stack direction="row" spacing={1} mt={1}
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  right: 12,
-                }}>
-                <Button onClick={() => navigate(`/member/channel/${project_id}/update/${msg.channel_id}`)}>
-                  수정
-                </Button>
-                <Button onClick={() => handleDelete(msg.channel_id)}
-                  sx={{
-                    color: "red",
-                  }}>
-                  삭제
-                </Button>
-              </Stack>
-            )}
           </Paper>
         ))}
       </Stack>

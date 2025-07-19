@@ -9,6 +9,7 @@ import {
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
+import ImageIcon from '@mui/icons-material/Image';
 
 export default function MemberProjectChannel() {
   const [posts, setPosts] = useState([]);
@@ -79,6 +80,7 @@ export default function MemberProjectChannel() {
               position: "relative",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             }}
+            onClick={() => navigate(`/member/channel/${project_id}/view/${post.channel_id}`)}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Typography variant="subtitle1" fontWeight="bold"
@@ -86,6 +88,9 @@ export default function MemberProjectChannel() {
                 fontSize: "25px",
               }}>
               {post.title}
+              {Number(post.has_image) > 0 && (
+                  <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+                )}
             </Typography>
             <Typography variant="body2"
               sx={{

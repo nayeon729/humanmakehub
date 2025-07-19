@@ -18,6 +18,7 @@ import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 
+
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
   const [messages, setMessages] = useState([]);
@@ -137,7 +138,7 @@ export default function ProjectChannelMemberPage() {
         <Typography variant="h5" fontWeight="bold">
           💬 {projectTitle}
         </Typography>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create`)}>
+        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
           <img src={add} style={{ width: '40px', hight: '40px' }} />
         </IconButton>
       </Stack>
