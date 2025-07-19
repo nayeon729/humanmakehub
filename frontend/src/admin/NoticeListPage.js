@@ -6,6 +6,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import add from "../assets/create.png"
+import CampaignIcon from '@mui/icons-material/Campaign';
+import Tooltip from "@mui/material/Tooltip";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -60,7 +62,28 @@ export default function AdminNoticeListPage() {
     return (
         <Box sx={{ p: 2 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h4" fontWeight="bold">📢 공지사항</Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Tooltip
+                        title={
+                            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                                This little budf is <b>really cute</b> 🐤
+                            </Typography>
+                        }
+                        placement="right"
+                        arrow
+                    >
+                        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                            <CampaignIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                            <Typography
+                                variant="h4"
+                                fontWeight="bold"
+                                gutterBottom
+                                sx={{ mb: 0, cursor: "help", }}
+                            >
+                                공지사항</Typography>
+                        </Box>
+                    </Tooltip>
+                </Box>
                 {["R03", "R04"].includes(userRole) && (
                     <Button onClick={() => navigate("/admin/notice/create")} sx={{ marginRight: '-8px' }}>
                         <img src={add} style={{ width: '40px', height: '40px' }} />

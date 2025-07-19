@@ -18,6 +18,7 @@ import axios from "../common/axiosInstance"
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -71,7 +72,7 @@ export default function MemberUserEditPage() {
   const handleSkillDetailChange = (code_id, field, value) => {
     console.log(code_id, field, value);
     console.log(skillDetails);
-    console.log(typeof(value));
+    console.log(typeof (value));
     setSkillDetails((prev) => ({
       ...prev,
       [code_id]: {
@@ -165,186 +166,204 @@ export default function MemberUserEditPage() {
 
   return (
     <>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <AccountCircleIcon sx={{ fontSize: 40 }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          회원정보 수정
-        </Typography>
-      </Box>
-
-      <Card sx={{ p: 4, height: "auto" }}>
-        <Typography variant="h6" gutterBottom>
-          안녕하세요! <strong>{userInfo.nickname}</strong>님 ({userInfo.user_id})
-        </Typography>
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-          <Typography>
-            {userInfo.email} / {userInfo.phone || "-"}
-          </Typography>
-        </Box>
-
-        <Divider sx={{ borderBottomWidth: 2, borderColor: "black", mb: 3 }} />
-
-        <Stack spacing={2}>
-          <Box sx={{ display: "flex", gap: 4 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                주요 기술
+      <Box sx={{ p: 2, pt: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
               </Typography>
-              <TextField
-                multiline
-                minRows={4}
-                fullWidth
-                size="small"
-                value={tech}
-                onChange={(e) => setTech(e.target.value)}
-              />
-            </Box>
-
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                경험
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <AccountCircleIcon sx={{ fontSize: 40, mr: "4px"  }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                회원정보 수정
               </Typography>
-              <TextField
-                multiline
-                minRows={4}
-                fullWidth
-                size="small"
-                value={experience}
-                onChange={(e) => setExperience(e.target.value)}
-              />
             </Box>
+          </Tooltip>
           </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography sx={{ width: 150, fontWeight: "bold" }}>Git 주소</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              value={git}
-              error={gitError}
-              helperText={gitError ? "올바른 Git 주소를 입력해주세요." : ""}
-              placeholder="ex) https://github.com/username/repo"
-              onChange={(e) => {
-                const val = e.target.value;
-                setGit(val);
-                setGitError(val && !isValidGitURL(val));
-              }}
-            />
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography sx={{ width: 150, fontWeight: "bold" }}>
-              포트폴리오 주소
+          <Card sx={{ p: 4, height: "auto" }}>
+            <Typography variant="h6" gutterBottom>
+              안녕하세요! <strong>{userInfo.nickname}</strong>님 ({userInfo.user_id})
             </Typography>
-            <TextField
-              fullWidth
-              size="small"
-              value={portfolio}
-              error={portfolioError}
-              helperText={
-                portfolioError ? "올바른 URL 형식으로 입력해주세요." : ""
-              }
-              placeholder="ex) https://yourportfolio.com"
-              onChange={(e) => {
-                const val = e.target.value;
-                setPortfolio(val);
-                setPortfolioError(val && !isValidURL(val));
-              }}
-            />
-          </Box>
 
-          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            기술 스택 선택
-          </Typography>
-          {Object.entries(techStacks).map(([category, techs]) => (
-            <Box
-              key={category}
-              sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2, mb: 2 }}
-            >
-              <Typography variant="subtitle1" fontWeight="bold" mb={1}>
-                {category}
+            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+              <Typography>
+                {userInfo.email} / {userInfo.phone || "-"}
               </Typography>
-              <Stack direction="row" gap={1} flexWrap="wrap">
-                {techs.map((tech) => (
-                  <Chip
-                    key={tech.code_id}
-                    label={tech.label || tech.code_name}
-                    clickable
-                    color={
-                      selectedTechs.some((t) => t.code_id === tech.code_id)
-                        ? "primary"
-                        : "default"
-                    }
-                    onClick={() => toggleTech(tech)}
-                  />
-                ))}
-              </Stack>
             </Box>
-          ))}
 
-          {selectedTechs.map((tech) => (
-            <Paper key={tech.code_id} sx={{ p: 2, bgcolor: "#fafafa" }}>
-              <Typography variant="subtitle2" fontWeight="bold">
-                {tech.label || tech.code_name} 경력 입력
-              </Typography>
-              <Stack direction="row" spacing={2} alignItems="center">
+            <Divider sx={{ borderBottomWidth: 2, borderColor: "black", mb: 3 }} />
+
+            <Stack spacing={2}>
+              <Box sx={{ display: "flex", gap: 4 }}>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    주요 기술
+                  </Typography>
+                  <TextField
+                    multiline
+                    minRows={4}
+                    fullWidth
+                    size="small"
+                    value={tech}
+                    onChange={(e) => setTech(e.target.value)}
+                  />
+                </Box>
+
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    경험
+                  </Typography>
+                  <TextField
+                    multiline
+                    minRows={4}
+                    fullWidth
+                    size="small"
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                  />
+                </Box>
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography sx={{ width: 150, fontWeight: "bold" }}>Git 주소</Typography>
                 <TextField
+                  fullWidth
                   size="small"
-                  label="경력(년)"
-                  type="number"
-                  value={
-                    skillDetails[tech.code_id]?.is_fresher
-                      ? 0
-                      : skillDetails[tech.code_id]?.years || ""
-                  }
-                  disabled={skillDetails[tech.code_id]?.is_fresher}
-                  onChange={(e) =>
-                    handleSkillDetailChange(
-                      tech.code_id,
-                      "years",
-                      e.target.value
-                    )
-                  }
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">년</InputAdornment>,
+                  value={git}
+                  error={gitError}
+                  helperText={gitError ? "올바른 Git 주소를 입력해주세요." : ""}
+                  placeholder="ex) https://github.com/username/repo"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setGit(val);
+                    setGitError(val && !isValidGitURL(val));
                   }}
-                  sx={{ width: 120 }}
                 />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={skillDetails[tech.code_id]?.is_fresher || false}
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Typography sx={{ width: 150, fontWeight: "bold" }}>
+                  포트폴리오 주소
+                </Typography>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={portfolio}
+                  error={portfolioError}
+                  helperText={
+                    portfolioError ? "올바른 URL 형식으로 입력해주세요." : ""
+                  }
+                  placeholder="ex) https://yourportfolio.com"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPortfolio(val);
+                    setPortfolioError(val && !isValidURL(val));
+                  }}
+                />
+              </Box>
+
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                기술 스택 선택
+              </Typography>
+              {Object.entries(techStacks).map(([category, techs]) => (
+                <Box
+                  key={category}
+                  sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2, mb: 2 }}
+                >
+                  <Typography variant="subtitle1" fontWeight="bold" mb={1}>
+                    {category}
+                  </Typography>
+                  <Stack direction="row" gap={1} flexWrap="wrap">
+                    {techs.map((tech) => (
+                      <Chip
+                        key={tech.code_id}
+                        label={tech.label || tech.code_name}
+                        clickable
+                        color={
+                          selectedTechs.some((t) => t.code_id === tech.code_id)
+                            ? "primary"
+                            : "default"
+                        }
+                        onClick={() => toggleTech(tech)}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              ))}
+
+              {selectedTechs.map((tech) => (
+                <Paper key={tech.code_id} sx={{ p: 2, bgcolor: "#fafafa" }}>
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    {tech.label || tech.code_name} 경력 입력
+                  </Typography>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <TextField
+                      size="small"
+                      label="경력(년)"
+                      type="number"
+                      value={
+                        skillDetails[tech.code_id]?.is_fresher
+                          ? 0
+                          : skillDetails[tech.code_id]?.years || ""
+                      }
+                      disabled={skillDetails[tech.code_id]?.is_fresher}
                       onChange={(e) =>
                         handleSkillDetailChange(
                           tech.code_id,
-                          "is_fresher",
-                          e.target.checked
+                          "years",
+                          e.target.value
                         )
                       }
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">년</InputAdornment>,
+                      }}
+                      sx={{ width: 120 }}
                     />
-                  }
-                  label="신입"
-                />
-              </Stack>
-            </Paper>
-          ))}
-        </Stack>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={skillDetails[tech.code_id]?.is_fresher || false}
+                          onChange={(e) =>
+                            handleSkillDetailChange(
+                              tech.code_id,
+                              "is_fresher",
+                              e.target.checked
+                            )
+                          }
+                        />
+                      }
+                      label="신입"
+                    />
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
 
-        <Box sx={{ mt: 4, textAlign: "center" }}>
-          <Button variant="contained" onClick={() => setDialogOpen(true)}>
-            수정
-          </Button>
-          <PasswordConfirmDialog
-            open={dialogOpen}
-            onConfirm={(password) => {
-              setDialogOpen(false);
-              handleSubmit(password);
-            }}
-            onCancel={() => setDialogOpen(false)}
-          />
+            <Box sx={{ mt: 4, textAlign: "center" }}>
+              <Button variant="contained" onClick={() => setDialogOpen(true)}>
+                수정
+              </Button>
+              <PasswordConfirmDialog
+                open={dialogOpen}
+                onConfirm={(password) => {
+                  setDialogOpen(false);
+                  handleSubmit(password);
+                }}
+                onCancel={() => setDialogOpen(false)}
+              />
+            </Box>
+          </Card>
         </Box>
-      </Card>
-    </>
-  );
+      </>
+      );
 }

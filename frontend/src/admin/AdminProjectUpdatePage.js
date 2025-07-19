@@ -17,6 +17,8 @@ import Looks3RoundedIcon from '@mui/icons-material/Looks3Rounded';
 import Looks4RoundedIcon from '@mui/icons-material/Looks4Rounded';
 import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -96,9 +98,27 @@ export default function AdminProjectUpdatePage() {
 
   return (
     <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <img src={Folder} alt="" style={{ height: "35px" }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>관리자 프로젝트 생성</Typography>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >관리자 프로젝트 생성
+            </Typography>
+          </Box>
+        </Tooltip>
       </Box>
       <Paper sx={{ p: 4, width: 600 }}>
         <Stack spacing={3}>
@@ -121,7 +141,7 @@ export default function AdminProjectUpdatePage() {
             onSelectionChange={(val) => setFormData((prev) => ({ ...prev, projectType: val }))}
           />
 
-         <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
             <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
           </Box>
@@ -136,7 +156,7 @@ export default function AdminProjectUpdatePage() {
             required
           />
 
-         <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
             <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
           </Box>

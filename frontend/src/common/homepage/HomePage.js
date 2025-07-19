@@ -19,6 +19,7 @@ import HeroSlider from "./HeroSlider";
 import PortfolioListTest from "./PortfolioListTest";
 import PortfolioVerticalSlider from "./PortfolioVerticalSlider";
 import { useAlert } from "../../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
 
 
 export default function HomePage() {
@@ -186,7 +187,7 @@ export default function HomePage() {
               }}>
                 {sessionStorage.getItem("token") ? (
                   <a
-                   style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       sessionStorage.removeItem("token");
                       navigate("/");
@@ -676,8 +677,8 @@ export default function HomePage() {
       </section>
 
       {/* PORTFOLIO Section */}
-    
-       <PortfolioVerticalSlider/>
+
+      <PortfolioVerticalSlider />
 
 
       {/* ABOUT Section */}
@@ -822,7 +823,17 @@ export default function HomePage() {
       <section className="contact_wrap" id="contactSection" style={{ backgroundColor: "#ffb300", padding: "96px 0", display: "column", justifyContent: "center", alignItems: "center" }}>
         <div className="contact_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
           <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
-          <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold" }}>HumanMakeHub에 문의하기</strong>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold",cursor: "help", }}>HumanMakeHub에 문의하기</strong>
+          </Tooltip>
         </div>
         <form id="askSend">
           <Box
@@ -839,7 +850,7 @@ export default function HomePage() {
               <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>
               <TextField fullWidth name="username" variant="outlined" required
                 sx={{
-                  backgroundColor: "#fff",width: { xs: 350, md: 600 },
+                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
                   borderRadius: "5px",
                   "& .MuiInputBase-root": { height: 45, },
                   "& input": { padding: "0 12px", },
@@ -884,10 +895,29 @@ export default function HomePage() {
 
               {/* 문의항목 체크 */}
               <Box sx={{ mt: 4, mb: 4 }}>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ fontSize: "17px" }}>
-                  문의 항목 (중복 선택 가능)
-                </Typography>
-
+                <Tooltip
+                  title={
+                    <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                      This little budf is <b>really cute</b> 🐤
+                    </Typography>
+                  }
+                  placement="right"
+                  arrow
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    gutterBottom
+                    sx={{
+                      fontSize: "17px",
+                      display: "inline-block",
+                      width: "fit-content",
+                      cursor: "help",
+                    }}
+                  >
+                    문의 항목 (중복 선택 가능)
+                  </Typography>
+                </Tooltip>
                 <Box
                   sx={{
                     width: { xs: 350, md: 600 },
@@ -927,18 +957,39 @@ export default function HomePage() {
               </Box>
 
               {/* 내용 */}
-
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ fontSize: "17px" }}>
-                문의 내용 *
-              </Typography>
-              <TextField
-                name="askMessage"
-                multiline
-                minRows={8}
-                placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
-                variant="outlined"
-                sx={{ backgroundColor: "#fff", width: { xs: 350, md: 600 }, borderRadius: "5px", }}
-              />
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Tooltip
+                  title={
+                    <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                      This little budf is <b>really cute</b> 🐤
+                    </Typography>
+                  }
+                  placement="right"
+                  arrow
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    gutterBottom
+                    sx={{
+                      fontSize: "17px",
+                      display: "inline-block",
+                      width: "fit-content",
+                      cursor: "help",
+                    }}
+                  >
+                    문의 내용 *
+                  </Typography>
+                </Tooltip>
+                <TextField
+                  name="askMessage"
+                  multiline
+                  minRows={8}
+                  placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
+                  variant="outlined"
+                  sx={{ backgroundColor: "#fff", width: { xs: 350, md: 600 }, borderRadius: "5px", }}
+                />
+              </Box>
 
               {/* 개인정보 동의 */}
               <Box display="flex" alignItems="center" sx={{ marginTop: "8px" }}>

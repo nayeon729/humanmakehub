@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import Combo from "../components/Combo";
 import folder from '../icon/folder.png';
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -300,14 +302,28 @@ export default function AdminProjectManagementPage() {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
-        <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-          <img src={folder} style={{ width: '50px', height: '50px' }} />
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            프로젝트 관리
-          </Typography>
-        </Stack>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
+            <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}>
+              프로젝트 관리
+            </Typography>
+          </Stack>
+        </Tooltip>
       </Stack>
       <Grid container spacing={3}>
         {projects.map((proj) => {

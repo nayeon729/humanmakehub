@@ -13,6 +13,7 @@ import {
 import CreateIcon from "@mui/icons-material/Create";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
+import Tooltip from "@mui/material/Tooltip";
 
 const MemberProjectList = () => {
   const navigate = useNavigate();
@@ -50,8 +51,8 @@ const MemberProjectList = () => {
 
     const token = sessionStorage.getItem("token");
     axios.post(`${BASE_URL}/admin/portfolioDelete/${portfolio_id}`, {}, {
-                headers: { Authorization: `Bearer ${token}` },
-              })
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(res => {
         console.log("res", res);
         console.log("res.data", res.data);
@@ -68,9 +69,28 @@ const MemberProjectList = () => {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4" fontWeight="bold">
-          포트폴리오 목록
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            {/* <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                포트폴리오 목록
+              </Typography>
+            {/* </Box> */}
+          </Tooltip>
+        </Box>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>
           <CreateIcon />
         </IconButton>
@@ -89,38 +109,38 @@ const MemberProjectList = () => {
             <Typography variant="body2" sx={{ color: "gray" }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
-                <div style={{
-                    display: "flex",
-                    gap: 8,
-                    flexWrap: "wrap",
-                    marginBottom: 8
-                }}>
-                    {post?.tags && (
-                        <>
-                        {post.tags.map((tag, i) => (
-                        <span
-                            key={i}
-                            style={{
-                            fontSize: "clamp(11px, 2.3vw, 12px)",
-                            backgroundColor: "#e3f2fd",
-                            color: "#1976d2",
-                            padding: "4px 10px",
-                            borderRadius: 20
-                            }}
-                        >
-                            {tag}
-                        </span>
-                        ))}
-                        </>
-                    )}
-                </div>
-                <div style={{
-                    fontSize: "clamp(13px, 2.4vw, 14px)",
-                    color: "#222",
-                    fontWeight: 600
-                }}>
-                    {post.estimated_dt} · {post.budget}
-                </div>
+            <div style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              marginBottom: 8
+            }}>
+              {post?.tags && (
+                <>
+                  {post.tags.map((tag, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        fontSize: "clamp(11px, 2.3vw, 12px)",
+                        backgroundColor: "#e3f2fd",
+                        color: "#1976d2",
+                        padding: "4px 10px",
+                        borderRadius: 20
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </>
+              )}
+            </div>
+            <div style={{
+              fontSize: "clamp(13px, 2.4vw, 14px)",
+              color: "#222",
+              fontWeight: 600
+            }}>
+              {post.estimated_dt} · {post.budget}
+            </div>
 
             <Stack direction="row" justifyContent="space-between" mt={1}>
               <Typography variant="caption" sx={{ color: "gray" }}>
@@ -128,15 +148,15 @@ const MemberProjectList = () => {
               </Typography>
             </Stack>
             {post.create_id === myUserId && (
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
-                              수정
-                            </Button>
-                            <Button onClick={() => handleDelete(post.portfolio_id)}>
-                              삭제
-                            </Button>
-                          </Stack>
-                        )}
+              <Stack direction="row" spacing={1} mt={1}>
+                <Button onClick={() => navigate(`/admin/portfolioUpdate/${post.portfolio_id}`)}>
+                  수정
+                </Button>
+                <Button onClick={() => handleDelete(post.portfolio_id)}>
+                  삭제
+                </Button>
+              </Stack>
+            )}
           </Paper>
         ))}
       </Box>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, TextField, Typography, Button, MenuItem, Paper, FormControl, InputLabel, Select
+  Box, TextField, Typography, Button, MenuItem, Paper, FormControl, InputLabel, Select, Stack
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
-
+import Tooltip from "@mui/material/Tooltip";
+import SmsIcon from '@mui/icons-material/Sms';
 
 export default function ProjectChannelCreatePage() {
   const [title, setTitle] = useState("");
@@ -101,10 +102,10 @@ export default function ProjectChannelCreatePage() {
   }, [project_id]);
 
   useEffect(() => {
-  if (user_id && members.length > 0) {
-    setUserId((prev) => prev || user_id); // 이미 선택되어 있으면 유지
-  }
-}, [user_id, members]);
+    if (user_id && members.length > 0) {
+      setUserId((prev) => prev || user_id); // 이미 선택되어 있으면 유지
+    }
+  }, [user_id, members]);
 
   useEffect(() => {
     const getTeamMemberId = async () => {
@@ -147,9 +148,31 @@ export default function ProjectChannelCreatePage() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h5" gutterBottom fontWeight="bold">
-        💬 {projectTitle} 글 작성
-      </Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                This little budf is <b>really cute</b> 🐤
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                {projectTitle} 글 작성
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
+      </Stack>
 
       <Paper sx={{ p: 3, mt: 2 }}>
         <Box sx={{ mb: 2 }}>
@@ -238,7 +261,7 @@ export default function ProjectChannelCreatePage() {
                     minWidth: "24px",
                     padding: "0px 6px",
                     fontSize: "0.7rem",
-                    fontWeight:"900",
+                    fontWeight: "900",
                     borderRadius: "0 8px 0 8px",
                   }}
                 >

@@ -9,6 +9,8 @@ import AddIcon from '@mui/icons-material/Add';
 import pjadd from '../icon/pjadd.png';
 import folder from'../icon/folder.png';
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -95,12 +97,26 @@ export default function AdminProjectManagementPage() {
 
   return (
     <>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, pt:3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+          <Tooltip
+                    title={
+                      <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                        This little budf is <b>really cute</b> 🐤
+                      </Typography>
+                    }
+                    placement="right"
+                    arrow
+                  >
           <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <img src={folder} style={{width:'50px', height:'50px'}}/>
-            <Typography variant="h4" fontWeight="bold"> 전체 프로젝트</Typography>
+            <FolderIcon sx={{ fontSize: 40, mr: "4px"  }} />
+            <Typography 
+            variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}> 전체 프로젝트</Typography>
           </Stack>
+          </Tooltip>
           <IconButton onClick={() => navigate("/admin/create")}>
             <img src={pjadd} alt="추가" style={{ width: 35, height: 30}} />
           </IconButton>

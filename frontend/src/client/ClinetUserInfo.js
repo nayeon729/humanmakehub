@@ -20,10 +20,11 @@ import {
   Divider,
 } from "@mui/material";
 import axios from "../common/axiosInstance"
-import { useNavigate,useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -124,12 +125,29 @@ function ClientEditableView({ userInfo }) {
   };
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <AccountCircleIcon sx={{ fontSize: 40 }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          회원정보
-        </Typography>
+    <Box sx={{ p: 2, pt: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              회원정보
+            </Typography>
+          </Box>
+        </Tooltip>
       </Box>
       <Card sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>

@@ -6,6 +6,8 @@ import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
 import Folder from "../assets/folder.png";
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 const MemberProjectList = () => {
   const [invites, setInvites] = useState([]);
@@ -73,11 +75,30 @@ const MemberProjectList = () => {
   if (loading) return <Typography variant="h6">로딩 중...</Typography>;
 
   return (
-    <Box sx={{ px: 4, py: 3 }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-              <img src={Folder} alt="" style={{ height: "35px" }} />
-              <Typography variant="h4" fontWeight="bold" gutterBottom>프로젝트 목록</Typography>
-            </Box>
+    <Box sx={{ p: 2, pt: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center" ,mb:3}}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <FolderIcon sx={{ fontSize: 40, mr: "4px"  }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              프로젝트 목록
+            </Typography>
+          </Box>
+        </Tooltip>
+        </Box>
       <Grid container spacing={5}>
         {invites.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>

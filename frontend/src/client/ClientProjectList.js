@@ -14,6 +14,8 @@ import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip } from "@mui
 import axios from "../common/axiosInstance"
 import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
+import Tooltip from "@mui/material/Tooltip";
+import FolderIcon from '@mui/icons-material/Folder';
 
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -69,10 +71,29 @@ const ClientProjectList = () => {
 
   return (
     <Box sx={{ px: 4, py: 3 }}>
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <img src={Folder} alt="" style={{ height: "35px" }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>프로젝트 목록</Typography>
-      </Box>
+      <Box sx={{ display: "flex", alignItems: "center" ,mb:3}}>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              This little budf is <b>really cute</b> 🐤
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <FolderIcon sx={{ fontSize: 40, mr: "4px"  }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              프로젝트 목록
+            </Typography>
+          </Box>
+        </Tooltip>
+        </Box>
       <Box sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid container spacing={5} >
           {projects.map((project) => (
