@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Typography, Paper, Grid, Chip, Stack, Button, IconButton, Dialog, DialogTitle,
-  DialogContent, DialogContentText, DialogActions
+  DialogContent, DialogContentText, DialogActions, Tabs, Tab, Pagination
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,10 @@ export default function AdminProjectManagementPage() {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [role, setRole] = useState("");
+  const [tab, setTab] = useState("all");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
 
   useEffect(() => {
     const role = sessionStorage.getItem("role");
@@ -95,6 +99,25 @@ export default function AdminProjectManagementPage() {
     return "default";
   };
 
+
+  const visibleProjects = (
+    tab === "all"
+      ? projects
+      : tab === "W00"
+        ? projects.filter(
+            (proj) => proj.status === "W00" || proj.status === null || proj.status === "W04"
+          )
+        : projects.filter(
+            (proj) => proj.status === tab
+          )
+  );
+
+  const paginatedProjects = visibleProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const totalPages = Math.ceil(visibleProjects.length / itemsPerPage);
+
   return (
     <>
       <Box sx={{ p: 2, pt:3 }}>
@@ -121,9 +144,17 @@ export default function AdminProjectManagementPage() {
             <img src={pjadd} alt="추가" style={{ width: 35, height: 30}} />
           </IconButton>
         </Stack>
+        <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
+          <Tab label="전체" value="all" />
+          <Tab label="PM미지정" value="W00" />
+          <Tab label="검토 중" value="검토 중" />
+          <Tab label="대기중" value="W01" />
+          <Tab label="진행중" value="W02" />
+          <Tab label="완료" value="W03" />
+        </Tabs>
 
         <Grid container spacing={3}>
-          {projects.map((proj) => {
+          {paginatedProjects.map((proj) => {
             const dateObj = new Date(proj.create_dt);
             const formattedDate = `${dateObj.getFullYear()}.${(dateObj.getMonth() + 1)
               .toString()
@@ -237,6 +268,18 @@ export default function AdminProjectManagementPage() {
             );
           })}
         </Grid>
+      </Box>
+      {/* Pagination */}
+      <Box mt={2} display="flex" justifyContent="center">
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(e, value) => setCurrentPage(value)}
+          shape="rounded"        // ● 동그란 스타일
+          color="primary"        // ● 파란색 강조
+          siblingCount={1}       // ● 현재 페이지 주변 1개씩
+          boundaryCount={1}      // ● 양 끝 페이지 1개씩
+        />
       </Box>
       <Dialog open={pmDialogOpen} onClose={() => setPmDialogOpen(false)}>
         <DialogTitle>pm 지정 확인</DialogTitle>

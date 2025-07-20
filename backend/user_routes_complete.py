@@ -12,6 +12,13 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
 from email_utils import send_verification_email  # 위에서 만든 이메일 함수
 from config import FRONT_BASE_URL
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="✅ [%(asctime)s] %(levelname)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="", tags=["User"])
 
@@ -59,11 +66,31 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute("SELECT * FROM user WHERE user_id = %s AND del_yn = 'N'", (form_data.username,))
             user = cursor.fetchone()
-        if not user or not bcrypt.checkpw(form_data.password.encode(), user["password"].encode()):
+
+        if not user:
+            logger.warning(f"🚫 로그인 실패 (아이디 없음): {form_data.username}")
             raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 올바르지 않습니다.")
-        access_token = create_access_token(data={"sub": str(user["user_id"]), "nickname": user["nickname"], "role": user["role"]})
+        
+        if not bcrypt.checkpw(form_data.password.encode(), user["password"].encode()):
+            logger.warning(f"🚫 로그인 실패 (비밀번호 틀림): {form_data.username}")
+            raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 올바르지 않습니다.")
+
+        logger.info(f"🎉 로그인 성공: user_id={user['user_id']}, role={user['role']}")
+
+        access_token = create_access_token(data={
+            "sub": str(user["user_id"]),
+            "nickname": user["nickname"],
+            "role": user["role"]
+        })
+
         return {"access_token": access_token, "token_type": "bearer"}
+
+    except HTTPException as http_exc:
+        # 401 또는 403 오류는 그냥 다시 raise 해주기
+        raise http_exc
+    
     except Exception as e:
+        logger.error(f"💥 로그인 중 예외 발생: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
