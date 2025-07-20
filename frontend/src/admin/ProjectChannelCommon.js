@@ -20,6 +20,7 @@ import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
 import SmsIcon from '@mui/icons-material/Sms';
+import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelCommonPage() {
   const [posts, setPosts] = useState([]);
@@ -31,6 +32,9 @@ export default function ProjectChannelCommonPage() {
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
   const [pmCheck, setPmCheck] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 7;
 
   useEffect(() => {
     const fetchPmCheck = async () => {
@@ -52,22 +56,28 @@ export default function ProjectChannelCommonPage() {
 
     fetchPmCheck(); // 내부에서 호출
   }, []);
-  const fetchPosts = async () => {
+  const fetchPosts = async (page = 1) => {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/admin/project/common/${project_id}`, {
+        params: {
+          page: page,
+          page_size: pageSize
+        },
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("공통 채널 게시글 :", res.data.items);
       setPosts(res.data.items);
+      setTotalCount(res.data.total);
+      setCurrentPage(page);
     } catch (error) {
       console.error("공통 채널 게시글 불러오기 실패", error);
     }
   };
 
   useEffect(() => {
-    if (project_id) fetchPosts();
-  }, [project_id]);
+    if (project_id) fetchPosts(currentPage);
+  }, [project_id, currentPage]);
 
   useEffect(() => {
     const fetchProjectTitle = async () => {
@@ -156,6 +166,17 @@ export default function ProjectChannelCommonPage() {
             </Stack>
           </Paper>
         ))}
+      </Box>
+      <Box display="flex" justifyContent="center" mt={3}>
+        <Pagination
+          count={Math.ceil(totalCount / pageSize)}
+          page={currentPage}
+          onChange={(e, value) => fetchPosts(value)}
+          shape="rounded"
+          color="primary"
+          siblingCount={1}
+          boundaryCount={1}
+        />
       </Box>
     </Box>
   );
