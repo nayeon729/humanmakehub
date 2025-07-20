@@ -11,6 +11,8 @@ import folder from '../icon/folder.png';
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import Pagination from "@mui/material/Pagination";
+
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -27,9 +29,10 @@ export default function AdminProjectManagementPage() {
   const [selectedRanks, setSelectedRanks] = useState([]);
   const [selectedPositions, setSelectedPositions] = useState([]);
   const [filteredDevelopers, setFilteredDevelopers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const { showAlert } = useAlert();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 5;
 
   const BASE_URL = process.env.REACT_APP_API_URL
   const navigate = useNavigate();
@@ -218,17 +221,21 @@ export default function AdminProjectManagementPage() {
   const positionMap = { 프론트: "T01", 백엔드: "T02", 모바일: "T03" };
   const convertedRanks = selectedRanks.map((r) => rankMap[r]);
   const convertedPositions = selectedPositions.map((p) => positionMap[p]);
-  const handleSearch = async () => {
+  const handleSearch = async (page = 1) => {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.post(`${BASE_URL}/admin/members/filter`, {
         ranks: convertedRanks,
         positions: convertedPositions,
-        keyword: searchKeyword
+        keyword: searchKeyword,
+        page,
+        page_size: pageSize
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setFilteredDevelopers(res.data);
+      setFilteredDevelopers(res.data.users);
+      setTotalCount(res.data.total);
+      setCurrentPage(page);
     } catch (error) {
       console.error("개발자 검색 실패", error);
       showAlert("개발자 목록을 불러오지 못했습니다.");
@@ -648,19 +655,17 @@ export default function AdminProjectManagementPage() {
             ))}
           </Box>
 
-          {/* 페이지네이션 (가라용) */}
-          <Box display="flex" justifyContent="center" gap={1}>
-            {[1].map((num) => (
-              <Button
-                key={num}
-                size="small"
-                variant={currentPage === num ? "contained" : "outlined"}
-                onClick={() => setCurrentPage(num)}
-              >
-                {num}
-              </Button>
-            ))}
-          </Box>
+          <Box mt={2} display="flex" justifyContent="center">
+  <Pagination
+    count={Math.ceil(totalCount / pageSize)}
+    page={currentPage}
+    onChange={(e, value) => handleSearch(value)}
+    shape="rounded"
+    color="primary"
+    siblingCount={1}
+    boundaryCount={1}  
+  />
+</Box>
         </DialogContent>
       </Dialog>
     </Box>
