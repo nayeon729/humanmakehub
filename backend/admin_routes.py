@@ -1145,10 +1145,17 @@ def get_project_common(
         conn.close()
 
 @router.get("/project/{project_id}/user/{user_id}/{teamMemberId}")
-def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: dict = Depends(get_current_user)):
+def get_channel_messages(
+    project_id: int, 
+    user_id: str, 
+    teamMemberId:int, 
+    page: int = Query(1, ge=1),
+    page_size: int = Query(5, ge=1),
+    user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        offset = (page - 1) * page_size
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             sql = """
@@ -1171,9 +1178,21 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
                   AND pc.value_id = %s
                   AND pc.category = "board02"
                 ORDER BY pc.create_dt DESC
+                LIMIT %s OFFSET %s
             """
-            cursor.execute(sql, (teamMemberId,))
+            cursor.execute(sql, (teamMemberId, page_size, offset))
             items = cursor.fetchall()
+
+            count_sql = """
+                SELECT COUNT(*) AS total
+                FROM project_channel pc
+                JOIN user u ON pc.create_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND pc.value_id = %s
+                  AND pc.category = "board02"
+            """
+            cursor.execute(count_sql, (teamMemberId,))
+            total = cursor.fetchone()["total"]
 
             cursor.execute("""
                 SELECT pm_id FROM project
@@ -1185,7 +1204,7 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
             return {
                 "items": items,
                 "pm_id": pm_id,
-                "total": len(items)
+                "total": total
             }
 
     except Exception as e:
