@@ -23,6 +23,13 @@ const MemberProjectList = () => {
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
+  const getValidLink = (url) => {
+    if (!url) return "";
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
+  };
+
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) setMyUserId(id);
@@ -141,6 +148,27 @@ const MemberProjectList = () => {
             }}>
               {post.estimated_dt} · {post.budget}
             </div>
+
+            {post.link && (
+              <Typography
+                component="a"
+                href={getValidLink(post.link)}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  mt: 1,
+                  display: "inline-block",
+                  color: "#1976d2",
+                  textDecoration: "underline",
+                  fontSize: 14,
+                  wordBreak: "break-all"
+                }}
+              >
+                {getValidLink(post.link)}
+              </Typography>
+
+            )}
+
 
             <Stack direction="row" justifyContent="space-between" mt={1}>
               <Typography variant="caption" sx={{ color: "gray" }}>

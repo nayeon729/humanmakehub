@@ -34,12 +34,32 @@ export default function ProjectChannelMemberPage() {
   const context = useOutletContext() || {};
   const setIsChecked = context.setIsChecked || (() => { });
   const { showAlert } = useAlert();
+  const [pmCheck, setPmCheck] = useState(false);
 
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
     if (id) {
       setMyUserId(id);
     }
+
+    const fetchPmCheck = async () => {
+      const id = sessionStorage.getItem("user_id");
+      if (id) setMyUserId(id);
+
+      try {
+        const token = sessionStorage.getItem("token");
+        const user_id = sessionStorage.getItem("user_id");
+        const res = await axios.get(`${BASE_URL}/admin/project/pmCheck/${project_id}/${user_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("PM 확인 :", res.data.pmCheck);
+        setPmCheck(res.data.pmCheck);
+      } catch (error) {
+        console.error("PM확인 실패", error);
+      }
+    };
+
+    fetchPmCheck(); // 내부에서 호출
   }, []);
 
   const fetchMessages = async () => {
@@ -161,9 +181,11 @@ export default function ProjectChannelMemberPage() {
             </Tooltip>
           </Box>
         </Stack>
-        <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
-          <img src={add} style={{ width: '40px', hight: '40px' }} />
-        </IconButton>
+        {pmCheck && (
+          <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
+            <img src={add} style={{ width: '40px', hight: '40px' }} />
+          </IconButton>
+        )}
       </Stack>
 
 

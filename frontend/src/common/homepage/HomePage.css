@@ -259,6 +259,15 @@ section {
     box-sizing: border-box;
 }
 
+/* 링크가 있는 경우에만 호버와 포인터 효과 */
+.portfolio-slide-card.clickable {
+  cursor: pointer;
+}
+
+.portfolio-slide-card.clickable:hover {
+  background-color: #f0f8ff;
+}
+
 .slick-slide>div {
     display: flex;
     justify-content: center;
