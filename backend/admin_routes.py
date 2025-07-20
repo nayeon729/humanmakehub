@@ -35,7 +35,7 @@
 ----------------------------------------------------------------------
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File, Form, Query
 from pydantic import BaseModel
 from datetime import datetime
 import pymysql
@@ -444,47 +444,66 @@ def filter_member_users(
     ranks: List[str] = Body(default=[]),
     positions: List[str] = Body(default=[]),
     keyword: str = Body(default=""),
+    page: int = Body(default=1),
+    page_size: int = Body(default=5),
     user: dict = Depends(get_current_user)
 ):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
-    
+
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            sql = """
-                SELECT
-                    u.user_id,
-                    u.nickname,
-                    u.grade,
-                    grade.code_name AS user_grade,
-                    GROUP_CONCAT(DISTINCT cc.code_name) AS skills
+            offset = (page - 1) * page_size
+            base_sql = """
                 FROM user u
                 LEFT JOIN user_skills us ON u.user_id = us.user_id AND us.del_yn = 'N'
                 LEFT JOIN common_code cc ON us.code_id = cc.code_id AND cc.del_yn = 'N'
                 LEFT JOIN common_code grade ON u.grade = grade.code_id AND grade.group_id = 'USER_GRADE'
                 WHERE u.role = 'R02' AND u.del_yn = 'N'
             """
+            where_clauses = []
             params = []
 
             if ranks:
                 placeholders = ','.join(['%s'] * len(ranks))
-                sql += f" AND u.grade IN ({placeholders})"   # ✅ 여기만 user.grade 로!
+                where_clauses.append(f"u.grade IN ({placeholders})")
                 params.extend(ranks)
 
             if positions:
                 placeholders = ','.join(['%s'] * len(positions))
-                sql += f" AND cc.parent_code IN ({placeholders})"
+                where_clauses.append(f"cc.parent_code IN ({placeholders})")
                 params.extend(positions)
 
             if keyword:
-                sql += " AND u.nickname LIKE %s"
+                where_clauses.append("u.nickname LIKE %s")
                 params.append(f"%{keyword}%")
 
-            sql += " GROUP BY u.user_id"
-            
-            cursor.execute(sql, params)
-            return cursor.fetchall()
+            if where_clauses:
+                base_sql += " AND " + " AND ".join(where_clauses)
+
+            # 👉 전체 개수 가져오기
+            count_sql = "SELECT COUNT(DISTINCT u.user_id) " + base_sql
+            cursor.execute(count_sql, params)
+            total = cursor.fetchone()["COUNT(DISTINCT u.user_id)"]
+
+            # 👉 실제 데이터 조회
+            data_sql = f"""
+                SELECT u.user_id, u.nickname, u.grade,
+                       grade.code_name AS user_grade,
+                       GROUP_CONCAT(DISTINCT cc.code_name) AS skills
+                {base_sql}
+                GROUP BY u.user_id
+                LIMIT %s OFFSET %s
+            """
+            cursor.execute(data_sql, params + [page_size, offset])
+            rows = cursor.fetchall()
+
+            return {
+                "total": total,
+                "users": rows
+            }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -1064,10 +1083,15 @@ def delete_notice(channel_id: str, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.get("/project/common/{project_id}")
-def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
+def get_project_common(
+    project_id: int, 
+    page: int = Query(1, ge=1),
+    page_size: int = Query(5, ge=1),
+    user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        offset = (page - 1) * page_size
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             sql = """
@@ -1092,13 +1116,27 @@ def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
                   AND pc.value_id = %s
                   AND pc.category = "board01"
                 ORDER BY pc.create_dt DESC
+                LIMIT %s OFFSET %s
             """
-            cursor.execute(sql, (project_id,))
+            cursor.execute(sql, (project_id, page_size, offset))
             items = cursor.fetchall()
+
+            count_sql = """
+                SELECT COUNT(*) AS total
+                FROM project_channel pc
+                JOIN user u ON pc.user_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND u.role IN ('R03', 'R04')
+                  AND pc.user_id = pc.create_id
+                  AND pc.value_id = %s
+                  AND pc.category = "board01"
+            """
+            cursor.execute(count_sql, (project_id,))
+            total = cursor.fetchone()["total"]
 
             return {
                 "items": items,
-                "total": len(items)
+                "total": total
             }
 
     except Exception as e:
@@ -1107,10 +1145,17 @@ def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.get("/project/{project_id}/user/{user_id}/{teamMemberId}")
-def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: dict = Depends(get_current_user)):
+def get_channel_messages(
+    project_id: int, 
+    user_id: str, 
+    teamMemberId:int, 
+    page: int = Query(1, ge=1),
+    page_size: int = Query(5, ge=1),
+    user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        offset = (page - 1) * page_size
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             sql = """
@@ -1133,9 +1178,21 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
                   AND pc.value_id = %s
                   AND pc.category = "board02"
                 ORDER BY pc.create_dt DESC
+                LIMIT %s OFFSET %s
             """
-            cursor.execute(sql, (teamMemberId,))
+            cursor.execute(sql, (teamMemberId, page_size, offset))
             items = cursor.fetchall()
+
+            count_sql = """
+                SELECT COUNT(*) AS total
+                FROM project_channel pc
+                JOIN user u ON pc.create_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND pc.value_id = %s
+                  AND pc.category = "board02"
+            """
+            cursor.execute(count_sql, (teamMemberId,))
+            total = cursor.fetchone()["total"]
 
             cursor.execute("""
                 SELECT pm_id FROM project
@@ -1147,7 +1204,7 @@ def get_channel_messages(project_id: int, user_id: str, teamMemberId:int, user: 
             return {
                 "items": items,
                 "pm_id": pm_id,
-                "total": len(items)
+                "total": total
             }
 
     except Exception as e:

@@ -19,6 +19,7 @@ import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
 import SmsIcon from '@mui/icons-material/Sms';
+import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelMemberPage() {
   const { project_id, user_id } = useParams();
@@ -28,7 +29,9 @@ export default function ProjectChannelMemberPage() {
   const [projectTitle, setProjectTitle] = useState("");
   const navigate = useNavigate();
   const [teamMemberId, setTeamMemberId] = useState("");
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 6;
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   const context = useOutletContext() || {};
@@ -62,12 +65,16 @@ export default function ProjectChannelMemberPage() {
     fetchPmCheck(); // 내부에서 호출
   }, []);
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (page = 1) => {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.get(
         `${BASE_URL}/admin/project/${project_id}/user/${user_id}/${teamMemberId}`,
         {
+          params: {
+            page,
+            page_size: pageSize
+          },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,6 +82,8 @@ export default function ProjectChannelMemberPage() {
       );
       setMessages(res.data.items);
       setPmId(res.data.pm_id);
+      setTotalCount(res.data.total);
+      setCurrentPage(page);
       console.log("응답 확인 👉", res.data);
     } catch (err) {
       console.error("게시글 불러오기 실패", err);
@@ -83,8 +92,8 @@ export default function ProjectChannelMemberPage() {
 
   useEffect(() => {
     if (!teamMemberId) return; // 값 없으면 무시
-    fetchMessages();
-  }, [teamMemberId])
+    fetchMessages(currentPage);
+  }, [teamMemberId, currentPage])
 
   useEffect(() => {
     const getTeamMemberId = async () => {
@@ -218,6 +227,17 @@ export default function ProjectChannelMemberPage() {
           </Paper>
         ))}
       </Stack>
+      <Box display="flex" justifyContent="center" mt={3}>
+        <Pagination
+          count={Math.ceil(totalCount / pageSize)}
+          page={currentPage}
+          onChange={(e, value) => fetchMessages(value)}
+          shape="rounded"
+          color="primary"
+          siblingCount={1}
+          boundaryCount={1}
+        />
+      </Box>
     </Box>
   );
 };
