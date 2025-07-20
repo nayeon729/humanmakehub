@@ -18,6 +18,7 @@ import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
 import SmsIcon from '@mui/icons-material/Sms';
+import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -31,6 +32,10 @@ export default function ProjectChannelPmPage() {
   const context = useOutletContext() || {};
   const setIsChecked = context.setIsChecked || (() => { }); // 이 부분!
   const { showAlert } = useAlert();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 7;
+
 
   useEffect(() => {
     const id = sessionStorage.getItem("user_id");
@@ -38,12 +43,13 @@ export default function ProjectChannelPmPage() {
       setMyUserId(id);
     }
   }, []);
-  const fetchMessages = async () => {
+  const fetchMessages = async (page = 1) => {
     try {
       const token = sessionStorage.getItem("token");
       const res = await axios.get(
         `${BASE_URL}/member/project/${project_id}/user/${user_id}/${teamMemberId}`,
         {
+          params: { page, page_size: pageSize },
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -51,6 +57,8 @@ export default function ProjectChannelPmPage() {
       );
       setMessages(res.data?.items ?? []);
       setPmId(res.data.pm_id);
+      setTotalCount(res.data.total);
+      setCurrentPage(page);
       console.log("응답 확인 👉", res.data);
     } catch (err) {
       console.error("게시글 불러오기 실패", err);
@@ -157,12 +165,12 @@ export default function ProjectChannelPmPage() {
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
               {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
-              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }}/>
+              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mb: 0,cursor: "help", }}
+                sx={{ mb: 0, cursor: "help", }}
               >
                 {projectTitle}
               </Typography>
@@ -224,6 +232,17 @@ export default function ProjectChannelPmPage() {
           </Paper>
         ))}
       </Stack>
+      <Box display="flex" justifyContent="center" mt={3}>
+        <Pagination
+          count={Math.ceil(totalCount / pageSize)}
+          page={currentPage}
+          onChange={(e, value) => fetchMessages(value)}
+          shape="rounded"
+          color="primary"
+          siblingCount={1}
+          boundaryCount={1}
+        />
+      </Box>
     </Box>
   );
 };
