@@ -35,7 +35,7 @@
 ----------------------------------------------------------------------
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, Body, UploadFile, File, Form, Query
 from pydantic import BaseModel
 from datetime import datetime
 import pymysql
@@ -1083,10 +1083,15 @@ def delete_notice(channel_id: str, user: dict = Depends(get_current_user)):
         conn.close()
 
 @router.get("/project/common/{project_id}")
-def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
+def get_project_common(
+    project_id: int, 
+    page: int = Query(1, ge=1),
+    page_size: int = Query(5, ge=1),
+    user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
     try:
+        offset = (page - 1) * page_size
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             sql = """
@@ -1111,13 +1116,27 @@ def get_project_common(project_id: int, user: dict = Depends(get_current_user)):
                   AND pc.value_id = %s
                   AND pc.category = "board01"
                 ORDER BY pc.create_dt DESC
+                LIMIT %s OFFSET %s
             """
-            cursor.execute(sql, (project_id,))
+            cursor.execute(sql, (project_id, page_size, offset))
             items = cursor.fetchall()
+
+            count_sql = """
+                SELECT COUNT(*) AS total
+                FROM project_channel pc
+                JOIN user u ON pc.user_id = u.user_id
+                WHERE pc.del_yn = 'N'
+                  AND u.role IN ('R03', 'R04')
+                  AND pc.user_id = pc.create_id
+                  AND pc.value_id = %s
+                  AND pc.category = "board01"
+            """
+            cursor.execute(count_sql, (project_id,))
+            total = cursor.fetchone()["total"]
 
             return {
                 "items": items,
-                "total": len(items)
+                "total": total
             }
 
     except Exception as e:
