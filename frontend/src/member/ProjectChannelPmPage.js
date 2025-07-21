@@ -59,7 +59,6 @@ export default function ProjectChannelPmPage() {
       setPmId(res.data.pm_id);
       setTotalCount(res.data.total);
       setCurrentPage(page);
-      console.log("응답 확인 👉", res.data);
     } catch (err) {
       console.error("게시글 불러오기 실패", err);
     }
@@ -78,7 +77,6 @@ export default function ProjectChannelPmPage() {
               Authorization: `Bearer ${token}`,
             },
           });
-          console.log("알람체크 성공");
           setIsChecked(true);
         } catch (error) {
           console.error("알람체크 실패", error);
@@ -101,10 +99,6 @@ export default function ProjectChannelPmPage() {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
-        console.log("project_id", project_id);
-        console.log("userId", user_id);
-        console.log("res", res.data.team_member_id);
-        console.log("type", typeof (res.data.team_member_id));
         setTeamMemberId(res.data.team_member_id);
       } catch (err) {
         console.error("프로젝트 팀멤버아이디 조회 실패", err);
@@ -156,7 +150,7 @@ export default function ProjectChannelPmPage() {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

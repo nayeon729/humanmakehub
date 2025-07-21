@@ -5,18 +5,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
+import "./HomePage.css";
 import Drawer from "@mui/material/Drawer";
 import { useMediaQuery, useTheme } from "@mui/material";
 import axios from "../axiosInstance"
 import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
-import PortfolioListTest from "./PortfolioListTest";
 import PortfolioVerticalSlider from "./PortfolioVerticalSlider";
 import { useAlert } from "../../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
@@ -29,8 +23,9 @@ export default function HomePage() {
   const navigate = useNavigate();
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));       // ≤600px
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // 601px~900px
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isDesktop = useMediaQuery('(min-width:900px)');
   const { showAlert } = useAlert();
   const [role, setRole] = useState(null);
   const [nickname, setNickname] = useState("");
@@ -77,8 +72,8 @@ export default function HomePage() {
   const handleToggle = (item) => {
     setSelectedItems((prev) =>
       prev.includes(item)
-        ? prev.filter((i) => i !== item) // 선택 해제
-        : [...prev, item]               // 선택 추가
+        ? prev.filter((i) => i !== item)
+        : [...prev, item]
     );
   };
 
@@ -105,10 +100,7 @@ export default function HomePage() {
     for (let [key, value] of formData.entries()) {
       formValues[key] = value;
     }
-    console.log("selectedItems", selectedItems);
-    formValues["category"] = JSON.stringify(selectedItems);  // ⭐ 핵심
-
-    console.log("formValues", formValues);
+    formValues["category"] = JSON.stringify(selectedItems);
 
     try {
       await axios.post(`${BASE_URL}/user/askSend`,
@@ -172,7 +164,8 @@ export default function HomePage() {
           <Box
             component="ul"
             sx={{
-              display: { xs: "none", md: "flex" },
+              "@media(max-width:1179px)": { display: "none", },
+              "@media(min-width:1180px)": { display: "flex", },
               position: "absolute",
               left: "57%",
               transform: "translateX(-50%)",
@@ -230,7 +223,11 @@ export default function HomePage() {
 
 
           {/* 모바일 햄버거 버튼 */}
-          <Box sx={{ display: { xs: "block", md: "none" } }}>
+          <Box
+            sx={{
+              "@media(max-width:1179px)": { display: "flex", },
+              "@media(min-width:1180px)": { display: "none", },
+            }}>
             <IconButton
               onClick={handleDrawerToggle}
               sx={{
@@ -842,7 +839,7 @@ export default function HomePage() {
           <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }
@@ -862,159 +859,174 @@ export default function HomePage() {
               alignItems: "center",
             }}
           >
-            <Box>
-              {/* 고객정보 */}
-              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>
-              <TextField fullWidth name="username" variant="outlined" required
+            <Box
+              sx={{
+                display: "flex",
+                "@media(max-width:1199px)": { flexDirection: "column", },
+                "@media(min-width:1200px)": { flexDirection: "flex", gap: 4 },
+                // 간격 조금 주면 보기 좋음
+              }}>
+              <Box
                 sx={{
-                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
-                  borderRadius: "5px",
-                  "& .MuiInputBase-root": { height: 45, },
-                  "& input": { padding: "0 12px", },
-                }} />
-
-              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>회사명*</Typography>
-              <TextField fullWidth name="company" variant="outlined" required
-                sx={{
-                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
-                  borderRadius: "5px",
-                  "& .MuiInputBase-root": { height: 45, },
-                  "& input": { padding: "0 12px", },
-                }} />
-
-              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>연락처*</Typography>
-              <TextField fullWidth name="phone" placeholder="010-1234-5678" variant="outlined" required
-                sx={{
-                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
-                  borderRadius: "5px",
-                  "& .MuiInputBase-root": { height: 45, },
-                  "& input": { padding: "0 12px", },
-                }} />
-
-              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>소속/직책</Typography>
-              <TextField fullWidth name="position" variant="outlined"
-                sx={{
-                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
-                  borderRadius: "5px",
-                  "& .MuiInputBase-root": { height: 45, },
-                  "& input": { padding: "0 12px", },
-                }} />
-
-              <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이메일*</Typography>
-              <TextField fullWidth name="email" variant="outlined" required
-                sx={{
-                  backgroundColor: "#fff", width: { xs: 350, md: 600 },
-                  borderRadius: "5px",
-                  "& .MuiInputBase-root": { height: 45, },
-                  "& input": { padding: "0 12px", },
-                }} />
-
-
-              {/* 문의항목 체크 */}
-              <Box sx={{ mt: 4, mb: 4 }}>
-                <Tooltip
-                  title={
-                    <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                      This little budf is <b>really cute</b> 🐤
-                    </Typography>
-                  }
-                  placement="right"
-                  arrow
-                >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    gutterBottom
-                    sx={{
-                      fontSize: "17px",
-                      display: "inline-block",
-                      width: "fit-content",
-                      cursor: "help",
-                    }}
-                  >
-                    문의 항목 (중복 선택 가능)
-                  </Typography>
-                </Tooltip>
-                <Box
+                  "@media(max-width:1199px)": {marginTop: "10px",},
+                  "@media(min-width:1200px)": { marginTop: "35px", },
+                  // 간격 조금 주면 보기 좋음
+                }}>
+                {/* 고객정보 */}
+                <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>
+                <TextField fullWidth name="username" variant="outlined" required
                   sx={{
-                    width: { xs: 350, md: 600 },
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 1.5,
-                  }}
-                >
-                  {["웹 개발", "앱 개발", "데이터 분석", "AI솔루션", "전산시스템 구축", "쇼핑몰 구축", "플랫폼 구축", "기타"].map((item, idx) => {
-                    const isSelected = selectedItems.includes(item);
-                    return (
-                      <Chip
-                        key={idx}
-                        label={item}
-                        clickable
-                        variant={isSelected ? "filled" : "outlined"}
-                        color={isSelected ? "primary" : "default"}
-                        onClick={() => handleToggle(item)}
-                        sx={{
-                          px: 2,
-                          py: 1,
-                          fontWeight: 500,
-                          fontSize: "14px",
-                          backgroundColor: isSelected ? "#1976d2" : "#fff",
-                          color: isSelected ? "#fff" : "#1976d2",
-                          border: isSelected ? "none" : "1px solid #1976d2",
+                    backgroundColor: "#fff", width: { xs: 350, md: 600 },
+                    borderRadius: "5px",
+                    "& .MuiInputBase-root": { height: 45, },
+                    "& input": { padding: "0 12px", },
+                  }} />
 
-                          // ⭐ 확실하게 hover 스타일 덮기
-                          "&:hover": {
-                            backgroundColor: `${isSelected ? "#1976d2" : "#fff"} !important`,
-                          }
-                        }}
-                      />
-                    );
-                  })}
-                </Box>
+                <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>회사명*</Typography>
+                <TextField fullWidth name="company" variant="outlined" required
+                  sx={{
+                    backgroundColor: "#fff", width: { xs: 350, md: 600 },
+                    borderRadius: "5px",
+                    "& .MuiInputBase-root": { height: 45, },
+                    "& input": { padding: "0 12px", },
+                  }} />
+
+                <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>연락처*</Typography>
+                <TextField fullWidth name="phone" placeholder="010-1234-5678" variant="outlined" required
+                  sx={{
+                    backgroundColor: "#fff", width: { xs: 350, md: 600 },
+                    borderRadius: "5px",
+                    "& .MuiInputBase-root": { height: 45, },
+                    "& input": { padding: "0 12px", },
+                  }} />
+
+                <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>소속/직책</Typography>
+                <TextField fullWidth name="position" variant="outlined"
+                  sx={{
+                    backgroundColor: "#fff", width: { xs: 350, md: 600 },
+                    borderRadius: "5px",
+                    "& .MuiInputBase-root": { height: 45, },
+                    "& input": { padding: "0 12px", },
+                  }} />
+
+                <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이메일*</Typography>
+                <TextField fullWidth name="email" variant="outlined" required
+                  sx={{
+                    backgroundColor: "#fff", width: { xs: 350, md: 600 },
+                    borderRadius: "5px",
+                    "& .MuiInputBase-root": { height: 45, },
+                    "& input": { padding: "0 12px", },
+                  }} />
               </Box>
 
-              {/* 내용 */}
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Tooltip
-                  title={
-                    <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                      This little budf is <b>really cute</b> 🐤
+              <Box>
+                {/* 문의항목 체크 */}
+                <Box sx={{ mt: 4, mb: 4 }}>
+                  <Tooltip
+                    title={
+                      <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                        This little budf is <b>really cute</b> 🐤
+                      </Typography>
+                    }
+                    placement="right"
+                    arrow
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{
+                        fontSize: "17px",
+                        display: "inline-block",
+                        width: "fit-content",
+                        cursor: "help",
+                      }}
+                    >
+                      문의 항목 (중복 선택 가능)
                     </Typography>
-                  }
-                  placement="right"
-                  arrow
-                >
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    gutterBottom
+                  </Tooltip>
+                  <Box
                     sx={{
-                      fontSize: "17px",
-                      display: "inline-block",
-                      width: "fit-content",
-                      cursor: "help",
+                      width: { xs: 350, md: 600 },
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 1.5,
                     }}
                   >
-                    문의 내용 *
-                  </Typography>
-                </Tooltip>
-                <TextField
-                  name="askMessage"
-                  multiline
-                  minRows={8}
-                  placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
-                  variant="outlined"
-                  sx={{ backgroundColor: "#fff", width: { xs: 350, md: 600 }, borderRadius: "5px", }}
-                />
-              </Box>
+                    {["웹 개발", "앱 개발", "데이터 분석", "AI솔루션", "전산시스템 구축", "쇼핑몰 구축", "플랫폼 구축", "기타"].map((item, idx) => {
+                      const isSelected = selectedItems.includes(item);
+                      return (
+                        <Chip
+                          key={idx}
+                          label={item}
+                          clickable
+                          variant={isSelected ? "filled" : "outlined"}
+                          color={isSelected ? "primary" : "default"}
+                          onClick={() => handleToggle(item)}
+                          sx={{
+                            px: 2,
+                            py: 1,
+                            fontWeight: 500,
+                            fontSize: "14px",
+                            backgroundColor: isSelected ? "#1976d2" : "#fff",
+                            color: isSelected ? "#fff" : "#1976d2",
+                            border: isSelected ? "none" : "1px solid #1976d2",
 
-              {/* 개인정보 동의 */}
-              <Box display="flex" alignItems="center" sx={{ marginTop: "8px" }}>
-                <input type="checkbox" id="privacy" required style={{ marginRight: 8 }} />
-                <label htmlFor="privacy" style={{ fontSize: 14 }}>
-                  (필수) 개인정보 수집 및 이용방침에 동의합니다.
-                </label>
+                            // ⭐ 확실하게 hover 스타일 덮기
+                            "&:hover": {
+                              backgroundColor: `${isSelected ? "#1976d2" : "#fff"} !important`,
+                            }
+                          }}
+                        />
+                      );
+                    })}
+                  </Box>
+                </Box>
+
+                {/* 내용 */}
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Tooltip
+                    title={
+                      <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                        This little budf is <b>really cute</b> 🐤
+                      </Typography>
+                    }
+                    placement="right"
+                    arrow
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                      sx={{
+                        fontSize: "17px",
+                        display: "inline-block",
+                        width: "fit-content",
+                        cursor: "help",
+                      }}
+                    >
+                      문의 내용 *
+                    </Typography>
+                  </Tooltip>
+                  <TextField
+                    name="askMessage"
+                    multiline
+                    minRows={8}
+                    placeholder="예상 개발 비용과 개발 기간을 알려주시면 상담에 도움이 됩니다."
+                    variant="outlined"
+                    sx={{ backgroundColor: "#fff", width: { xs: 350, md: 600 }, borderRadius: "5px", }}
+                  />
+                </Box>
+
+
               </Box>
+            </Box>
+            {/* 개인정보 동의 */}
+            <Box display="flex" alignItems="center" sx={{ marginTop: "20px" }}>
+              <input type="checkbox" id="privacy" required style={{ marginRight: 8 }} />
+              <label htmlFor="privacy" style={{ fontSize: 14 }}>
+                (필수) 개인정보 수집 및 이용방침에 동의합니다.
+              </label>
             </Box>
 
             {/* 제출 버튼 */}

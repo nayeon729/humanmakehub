@@ -27,7 +27,7 @@ export default function AdminUserManagementPage() {
   const itemsPerPage = 10;
   const BASE_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  const { showAlert, showConfirm  } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState(null);    // 예: 'grade', 'role', 'delete', 'recover'
   const [targetUserId, setTargetUserId] = useState("");
@@ -47,7 +47,6 @@ export default function AdminUserManagementPage() {
       const response = await axios.get(`${BASE_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log("사용자", response.data);
       setUsers(response.data);
     } catch (error) {
       console.error("사용자 불러오기 실패", error);
@@ -60,128 +59,126 @@ export default function AdminUserManagementPage() {
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.grade === newGrade) return; // 🔒 변경 안 됐으면 바로 리턴
 
-      const token = sessionStorage.getItem("token");
-      // ✅ 먼저 비밀번호 확인
-      try {
-        await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } catch (error) {
-        if (error.response?.status === 401) {
-          const detail = error.response?.data?.detail;
-          if (detail === "비밀번호가 일치하지 않습니다.") {
-            showAlert("❌ 비밀번호가 틀렸습니다.", () => {
-              window.location.reload();
-            })
-          } else {
-            showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
-          }
-          return;
+    const token = sessionStorage.getItem("token");
+    // ✅ 먼저 비밀번호 확인
+    try {
+      await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      if (error.response?.status === 401) {
+        const detail = error.response?.data?.detail;
+        if (detail === "비밀번호가 일치하지 않습니다.") {
+          showAlert("❌ 비밀번호가 틀렸습니다.", () => {
+            window.location.reload();
+          })
+        } else {
+          showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
         }
+        return;
       }
+    }
 
-      if (!token) {
-        showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
-        return;
-      }
-      if (!newGrade) {
-        showAlert("새 등급이 유효하지 않습니다.");
-        return;
-      }
-      try {
-        await axios.put(
-          `${BASE_URL}/admin/users/${user_id}/grade`,
-          { grade: newGrade },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
+    if (!token) {
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      return;
+    }
+    if (!newGrade) {
+      showAlert("새 등급이 유효하지 않습니다.");
+      return;
+    }
+    try {
+      await axios.put(
+        `${BASE_URL}/admin/users/${user_id}/grade`,
+        { grade: newGrade },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           }
-        );
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.user_id === user_id ? { ...user, grade: newGrade } : user
-          )
-        );
-        showAlert("✅ 등급이 성공적으로 수정되었습니다.");
-      } catch (error) {
-        console.error("❌ 등급 수정 실패", error);
-        const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-        showAlert("❌ 등급 수정 실패: " + errorMsg);
-      }
+        }
+      );
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.user_id === user_id ? { ...user, grade: newGrade } : user
+        )
+      );
+      showAlert("✅ 등급이 성공적으로 수정되었습니다.");
+    } catch (error) {
+      console.error("❌ 등급 수정 실패", error);
+      const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
+      showAlert("❌ 등급 수정 실패: " + errorMsg);
+    }
   };
 
 
   const handleRoleChange = async (user_id, newRole, password) => {
-    console.log("newRole", newRole);
     const user = users.find(u => u.user_id === user_id);
     if (!user || user.role === newRole) return; // 🔒 변경 안 됐으면 바로 리턴
 
-      const token = sessionStorage.getItem("token");
-      // ✅ 먼저 비밀번호 확인
-      try {
-        await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } catch (error) {
-        console.log(error);
-        if (error.response?.status === 401) {
-          const detail = error.response?.data?.detail;
-          if (detail === "비밀번호가 일치하지 않습니다.") {
-            showAlert("❌ 비밀번호가 틀렸습니다.", () => {
+    const token = sessionStorage.getItem("token");
+    // ✅ 먼저 비밀번호 확인
+    try {
+      await axios.post(`${BASE_URL}/client/verify-password`, { password }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      if (error.response?.status === 401) {
+        const detail = error.response?.data?.detail;
+        if (detail === "비밀번호가 일치하지 않습니다.") {
+          showAlert("❌ 비밀번호가 틀렸습니다.", () => {
+            window.location.reload();
+          })
+        } else {
+          showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+        }
+        return;
+      }
+    }
+
+    if (!token) {
+      showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      return;
+    }
+    if (!newRole) {
+      showAlert("새 역할이 유효하지 않습니다.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${BASE_URL}/admin/users/${user_id}/role`,
+        { role: newRole },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.user_id === user_id ? { ...user, role: newRole } : user
+        )
+      );
+      showAlert("✅ 역할이 성공적으로 수정되었습니다.");
+    } catch (error) {
+      if (error.response?.status === 400) {
+        const detail = error.response?.data?.detail;
+        if (detail === "프로젝트 보유중") {
+          showConfirm("보유중인 프로젝트가 있습니다. PM을 해지하시겠습니까?", () => {
+            pmRemove(user_id);
+          },
+            () => {
               window.location.reload();
             })
-          } else {
-            showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
-          }
-          return;
         }
-      }
-
-      if (!token) {
-        showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
         return;
       }
-      if (!newRole) {
-        showAlert("새 역할이 유효하지 않습니다.");
-        return;
-      }
-
-      try {
-        await axios.put(
-          `${BASE_URL}/admin/users/${user_id}/role`,
-          { role: newRole },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.user_id === user_id ? { ...user, role: newRole } : user
-          )
-        );
-        showAlert("✅ 역할이 성공적으로 수정되었습니다.");
-      } catch (error) {
-        if (error.response?.status === 400) {
-          const detail = error.response?.data?.detail;
-          if (detail === "프로젝트 보유중") {
-            showConfirm("보유중인 프로젝트가 있습니다. PM을 해지하시겠습니까?", () => {
-              pmRemove(user_id);
-            },
-            () => {
-                window.location.reload();
-            })
-          }
-        return;
-        }
-        console.error("❌ 역할 수정 실패", error);
-        const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
-        showAlert("❌ 역할 수정 실패: " + errorMsg);
-      }
+      console.error("❌ 역할 수정 실패", error);
+      const errorMsg = error.response?.data?.detail || "알 수 없는 서버 오류입니다.";
+      showAlert("❌ 역할 수정 실패: " + errorMsg);
+    }
   };
 
   const pmRemove = async (user_id) => {
@@ -190,7 +187,7 @@ export default function AdminUserManagementPage() {
       const response = await axios.post(`${BASE_URL}/admin/pmRemove/${user_id}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      showAlert((response.data.message) , () => {
+      showAlert((response.data.message), () => {
         window.location.reload();
       })
     } catch (error) {
@@ -317,12 +314,13 @@ export default function AdminUserManagementPage() {
     }
   };
   return (
-    <Box sx={{ p: 2, pt:3 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Tooltip
           title={
-            <Typography sx={{ fontSize: 16, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
+              회원들의 역할과 등급을 확인하고 관리할 수 있어요!<br/>
+              사용자 닉네임을 클릭하면 회원정보를 조회 할 수 있습니다.
             </Typography>
           }
           placement="right"
@@ -411,9 +409,9 @@ export default function AdminUserManagementPage() {
                             setDialogType("grade");
                             setDialogOpen(true);
                           },
-                          () => {
-                            window.location.reload(); // ✅ 새로고침으로 되돌림!
-                          });
+                            () => {
+                              window.location.reload(); // ✅ 새로고침으로 되돌림!
+                            });
                         }}
                         sx={{ minWidth: 50 }}
                       />
@@ -440,9 +438,9 @@ export default function AdminUserManagementPage() {
                             setDialogType("role");
                             setDialogOpen(true);
                           },
-                          () => {
-                            window.location.reload(); // ✅ 새로고침으로 되돌림!
-                          });
+                            () => {
+                              window.location.reload(); // ✅ 새로고침으로 되돌림!
+                            });
                         }}
                         sx={{ minWidth: 50 }}
                       />
@@ -513,8 +511,9 @@ export default function AdminUserManagementPage() {
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>취소</Button>
           <Button onClick={() => {
-          setDialogType("delete");
-          setDialogOpen(true);}} color="error" variant="contained">
+            setDialogType("delete");
+            setDialogOpen(true);
+          }} color="error" variant="contained">
             삭제 확인
           </Button>
         </DialogActions>
@@ -530,8 +529,9 @@ export default function AdminUserManagementPage() {
         <DialogActions>
           <Button onClick={() => setRecoverDialogOpen(false)}>취소</Button>
           <Button onClick={() => {
-          setDialogType("recover");
-          setDialogOpen(true);}} color="primary" variant="contained">
+            setDialogType("recover");
+            setDialogOpen(true);
+          }} color="primary" variant="contained">
             복구 확인
           </Button>
         </DialogActions>

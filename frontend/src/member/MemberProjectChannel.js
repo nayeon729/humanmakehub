@@ -25,7 +25,6 @@ export default function MemberProjectChannel() {
   const [totalCount, setTotalCount] = useState(0);
   const pageSize = 7;
 
-  console.log("프로젝트 id:" + project_id);
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -78,7 +77,7 @@ export default function MemberProjectChannel() {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

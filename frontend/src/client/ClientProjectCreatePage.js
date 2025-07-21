@@ -56,7 +56,6 @@ const ClientUserInfo = () => {
         },
       });
       showAlert("프로젝트가 생성되었습니다.");
-      console.log(response.data);
     } catch (error) {
       console.error("프로젝트 생성 실패:", error);
       showAlert("프로젝트 생성에 실패했습니다.");
@@ -68,7 +67,7 @@ const ClientUserInfo = () => {
       <Box sx={{ display: "flex", alignItems: "center" ,mb:3}}>
         <Tooltip
           title={
-            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
               This little budf is <b>really cute</b> 🐤
             </Typography>
           }

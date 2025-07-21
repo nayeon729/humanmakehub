@@ -32,7 +32,6 @@ export default function MemberDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlerts(res.data);
-      console.log("alerts :", res.data);
     };
     fetchAlerts();
   }, []);
@@ -55,7 +54,7 @@ export default function MemberDashboard() {
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Tooltip
           title={
-            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
               This little budf is <b>really cute</b> 🐤
             </Typography>
           }

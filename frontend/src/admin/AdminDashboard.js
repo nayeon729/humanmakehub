@@ -53,7 +53,6 @@ export default function AdminDashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAlerts(res.data);
-        console.log("alerts :", res.data);
       } catch (error) {
         if (error.response?.status !== 401) {
           console.error("알림 목록 불러오기 실패", error);
@@ -92,30 +91,31 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <Box sx={{ p: 2, pt:3 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Tooltip
-            title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
-              </Typography>
-            }
-            placement="right"
-            arrow
-          >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <BeenhereIcon sx={{ fontSize: "40px", mr: "4px" }} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                관리자 대시보드
-              </Typography>
-            </Box>
-          </Tooltip>
-        </Box>
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
+              관리자만 접근 가능한 대시보드입니다.<br/>
+              회원 수와 프로젝트 수, 알림 등을 한눈에 <br/>확인할 수 있어요!
+            </Typography>
+          }
+          placement="right"
+          arrow
+        >
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+            <BeenhereIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              관리자 대시보드
+            </Typography>
+          </Box>
+        </Tooltip>
+      </Box>
 
       <Grid container spacing={3} mt={1}>
         {cards.map((card, idx) => (

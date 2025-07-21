@@ -5,9 +5,7 @@ import {
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
-import AddIcon from '@mui/icons-material/Add';
 import pjadd from '../icon/pjadd.png';
-import folder from'../icon/folder.png';
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
@@ -34,7 +32,6 @@ export default function AdminProjectManagementPage() {
   const fetchProjects = async () => {
     try {
       const token = sessionStorage.getItem("token");
-      console.log("보내는 토큰:", token);
       const res = await axios.get(`${BASE_URL}/admin/projects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -45,7 +42,6 @@ export default function AdminProjectManagementPage() {
       }));
       setProjects(cleanedProjects);
     } catch (error) {
-      console.error("프로젝트 불러오기 실패", error);
     }
   };
 
@@ -84,8 +80,8 @@ export default function AdminProjectManagementPage() {
     A08: "기타"
   }
   const statusLabel = {
-    null : "PM 미지정",
-    "검토 중" : "검토 중",
+    null: "PM 미지정",
+    "검토 중": "검토 중",
     W01: "대기중",
     W02: "진행중",
     W03: "완료",
@@ -105,11 +101,11 @@ export default function AdminProjectManagementPage() {
       ? projects
       : tab === "W00"
         ? projects.filter(
-            (proj) => proj.status === "W00" || proj.status === null || proj.status === "W04"
-          )
+          (proj) => proj.status === "W00" || proj.status === null || proj.status === "W04"
+        )
         : projects.filter(
-            (proj) => proj.status === tab
-          )
+          (proj) => proj.status === tab
+        )
   );
 
   const paginatedProjects = visibleProjects.slice(
@@ -120,28 +116,29 @@ export default function AdminProjectManagementPage() {
 
   return (
     <>
-      <Box sx={{ p: 2, pt:3 }}>
+      <Box sx={{ p: 2, pt: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
           <Tooltip
-                    title={
-                      <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                        This little budf is <b>really cute</b> 🐤
-                      </Typography>
-                    }
-                    placement="right"
-                    arrow
-                  >
-          <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px"  }} />
-            <Typography 
-            variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}> 전체 프로젝트</Typography>
-          </Stack>
+            title={
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                등록된 프로젝트의 정보를 한눈에 확인할 수 있어요! <br/>
+                프로젝트의 [관리하기] 버튼을 클릭하면 해당 프로젝트를 담당하게 됩니다.
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
+              <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}> 전체 프로젝트</Typography>
+            </Stack>
           </Tooltip>
           <IconButton onClick={() => navigate("/admin/create")}>
-            <img src={pjadd} alt="추가" style={{ width: 35, height: 30}} />
+            <img src={pjadd} alt="추가" style={{ width: 35, height: 30 }} />
           </IconButton>
         </Stack>
         <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
@@ -162,9 +159,9 @@ export default function AdminProjectManagementPage() {
             const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
             return (
               <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 400}}>
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 400 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                    <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{backgroundColor:urgencyColor(proj.urgency), color:'white'}} size="small" />
+                    <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{ backgroundColor: urgencyColor(proj.urgency), color: 'white' }} size="small" />
                     <Typography variant="caption" color="text.secondary">
                       진행도 : {statusLabel[proj.status] || "알 수 없음"}
                     </Typography>
@@ -199,10 +196,10 @@ export default function AdminProjectManagementPage() {
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
-                    </Typography>
-                    <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '380px', height: '100px' }}>
-                      {proj.description}
-                    </Box>
+                  </Typography>
+                  <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '380px', height: '100px' }}>
+                    {proj.description}
+                  </Box>
                   <Stack
                     direction="row"
                     justifyContent={role === "R04" ? "space-between" : "center"}

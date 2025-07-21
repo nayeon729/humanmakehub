@@ -49,7 +49,6 @@ export default function AdminProjectCreatePage() {
       });
 
       showAlert("프로젝트가 성공적으로 등록되었습니다!");
-      console.log(response.data);
       navigate("/admin/projects/all");
     } catch (err) {
       console.error("프로젝트 등록 실패", err);
@@ -63,7 +62,7 @@ export default function AdminProjectCreatePage() {
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

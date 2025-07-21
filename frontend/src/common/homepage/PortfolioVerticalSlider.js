@@ -31,8 +31,6 @@ export default function HomePage() {
     useEffect(() => {
         axios.get(`${BASE_URL}/user/portfoliotest`)
             .then(res => {
-                console.log("res", res);
-                console.log("res.data", res.data);
                 setPortfolio(res?.data?.portfolios || []);
             })
             .catch(err => {

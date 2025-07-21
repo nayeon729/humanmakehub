@@ -37,7 +37,6 @@ export default function LoginPage() {
         });
         if (res.data.emailExists) {
           showAlert("존재하는 이메일입니다.");
-          console.log("data : ", res);
           setSendUserId(res.data?.user_id);
           setSendEmail(res.data?.email);
           setTimeout(() => setStartTimer(true), 10); // 다시 켜주기 (리셋)

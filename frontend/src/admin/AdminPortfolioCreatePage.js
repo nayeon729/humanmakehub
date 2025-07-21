@@ -56,7 +56,6 @@ export default function RegisterPage() {
     axios.get(`${BASE_URL}/user/tech-stacks`)
       .then(res => {
         setTechStacks(res.data);
-        console.log("res.data", res.data);
       })
       .catch(err => {
         console.error("기술 스택 불러오기 실패", err);

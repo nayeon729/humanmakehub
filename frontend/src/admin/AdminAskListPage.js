@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
+import HelpSharpIcon from '@mui/icons-material/HelpSharp';
 
 export default function getAskList() {
   const navigate = useNavigate();
@@ -57,26 +58,28 @@ export default function getAskList() {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Tooltip
-        title={
-          <Typography sx={{ fontSize: 16, color: "#fff" }}>
-            This little budf is <b>really cute</b> 🐤
-          </Typography>
-        }
-        placement="right"
-        arrow
-      >
-        {/* <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ mb: 0, cursor: "help", }}
+        <Tooltip
+          title={
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
+              고객이 등록한 문의사항을 확인하는 페이지입니다.<br/>
+              이름, 연락처, 문의 항목과 내용을 보고 [확인] 처리를 <br/>할 수 있어요!
+            </Typography>
+          }
+          placement="right"
+          arrow
         >
-          문의사항 목록
-        </Typography>
-        {/* </Box> */}
-      </Tooltip>
+          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                      <HelpSharpIcon sx={{ fontSize: "40px", mr: "4px" }}/>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ mb: 0, cursor: "help", }}
+          >
+            문의사항 목록
+          </Typography>
+          </Box>
+        </Tooltip>
       </Box>
       {askList && askList.map((list, index) => {
         return (

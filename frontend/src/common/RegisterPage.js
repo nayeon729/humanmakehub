@@ -38,7 +38,6 @@ export default function RegisterPage() {
     axios.get(`${BASE_URL}/user/tech-stacks`)
       .then(res => {
         setTechStacks(res.data);
-        console.log("res.data", res.data);
       })
       .catch(err => {
         console.error("기술 스택 불러오기 실패", err);
@@ -94,9 +93,6 @@ export default function RegisterPage() {
           showAlert("사용 가능한 아이디입니다.");
           setUsernameChecked(true);
         }
-        console.log("techStacks", techStacks);
-        console.log("selectedTechs", selectedTechs);
-        console.log("experience", experience);
       }
 
       if (field === "email") {

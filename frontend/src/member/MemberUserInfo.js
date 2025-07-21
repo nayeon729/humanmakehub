@@ -45,7 +45,6 @@ export default function MemberUserInfo() {
           res = await axios.get(`${BASE_URL}/admin/users/${user_id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          console.log("🔍 가져온 데이터:", res.data);
         } else {
           // 👉 일반 사용자 본인 정보
           res = await axios.get(`${BASE_URL}/user/me`, {
@@ -222,7 +221,7 @@ function EditableView({ userInfo, myId }) {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

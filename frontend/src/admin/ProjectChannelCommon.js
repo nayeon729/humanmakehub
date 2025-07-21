@@ -28,7 +28,6 @@ export default function ProjectChannelCommonPage() {
   const { project_id } = useParams();
   const [myUserId, setMyUserId] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
-  console.log("프로젝트 id:" + project_id);
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
   const [pmCheck, setPmCheck] = useState(false);
@@ -47,7 +46,6 @@ export default function ProjectChannelCommonPage() {
         const res = await axios.get(`${BASE_URL}/admin/project/pmCheck/${project_id}/${user_id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("PM 확인 :", res.data.pmCheck);
         setPmCheck(res.data.pmCheck);
       } catch (error) {
         console.error("PM확인 실패", error);
@@ -66,7 +64,6 @@ export default function ProjectChannelCommonPage() {
         },
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("공통 채널 게시글 :", res.data.items);
       setPosts(res.data.items);
       setTotalCount(res.data.total);
       setCurrentPage(page);
@@ -103,7 +100,7 @@ export default function ProjectChannelCommonPage() {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

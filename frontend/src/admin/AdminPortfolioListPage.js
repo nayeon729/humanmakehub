@@ -14,6 +14,8 @@ import CreateIcon from "@mui/icons-material/Create";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import Tooltip from "@mui/material/Tooltip";
+import WorkIcon from '@mui/icons-material/Work';
+import add from "../assets/create.png"
 
 const MemberProjectList = () => {
   const navigate = useNavigate();
@@ -40,8 +42,6 @@ const MemberProjectList = () => {
   const getPortfolio = () => {
     axios.get(`${BASE_URL}/user/portfoliotest`)
       .then(res => {
-        console.log("res", res);
-        console.log("res.data", res.data);
         setPortfolio(res?.data?.portfolios || []);
         setLoading(false);
       })
@@ -61,8 +61,6 @@ const MemberProjectList = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
-        console.log("res", res);
-        console.log("res.data", res.data);
         getPortfolio();
       })
       .catch(err => {
@@ -79,27 +77,29 @@ const MemberProjectList = () => {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                홈페이지에서 공개되는 사이트 포트폴리오를 확인할 <br/>수 있어요.
+                작성, 수정, 삭제가 가능합니다!
               </Typography>
             }
             placement="right"
             arrow
           >
-            {/* <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                포트폴리오 목록
-              </Typography>
-            {/* </Box> */}
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <WorkIcon  sx={{ fontSize: "40px", mr: "4px" }}/>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              포트폴리오 목록
+            </Typography>
+            </Box>
           </Tooltip>
         </Box>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>
-          <CreateIcon />
+          <img src={add} alt="글 생성 아이콘" style={{ width: '30px', height: '30px' }} />
         </IconButton>
       </Stack>
 

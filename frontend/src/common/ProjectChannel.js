@@ -69,7 +69,6 @@ export default function ProjectChannel({ role }) {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
-        console.log("1대1 알림 갯수 : ", res.data.count);
         setAlertCount(res.data.count);
       } catch (err) {
         console.error("알림 갯수 조회 실패", err);

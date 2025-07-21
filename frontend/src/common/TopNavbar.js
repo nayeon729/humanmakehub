@@ -3,17 +3,14 @@ import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, ListItemIcon,
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
-import FolderIcon from '@mui/icons-material/Folder';
-import BuildIcon from '@mui/icons-material/Build';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import CreateIcon from '@mui/icons-material/Create';
 import MenuIcon from '@mui/icons-material/Menu';
-import PaidIcon from '@mui/icons-material/Paid';
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ListIcon from '@mui/icons-material/List';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import PeopleIcon from "@mui/icons-material/People";
+import FolderIcon from '@mui/icons-material/Folder';
+import HelpSharpIcon from '@mui/icons-material/HelpSharp';
+import WorkIcon from '@mui/icons-material/Work';
 
 export default function TopNavbar() {
   const navigate = useNavigate();
@@ -106,15 +103,15 @@ export default function TopNavbar() {
             <ListItemText>전체 프로젝트</ListItemText>
           </MenuItem>
           <MenuItem {...commonProps("/admin/projects")}>
-            <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
+            <ListItemIcon><FolderIcon fontSize="small" /></ListItemIcon>
             <ListItemText>프로젝트 관리</ListItemText>
           </MenuItem>
           <MenuItem {...commonProps("/admin/askList")}>
-            <ListItemIcon><ReportProblemIcon fontSize="small" /></ListItemIcon>
+            <ListItemIcon><HelpSharpIcon fontSize="small" /></ListItemIcon>
             <ListItemText>문의사항 목록</ListItemText>
           </MenuItem>
           <MenuItem {...commonProps("/admin/portfolioList")}>
-            <ListItemIcon><AssignmentIcon fontSize="small" /></ListItemIcon>
+            <ListItemIcon><WorkIcon fontSize="small" /></ListItemIcon>
             <ListItemText>포트폴리오 목록</ListItemText>
           </MenuItem>
           <MenuItem {...commonProps("/admin/notice/list")}>

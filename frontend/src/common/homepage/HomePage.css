@@ -142,6 +142,7 @@ section {
     padding: 60px 10px;
     background: white;
     overflow: hidden;
+    max-width: 1200px;
 }
 
 

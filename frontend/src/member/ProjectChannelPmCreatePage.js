@@ -87,11 +87,6 @@ export default function ProjectChannelCreatePage() {
               Authorization: `Bearer ${sessionStorage.getItem("token")}`,
             },
           });
-          console.log("res", res);
-          console.log("project_id", project_id);
-          console.log("userId", userId);
-          console.log("res.team_member_id", res.data.team_member_id);
-          console.log("type", typeof (res.data.team_member_id));
           setTeamMemberId(res.data.team_member_id);
         } catch (err) {
           console.error("프로젝트 팀멤버아이디 조회 실패", err);
@@ -119,7 +114,6 @@ export default function ProjectChannelCreatePage() {
         }
       );
       setPmId(res.data.pm_id);
-      console.log("응답 확인 👉", res.data);
     } catch (err) {
       console.error("pm_id 불러오기 실패", err);
     }
@@ -151,7 +145,7 @@ export default function ProjectChannelCreatePage() {
         <Box sx={{ display: "flex", alignItems: "center" }}>
         <Tooltip
           title={
-            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
               This little budf is <b>really cute</b> 🐤
             </Typography>
           }

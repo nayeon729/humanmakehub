@@ -70,9 +70,6 @@ export default function MemberUserEditPage() {
   };
 
   const handleSkillDetailChange = (code_id, field, value) => {
-    console.log(code_id, field, value);
-    console.log(skillDetails);
-    console.log(typeof (value));
     setSkillDetails((prev) => ({
       ...prev,
       [code_id]: {
@@ -170,7 +167,7 @@ export default function MemberUserEditPage() {
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
           <Tooltip
             title={
-              <Typography sx={{ fontSize: 16, color: "#fff" }}>
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 This little budf is <b>really cute</b> 🐤
               </Typography>
             }

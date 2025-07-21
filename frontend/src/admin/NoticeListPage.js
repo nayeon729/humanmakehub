@@ -9,6 +9,7 @@ import add from "../assets/create.png"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Tooltip from "@mui/material/Tooltip";
 
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function AdminNoticeListPage() {
@@ -65,8 +66,8 @@ export default function AdminNoticeListPage() {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Tooltip
                         title={
-                            <Typography sx={{ fontSize: 16, color: "#fff" }}>
-                                This little budf is <b>really cute</b> 🐤
+                            <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                                관리자가 등록한 공지사항을 확인할 수 있는 <br/>화면입니다.
                             </Typography>
                         }
                         placement="right"
@@ -86,7 +87,7 @@ export default function AdminNoticeListPage() {
                 </Box>
                 {["R03", "R04"].includes(userRole) && (
                     <Button onClick={() => navigate("/admin/notice/create")} sx={{ marginRight: '-8px' }}>
-                        <img src={add} style={{ width: '40px', height: '40px' }} />
+                        <img src={add} style={{ width: '30px', height: '30px' }} />
                     </Button>
                 )}
             </Stack>

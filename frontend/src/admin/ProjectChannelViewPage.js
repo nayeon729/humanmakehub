@@ -12,7 +12,6 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 export default function ProjectChannelViewPage() {
     const { project_id, channel_id } = useParams();
-    console.log("🧭 useParams channel_id:", channel_id);
     const [myUserId, setMyUserId] = useState("");
     const [channel, setChannel] = useState([]);
     const [images, setImages] = useState([]);
@@ -45,10 +44,6 @@ export default function ProjectChannelViewPage() {
             setProjectTitle(res.data.project_title);
             setChannel(res.data.channel);
             setImages(res.data.images);
-            console.log("pjtitle:", res.data.Project_title);
-            console.log("✅ 요청 받은 channel_id:", channel_id);
-            console.log("📦 channel:", res.data.channel);
-            console.log("🖼 images:", res.data.images);
         } catch (error) {
             console.error("채널 불러오기 실패", error);
         }
@@ -100,7 +95,7 @@ export default function ProjectChannelViewPage() {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                         <Tooltip
                             title={
-                                <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                                <Typography sx={{ fontSize: 13, color: "#fff" }}>
                                     This little budf is <b>really cute</b> 🐤
                                 </Typography>
                             }

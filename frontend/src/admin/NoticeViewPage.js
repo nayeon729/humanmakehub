@@ -69,7 +69,7 @@ export default function AdminNoticeViewPage() {
                 <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                     <Tooltip
                         title={
-                            <Typography sx={{ fontSize: 16, color: "#fff" }}>
+                            <Typography sx={{ fontSize: 13, color: "#fff" }}>
                                 This little budf is <b>really cute</b> 🐤
                             </Typography>
                         }

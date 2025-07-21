@@ -22,7 +22,6 @@ export default function LoginPage() {
         email: email,
         password: password,
       };
-      console.log(payload);
       try {
         const res = await axios.post(`${BASE_URL}/user/pwFind`, payload);
         showAlert("비밀번호 재설정 성공!");

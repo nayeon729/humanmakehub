@@ -313,8 +313,9 @@ export default function AdminProjectManagementPage() {
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
         <Tooltip
           title={
-            <Typography sx={{ fontSize: 16, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+            <Typography sx={{ fontSize: 13, color: "#fff" }}>
+              담당한 프로젝트 상세 정보를 확인하는 페이지입니다.<br/>
+              진행률 조정, 상태 변경, 멤버 관리를 할 수 있고 <br/>프로젝트 채널을 통해 팀원과의 소통이 가능합니다.
             </Typography>
           }
           placement="right"
@@ -646,7 +647,7 @@ export default function AdminProjectManagementPage() {
                     textDecoration: "none",
                     "&:hover": { color: "primary.dark" }
                   }}
-                  onClick={() => window.open(`/admin/users/${dev.user_id}?readonly=1`, "_blank")}
+                  onClick={() => window.open(`/admin/member/${dev.user_id}?readonly=1`, "_blank")}
                 >
                   {dev.nickname}
                 </Typography>
@@ -656,16 +657,16 @@ export default function AdminProjectManagementPage() {
           </Box>
 
           <Box mt={2} display="flex" justifyContent="center">
-  <Pagination
-    count={Math.ceil(totalCount / pageSize)}
-    page={currentPage}
-    onChange={(e, value) => handleSearch(value)}
-    shape="rounded"
-    color="primary"
-    siblingCount={1}
-    boundaryCount={1}  
-  />
-</Box>
+            <Pagination
+              count={Math.ceil(totalCount / pageSize)}
+              page={currentPage}
+              onChange={(e, value) => handleSearch(value)}
+              shape="rounded"
+              color="primary"
+              siblingCount={1}
+              boundaryCount={1}
+            />
+          </Box>
         </DialogContent>
       </Dialog>
     </Box>

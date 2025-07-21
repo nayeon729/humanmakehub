@@ -24,7 +24,6 @@ export default function RegisterPage() {
     axios.get(`${BASE_URL}/user/tech-stacks`)
       .then(res => {
         setTechStacks(res.data);
-        console.log("전체 기술", res.data);
       })
       .catch(err => {
         console.error("기술 스택 불러오기 실패", err);
@@ -39,8 +38,6 @@ export default function RegisterPage() {
       },
     })
       .then(res => {
-        console.log("선택되어있는 기술", res.data);
-
         setSelectedTechs(res.data);
       })
       .catch(err => {
@@ -55,7 +52,6 @@ export default function RegisterPage() {
     })
       .then(res => {
         const data = res.data;
-        console.log("포트폴리오 정보:", data);
 
         // ✅ 단위(개월, 만원) 잘라내고 setForm
         setForm({
