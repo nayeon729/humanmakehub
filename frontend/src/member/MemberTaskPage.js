@@ -62,7 +62,7 @@ export default function MemberDashboard() {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <BeenhereIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <BeenhereIcon color='primary' sx={{ fontSize: "40px", mr: "4px" }} />
             <Typography
               variant="h4"
               fontWeight="bold"

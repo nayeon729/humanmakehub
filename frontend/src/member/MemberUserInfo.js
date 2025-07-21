@@ -114,7 +114,7 @@ function ReadOnlyView({ userInfo }) {
 
         <Box sx={{ flex: 1, p: 3 }}>
           <Box sx={{ display: "flex", gap: 1 }}>
-            <AccountCircleIcon sx={{ fontSize: 40 }} />
+            <AccountCircleIcon sx={{ fontSize: 40, mr:'4px', color:'#9d9d9d' }} />
             <Typography variant="h4" fontWeight="bold" gutterBottom>
               회원정보
             </Typography>
@@ -229,7 +229,7 @@ function EditableView({ userInfo, myId }) {
             arrow
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <AccountCircleIcon sx={{ fontSize: 40, mr: "4px"  }} />
+              <AccountCircleIcon sx={{ fontSize: 40, mr: "4px", color:'#9d9d9d'  }} />
               <Typography
                 variant="h4"
                 fontWeight="bold"

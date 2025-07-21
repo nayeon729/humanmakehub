@@ -77,7 +77,7 @@ function ClientReadOnlyView({ userInfo }) {
   return (
     <Box sx={{ flex: 1, p: 3 }}>
       <Box sx={{ display: "flex", gap: 1 }}>
-        <AccountCircleIcon sx={{ fontSize: 40 }} />
+        <AccountCircleIcon sx={{ fontSize: 40, color:'#9d9d9d' }} />
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           클라이언트 정보
         </Typography>
@@ -137,7 +137,7 @@ function ClientEditableView({ userInfo }) {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px", color:'#9d9d9d' }} />
             <Typography
               variant="h4"
               fontWeight="bold"

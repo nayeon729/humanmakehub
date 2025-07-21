@@ -6,7 +6,7 @@ import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 export default function ProjectChannelCreatePage() {
   const [title, setTitle] = useState("");
@@ -143,20 +143,20 @@ export default function ProjectChannelCreatePage() {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{p:2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                공용 채널과 팀원 채널에 글을 작성할 수 있는 페이지 입니다! 
               </Typography>
             }
             placement="right"
             arrow
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
@@ -172,7 +172,7 @@ export default function ProjectChannelCreatePage() {
 
       <Paper sx={{ p: 3, mt: 2 }}>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">제목</Typography>
+          <Typography variant="body2">제목*</Typography>
           <TextField
             fullWidth
             value={title}
@@ -181,7 +181,7 @@ export default function ProjectChannelCreatePage() {
           />
         </Box>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">채널</Typography>
+          <Typography variant="body2">채널*</Typography>
           <FormControl fullWidth>
             <Select
               labelId="member-select-label"
@@ -214,28 +214,32 @@ export default function ProjectChannelCreatePage() {
           </FormControl>
         </Box>
         <Box sx={{ mb: 2 }}>
+          <Box sx={{display:'flex', alignItems:'center'}}>
           <Typography variant="body2">이미지 첨부</Typography>
           <label htmlFor="file-upload" style={{
             display: "inline-block",
-            padding: "10px 20px",
+            padding: "0px 10px",
             backgroundColor: "#FFB43B",
             color: "#fff",
             borderRadius: "15px",
             cursor: "pointer",
-            fontWeight: "bold",
+            fontWeight: "900",
             fontSize: "14px",
-            transition: "background-color 0.3s"
+            transition: "background-color 0.3s",
+            width:'10px',
+            marginLeft:'5px',
           }}>
-            이미지 선택하기
+            +
             <input
               id="file-upload"
               type="file"
               multiple
               accept="image/*"
               onChange={handleFileChange}
-              style={{ display: "none" }}
+              style={{ display: "none",  }}
             />
           </label>
+          </Box>
           <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
             {previewUrls.map((url, index) => (
               <Box key={index} sx={{ position: "relative" }}>
@@ -268,7 +272,7 @@ export default function ProjectChannelCreatePage() {
           </Box>
         </Box>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">내용</Typography>
+          <Typography variant="body2">내용*</Typography>
           <TextField
             multiline
             rows={8}

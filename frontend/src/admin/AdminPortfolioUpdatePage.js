@@ -166,7 +166,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ background: "#f0f4f8", py: 8 }}>
+    <Box sx={{ py: 8 }}>
       <Container maxWidth="md">
         <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 5 }}>
           <>

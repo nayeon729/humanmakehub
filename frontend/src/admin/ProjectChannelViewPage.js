@@ -7,7 +7,7 @@ import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 
 export default function ProjectChannelViewPage() {
@@ -22,26 +22,22 @@ export default function ProjectChannelViewPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchChannel(channel_id);
-    }, [channel_id]);
-    useEffect(() => {
-        if (project_id) {
-            fetchProjectTitle(project_id);
-        }
-    }, [project_id]);
-    useEffect(() => {
         const id = sessionStorage.getItem("user_id");
         if (id) {
             setMyUserId(id);
         }
-    }, []);
+        fetchChannel(channel_id);
+        if (project_id) {
+            fetchProjectTitle(project_id);
+        }
+    }, [channel_id, project_id]);
+
     const fetchChannel = async (channelId) => {
         try {
             const token = sessionStorage.getItem("token");
             const res = await axios.get(`${BASE_URL}/admin/projectchannel/${channelId}/view`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setProjectTitle(res.data.project_title);
             setChannel(res.data.channel);
             setImages(res.data.images);
         } catch (error) {
@@ -65,9 +61,8 @@ export default function ProjectChannelViewPage() {
 
         try {
             const token = sessionStorage.getItem("token");
-            const userRole = sessionStorage.getItem("role");  // 예: "R03", "R02" 등
+            const userRole = sessionStorage.getItem("role"); 
 
-            // 역할에 따라 경로 결정
             const rolePath = (userRole === "R02")
                 ? "member"
                 : "admin";
@@ -90,33 +85,23 @@ export default function ProjectChannelViewPage() {
 
     return (
         <>
-            <Box sx={{ flex:1, p: 3 }}>
+            <Box sx={{ flex: 1, p: 3 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Tooltip
-                            title={
-                                <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                                    This little budf is <b>really cute</b> 🐤
-                                </Typography>
-                            }
-                            placement="right"
-                            arrow
-                        >
-                            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                                <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
-                                <Typography
-                                    variant="h4"
-                                    fontWeight="bold"
-                                    gutterBottom
-                                    sx={{ mb: 0, cursor: "help", }}
-                                >
-                                    {projectTitle}
-                                </Typography>
-                            </Box>
-                        </Tooltip>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                            <Typography
+                                variant="h4"
+                                fontWeight="bold"
+                                gutterBottom
+                                sx={{ mb: 0, cursor: "help", }}
+                            >
+                                {projectTitle}
+                            </Typography>
+                        </Box>
                     </Box>
                 </Stack>
-                <Paper sx={{ p: 3, pt: 0, borderRadius: 2, mt:3 }}>
+                <Paper sx={{ p: 3, pt: 0, borderRadius: 2, mt: 3 }}>
 
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box>
@@ -130,7 +115,7 @@ export default function ProjectChannelViewPage() {
                                     <Button
                                         sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
                                         onClick={() => {
-                                            const role = sessionStorage.getItem("role");  // or useContext or Redux에서 가져온 값도 OK
+                                            const role = sessionStorage.getItem("role");  
                                             const basePath = role === "R02" ? "member" : "admin";
                                             navigate(`/${basePath}/channel/${project_id}/update/${channel.channel_id}`);
                                         }}
@@ -155,7 +140,6 @@ export default function ProjectChannelViewPage() {
                     <Box mt={3}>
                         {images.length > 0 && (
                             <>
-                                {/* <Typography variant="subtitle1" fontWeight="bold">첨부 이미지</Typography> */}
                                 <Stack direction="row" spacing={2} flexWrap="wrap">
                                     {images.map((img, idx) => (
                                         <img

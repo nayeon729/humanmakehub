@@ -69,7 +69,7 @@ export default function getAskList() {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                      <HelpSharpIcon sx={{ fontSize: "40px", mr: "4px" }}/>
+                      <HelpSharpIcon  color= 'primary' sx={{ fontSize: "40px", mr: "4px", }}/>
           <Typography
             variant="h4"
             fontWeight="bold"

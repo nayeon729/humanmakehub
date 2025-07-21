@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 export default function ProjectChannelCreatePage() {
   const [title, setTitle] = useState("");
@@ -140,95 +140,73 @@ export default function ProjectChannelCreatePage() {
 
 
   return (
-    <Box sx={{ p:2, pt: 3 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Tooltip
-          title={
-            <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
-            </Typography>
-          }
-          placement="right"
-          arrow
-        >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
-            <SmsIcon sx={{ fontSize: "40px", mr: "4px" }}/>
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              {projectTitle} 글 작성 
-            </Typography>
-          </Box>
-        </Tooltip>
-      </Box>
+          <Tooltip
+            title={
+              <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                PM과 소통하는 글을 작성하는 페이지입니다!
+              </Typography>
+            }
+            placement="right"
+            arrow
+          >
+            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+              <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, cursor: "help", }}
+              >
+                {projectTitle} 글 작성
+              </Typography>
+            </Box>
+          </Tooltip>
+        </Box>
       </Stack>
 
-      <Paper sx={{
-        p: 3,
-        mt: 2,
-        backgroundColor: "#fff",
-        mt: 2,
-        borderRadius: 2,
-        boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
-        "& fieldset": { border: "none" },
-        borderTop: "1px solid #ddd",
-        borderLeft: "1px solid #ddd",
-      }}>
-        <Box sx={{ mb: 5 }}>
-          <Typography variant="body2" fontWeight="bold">
+      <Paper sx={{ p: 3, mt: 2 }}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2">
             제목*
           </Typography>
           <TextField
             fullWidth
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            variant="outlined"
-            InputProps={{
-              notched: false,
-              sx: {
-                border: "none",
-              },
-            }}
-            sx={{
-              backgroundColor: "#fff",
-              mt: 2,
-              borderRadius: 2,
-              boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
-              "& fieldset": { border: "none" },
-              borderTop: "1px solid #ddd",
-              borderLeft: "1px solid #ddd",
-            }}
+            sx={{ mb: 2 }}
           />
         </Box>
         <Box sx={{ mb: 2 }}>
-          <Typography variant="body2">이미지 첨부</Typography>
-          <label htmlFor="file-upload" style={{
-            display: "inline-block",
-            padding: "10px 20px",
-            backgroundColor: "#FFB43B",
-            color: "#fff",
-            borderRadius: "15px",
-            cursor: "pointer",
-            fontWeight: "bold",
-            fontSize: "14px",
-            transition: "background-color 0.3s"
-          }}>
-            이미지 선택하기
-            <input
-              id="file-upload"
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-          </label>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body2">이미지 첨부</Typography>
 
+            <label htmlFor="file-upload" style={{
+              display: "inline-block",
+              padding: "0px 10px",
+              backgroundColor: "#FFB43B",
+              color: "#fff",
+              borderRadius: "15px",
+              cursor: "pointer",
+              fontWeight: "900",
+              fontSize: "14px",
+              transition: "background-color 0.3s",
+              width: '10px',
+              marginLeft: '5px',
+            }}>
+              +
+              <input
+                id="file-upload"
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+              />
+            </label>
+          </Box>
           <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
             {previewUrls.map((url, index) => (
               <Box key={index} sx={{ position: "relative" }}>
@@ -271,32 +249,15 @@ export default function ProjectChannelCreatePage() {
             fullWidth
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            variant="outlined"
-            InputProps={{
-              notched: false,
-              sx: {
-                border: "none",
-              },
-            }}
-            sx={{
-              backgroundColor: "#fff",
-              mt: 2,
-              borderRadius: 2,
-              boxShadow: "4px 4px 8px rgba(0, 0, 0, 0.1)",
-              "& fieldset": { border: "none" },
-              borderTop: "1px solid #ddd",
-              borderLeft: "1px solid #ddd",
-            }}
+            sx={{ mb: 2 }}
           />
         </Box>
-
-        <Button variant="contained" fullWidth onClick={handleSubmit}
-          sx={{
-            borderRadius: "15px",
-            mt: 3,
-          }}>
-          글 등록
-        </Button>
+        <Box sx={{ textAlign: 'center' }}>
+          <Button variant="contained" fullWidth onClick={handleSubmit}
+            sx={{ height: '45px', width: '250px', fontSize: '16px', borderRadius: '20px' }}>
+            글 등록
+          </Button>
+        </Box>
       </Paper>
     </Box>
   );

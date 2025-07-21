@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 
 export default function ProjectChannelUpdatePage() {
     const { channel_id, project_id } = useParams();
@@ -163,20 +163,11 @@ export default function ProjectChannelUpdatePage() {
         setImages(prev => prev.filter((_, i) => i !== index));
     };
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, pt:3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Tooltip
-                        title={
-                            <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                                This little budf is <b>really cute</b> 🐤
-                            </Typography>
-                        }
-                        placement="right"
-                        arrow
-                    >
                         <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                            <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                            <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
@@ -186,7 +177,6 @@ export default function ProjectChannelUpdatePage() {
                                 {projectTitle}글 수정
                             </Typography>
                         </Box>
-                    </Tooltip>
                 </Box>
             </Stack>
             <Paper sx={{ p: 3, mt: 2 }}>
@@ -224,28 +214,32 @@ export default function ProjectChannelUpdatePage() {
                     )}
                 </Box>
                 <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2">이미지 첨부</Typography>
-                    <label htmlFor="file-upload" style={{
-                        display: "inline-block",
-                        padding: "10px 20px",
-                        backgroundColor: "#FFB43B",
-                        color: "#fff",
-                        borderRadius: "15px",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                        transition: "background-color 0.3s"
-                    }}>
-                        이미지 선택하기
-                        <input
-                            id="file-upload"
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            style={{ display: "none" }}
-                        />
-                    </label>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body2">이미지 첨부</Typography>
+                        <label htmlFor="file-upload" style={{
+                            display: "inline-block",
+                            padding: "0px 10px",
+                            backgroundColor: "#FFB43B",
+                            color: "#fff",
+                            borderRadius: "15px",
+                            cursor: "pointer",
+                            fontWeight: "900",
+                            fontSize: "14px",
+                            transition: "background-color 0.3s",
+                            width: '10px',
+                            marginLeft: '5px',
+                        }}>
+                            +
+                            <input
+                                id="file-upload"
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                style={{ display: "none" }}
+                            />
+                        </label>
+                    </Box>
                     <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
                         {images.map((img, index) => (
                             <Box key={index} sx={{ position: "relative" }}>

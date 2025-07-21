@@ -75,7 +75,7 @@ const ClientUserInfo = () => {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px"  }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff'  }} />
             <Typography
               variant="h4"
               fontWeight="bold"

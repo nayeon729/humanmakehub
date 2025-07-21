@@ -17,7 +17,7 @@ import create from "../assets/create.png";
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelPmPage() {
@@ -34,7 +34,7 @@ export default function ProjectChannelPmPage() {
   const { showAlert } = useAlert();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 7;
+  const pageSize = 10;
 
 
   useEffect(() => {
@@ -147,80 +147,65 @@ export default function ProjectChannelPmPage() {
   return (
     <Box sx={{ p: 2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Tooltip
-            title={
-              <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
-              </Typography>
-            }
-            placement="right"
-            arrow
-          >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
-              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                {projectTitle}
-              </Typography>
-            </Box>
-          </Tooltip>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Tooltip
+              title={
+                <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                  PM과 팀원의 일대일로 소통할 수 있는 채널입니다!
+                </Typography>
+              }
+              placement="right"
+              arrow
+            >
+              <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ mb: 0, cursor: "help", }}
+                >
+                  {projectTitle}
+                </Typography>
+              </Box>
+            </Tooltip>
+          </Box>
+        </Stack>
         <IconButton
           onClick={() => navigate(`/member/channel/${project_id}/create`)}
           sx={{ p: 0.5 }}
         >
           <img
-            src={create} alt="글쓰기" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
+            src={create} alt="글쓰기" style={{ verticalAlign: "middle", marginRight: 8, width: '30px', hight: '30px' }} />
         </IconButton>
       </Stack>
 
-      <Stack spacing={2}>
+      <Stack spacing={2} mt={2}>
         {messages.map((msg) => (
           <Paper key={msg.channel_id}
-            sx={{
-              backgroundColor: "#fff",
-              p: 1.5,
-              mt: 2,
-              borderRadius: 2,
-              position: "relative",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            }}
-            onClick={() => navigate(`/member/channel/${project_id}/view/${msg.channel_id}`)}>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            sx={{ p: 2 }} onClick={() => navigate(`/member/channel/${project_id}/view/${msg.channel_id}`)}>
+            <Box display='flex' flexDirection="row" alignItems="center">
               <Chip
                 color={msg.create_id === pmId ? "primary" : "warning"}
                 label={msg.create_id === pmId ? "PM" : msg.nickname}
               />
-              <Typography mt={1} sx={{ fontSize: '24px', fontWeight: '700' }}>
-                {msg.title}
-              </Typography>
-              {Number(msg.has_image) > 0 && (
-                <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
-              )}
-              <Typography variant="body2" color="text.secondary"
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 12,
-                  color: "black",
-                  fontSize: "0.75rem",
-                }}>
-                {msg.create_dt.slice(0, 10).replace(/-/g, ".")}
-              </Typography>
-            </Stack>
+              <Box display='flex' flexDirection='row' justifyContent='space-between' width="100%">
+                <Stack direction="row" alignItems="center">
+                  <Typography variant="subtitle1" fontWeight="bold" ml={1}>
+                    {msg.title}
+                  </Typography>
+                  {Number(msg.has_image) > 0 && (
+                    <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
+                  )}
+                </Stack>
+                <Typography variant="caption" sx={{ color: "gray" }}>
+                  {msg.create_dt.slice(0, 10).replace(/-/g, ".")}
+                </Typography>
+              </Box>
+            </Box>
 
-            <Typography variant="body2"
-              sx={{
-                color: "black",
-                mt: 0.5,
-                whiteSpace: "pre-line",
-              }}>
+            <Typography variant="body2" color="text.secondary" mt={2}>
               {msg.content}
             </Typography>
           </Paper>

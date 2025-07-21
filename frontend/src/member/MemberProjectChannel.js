@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import chatting from "../assets/chatting.png";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import Pagination from "@mui/material/Pagination";
 
 
@@ -23,7 +23,7 @@ export default function MemberProjectChannel() {
   const [projectTitle, setProjectTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 7;
+  const pageSize = 10;
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -86,7 +86,7 @@ export default function MemberProjectChannel() {
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
               {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
-              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
@@ -108,45 +108,33 @@ export default function MemberProjectChannel() {
             key={post.channel_id}
             sx={{
               backgroundColor: "#fff",
-              p: 1.5,
+              p: 2,
               mt: 2,
               borderRadius: 2,
-              position: "relative",
               boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             }}
             onClick={() => navigate(`/member/channel/${project_id}/view/${post.channel_id}`)}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
-            <Typography variant="subtitle1" fontWeight="bold"
-              sx={{
-                fontSize: "25px",
-              }}>
+             <Box display='flex' flexDirection='row' justifyContent='space-between'>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
               {post.title}
               {Number(post.has_image) > 0 && (
                 <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
               )}
             </Typography>
+            <Typography variant="caption"
+                sx={{ display: 'flex', alignItems: 'center', color: "gray" }}>
+                {post.create_dt.slice(0, 10).replace(/-/g, ".")}
+              </Typography>
+            </Box>
             <Typography variant="body2"
               sx={{
-                color: "black",
-                mt: 0.5,
-                whiteSpace: "pre-line",
+                color: "gray"
               }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
-            <Stack direction="row" justifyContent="space-between" mt={1}>
 
-              <Typography variant="caption"
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 12,
-                  color: "black",
-                  fontSize: "0.75rem",
-                }}>
-                {post.create_dt.slice(0, 10).replace(/-/g, ".")}
-              </Typography>
-            </Stack>
           </Paper>
         ))}
       </Box>

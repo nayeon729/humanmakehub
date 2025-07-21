@@ -19,7 +19,7 @@ import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelCommonPage() {
@@ -33,7 +33,7 @@ export default function ProjectChannelCommonPage() {
   const [pmCheck, setPmCheck] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 7;
+  const pageSize = 10;
 
   useEffect(() => {
     const fetchPmCheck = async () => {
@@ -95,7 +95,7 @@ export default function ProjectChannelCommonPage() {
 
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
+    <Box sx={{ p: 2, pt: 3  }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Tooltip
@@ -108,7 +108,7 @@ export default function ProjectChannelCommonPage() {
             arrow
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+              <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
@@ -135,14 +135,14 @@ export default function ProjectChannelCommonPage() {
         {posts.map((post) => (
           <Paper
             key={post.channel_id}
-            sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
+            sx={{ p: 2, mb: 2, borderRadius: 2, backgroundColor: "#fff", boxShadow: "0 2px 6px rgba(0,0,0,0.1)"}}
             onClick={() => navigate(`/admin/channel/${project_id}/view/${post.channel_id}`)}
           >
             {/* <Chip label={post.nickname} size="small" /> */}
             <Box display='flex' flexDirection='row' justifyContent='space-between'>
               <Typography variant="subtitle1" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
                 {post.title}
-                {Number(post.has_image) === 1 && (
+                {Number(post.has_image) > 0 && (
                   <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
                 )}
               </Typography>
@@ -158,9 +158,6 @@ export default function ProjectChannelCommonPage() {
             </Typography>
 
 
-            <Stack direction="row" justifyContent="space-between" mt={1}>
-
-            </Stack>
           </Paper>
         ))}
       </Box>

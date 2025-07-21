@@ -109,13 +109,13 @@ export default function AdminProjectUpdatePage() {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px",color:'#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
               gutterBottom
               sx={{ mb: 0, cursor: "help", }}
-            >관리자 프로젝트 생성
+            >관리자 프로젝트 수정
             </Typography>
           </Box>
         </Tooltip>

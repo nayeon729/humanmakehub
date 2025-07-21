@@ -322,7 +322,7 @@ export default function AdminProjectManagementPage() {
           arrow
         >
           <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px" }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"

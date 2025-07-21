@@ -77,7 +77,7 @@ export default function AdminNoticeViewPage() {
                         arrow
                     >
                         <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                            <CampaignIcon sx={{ fontSize: 40, mr: "4px" }} />
+                            <CampaignIcon color='error' sx={{ fontSize: 40, mr: "4px" }} />
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"

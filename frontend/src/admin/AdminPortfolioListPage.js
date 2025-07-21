@@ -86,7 +86,7 @@ const MemberProjectList = () => {
             arrow
           >
             <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <WorkIcon  sx={{ fontSize: "40px", mr: "4px" }}/>
+              <WorkIcon  sx={{ fontSize: "40px", mr: "4px", color:'#774000ff' }}/>
             <Typography
               variant="h4"
               fontWeight="bold"

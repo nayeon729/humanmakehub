@@ -95,7 +95,7 @@ export default function ClientUserEditPage() {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px" }} />
+            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px", color:'#9d9d9d' }} />
             <Typography
               variant="h4"
               fontWeight="bold"

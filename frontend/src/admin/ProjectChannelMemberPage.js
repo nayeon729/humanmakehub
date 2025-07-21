@@ -18,7 +18,7 @@ import add from "../assets/create.png"
 import { useAlert } from "../components/CommonAlert";
 import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
-import SmsIcon from '@mui/icons-material/Sms';
+import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import Pagination from "@mui/material/Pagination";
 
 export default function ProjectChannelMemberPage() {
@@ -31,7 +31,7 @@ export default function ProjectChannelMemberPage() {
   const [teamMemberId, setTeamMemberId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const pageSize = 6;
+  const pageSize = 10;
   const BASE_URL = process.env.REACT_APP_API_URL;
 
   const context = useOutletContext() || {};
@@ -154,21 +154,21 @@ export default function ProjectChannelMemberPage() {
   }, [messages, user_id])
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
+    <Box sx={{  p: 2, pt: 3  }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Tooltip
               title={
                 <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                  This little budf is <b>really cute</b> 🐤
+                  PM과 팀원의 일대일로 소통할 수 있는 채널입니다!
                 </Typography>
               }
               placement="right"
               arrow
             >
               <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                <SmsIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
                 <Typography
                   variant="h4"
                   fontWeight="bold"
@@ -183,7 +183,7 @@ export default function ProjectChannelMemberPage() {
         </Stack>
         {pmCheck && (
           <IconButton color="primary" onClick={() => navigate(`/admin/channel/${project_id}/create/${user_id}`)}>
-            <img src={add} style={{ width: '40px', hight: '40px' }} />
+            <img src={add} style={{ width: '30px', hight: '30px' }} />
           </IconButton>
         )}
       </Stack>
@@ -202,7 +202,7 @@ export default function ProjectChannelMemberPage() {
                   <Typography variant="subtitle1" fontWeight="bold" ml={1}>
                     {msg.title}
                   </Typography>
-                  {Number(msg.has_image) === 1 && (
+                  {Number(msg.has_image) > 0 && (
                     <ImageIcon sx={{ fontSize: 18, color: '#999', ml: '3px', pb: '5px' }} />
                   )}
                 </Stack>

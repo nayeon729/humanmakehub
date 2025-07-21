@@ -140,7 +140,7 @@ export default function ProjectChannel({ role }) {
 
       {/* 사이드바 */}
       {isDesktop && (
-        <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2, mr: 4 }}>
+        <Box sx={{ width: 200, bgcolor: "#f5f5f5", p: 2, boxShadow: 2, mr: 1 }}>
           <Typography variant="h6" fontWeight="bold" mb={2}>
             PROJECT<br />CHANNEL
           </Typography>
