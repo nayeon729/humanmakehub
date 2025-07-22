@@ -171,10 +171,8 @@ const MemberProjectList = () => {
                   fullWidth
                   variant="contained"
                   sx={{
-                    mt: 3,
-                    fontWeight: "bold",
+                    mt: 2,
                     fontSize: "16px",
-                    py: 1.5,
                   }}
                   onClick={() => navigate(`/member/channel/${project.project_id}/common`)}
                 >

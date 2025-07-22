@@ -1022,7 +1022,7 @@ export default function HomePage() {
               </Box>
             </Box>
             {/* 개인정보 동의 */}
-            <Box display="flex" alignItems="center" sx={{ marginTop: "20px" }}>
+            <Box display="flex" alignItems="center" sx={{ marginTop: "50px" }}>
               <input type="checkbox" id="privacy" required style={{ marginRight: 8 }} />
               <label htmlFor="privacy" style={{ fontSize: 14 }}>
                 (필수) 개인정보 수집 및 이용방침에 동의합니다.
@@ -1036,7 +1036,7 @@ export default function HomePage() {
               size="large"
               sx={{
                 width: "200px",
-                marginTop: "30px",
+                marginTop: "40px",
                 backgroundColor: "#1976d2",
                 color: "#fff",
                 fontWeight: "bold",

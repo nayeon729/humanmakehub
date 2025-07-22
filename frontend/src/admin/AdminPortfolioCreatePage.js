@@ -88,7 +88,7 @@ export default function RegisterPage() {
     <Box sx={{ py: 8 }}>
       <Container maxWidth="md">
         <Paper sx={{ p: 4, borderRadius: 4, boxShadow: 5 }}>
-            <>
+            <Box sx={{display:"flex",flexDirection:"column", justifyContent:"center"}}>
               <Typography variant="h5" align="center" fontWeight="bold">포트폴리오 작성</Typography>
               <Stack spacing={2} mt={3}>
                   <TextField
@@ -131,7 +131,7 @@ export default function RegisterPage() {
 
               </Stack>
               {Object.entries(techStacks).map(([category, techs]) => (
-                <Box key={category} sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2 }}>
+                <Box key={category} sx={{ border: "1px solid #ddd", borderRadius: 2, p: 2, gap:1}}>
                     <Typography variant="subtitle1" fontWeight="bold" mb={1}>{category}</Typography>
                     <Stack direction="row" gap={1} flexWrap="wrap">
                     {techs.map((tech) => (
@@ -140,10 +140,10 @@ export default function RegisterPage() {
                     </Stack>
                 </Box>
                 ))}
-              <Button variant="contained" size="large" onClick={handleSubmit}>
+              <Button variant="contained" onClick={handleSubmit} sx={{mt:3, width:"200px"}}>
                 작성 완료
               </Button>
-            </>
+            </Box>
         </Paper>
       </Container>
     </Box>
