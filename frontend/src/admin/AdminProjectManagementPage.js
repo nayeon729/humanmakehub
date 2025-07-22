@@ -12,6 +12,7 @@ import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
 import Pagination from "@mui/material/Pagination";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 export default function AdminProjectManagementPage() {
@@ -33,6 +34,9 @@ export default function AdminProjectManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const pageSize = 5;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const BASE_URL = process.env.REACT_APP_API_URL
   const navigate = useNavigate();
@@ -322,12 +326,12 @@ export default function AdminProjectManagementPage() {
           arrow
         >
           <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff' }} />
+            <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px", color:'#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
               gutterBottom
-              sx={{ mb: 0, cursor: "help", }}>
+              sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px" }}>
               프로젝트 관리
             </Typography>
           </Stack>
@@ -341,7 +345,7 @@ export default function AdminProjectManagementPage() {
             .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-              <Paper elevation={3} sx={{ p: 3, pt: 2, borderRadius: 2, width: 400 }}>
+              <Paper elevation={3} sx={{ p: 3, pt: 2, borderRadius: 2, width: isMobile ? 320 : 400 }}>
                 <Box mb={1}
                   sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <Box sx={{ display: "flex", flex: '4' }}>
@@ -396,7 +400,7 @@ export default function AdminProjectManagementPage() {
                 <Typography variant="body2" gutterBottom>
                   <strong>요구사항:</strong> <br />
                 </Typography>
-                <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '390px', height: '100px', marginLeft: '-3px', marginTop: '5px' }}>
+                <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '310px' : '390px', height: '100px', marginLeft: '-3px', marginTop: '5px' }}>
                   {proj.description}
                 </Box>
                 <Box sx={{ mt: 2 }}>

@@ -9,6 +9,7 @@ import pjadd from '../icon/pjadd.png';
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -22,6 +23,9 @@ export default function AdminProjectManagementPage() {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const role = sessionStorage.getItem("role");
@@ -85,7 +89,7 @@ export default function AdminProjectManagementPage() {
     W01: "대기중",
     W02: "진행중",
     W03: "완료",
-    W04: "기존PM해지 새PM임명중",
+    W04: "새PM임명중",
   };
 
   const urgencyColor = (urgency) => {
@@ -129,19 +133,32 @@ export default function AdminProjectManagementPage() {
             arrow
           >
             <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-              <FolderIcon sx={{ fontSize: 40, mr: "4px",color:'#fde663ff'}} />
+              <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px",color:'#fde663ff'}} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mb: 0, cursor: "help", }}> 전체 프로젝트</Typography>
+                sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px"}}> 전체 프로젝트</Typography>
             </Stack>
           </Tooltip>
           <IconButton onClick={() => navigate("/admin/create")}>
-            <img src={pjadd} alt="추가" style={{ width: 35, height: 30 }} />
+            <img src={pjadd} alt="추가" style={{ width: isMobile ? 30 : 35, height: isMobile ? 25 : 30, marginRight:3 }} />
           </IconButton>
         </Stack>
-        <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
+        <Tabs
+          value={tab}
+          onChange={(e, newVal) => setTab(newVal)}
+          variant={isMobile ? "scrollable" : "standard"}
+          scrollButtons={isMobile ? "auto" : false}
+          sx={{ mb: 2, width: isMobile ? '375px' : '600px',
+            ...(isMobile && {
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            "& .MuiTabs-flexContainer": {
+              flexWrap: "nowrap", // 탭 줄바꿈 방지
+            },
+            }),
+          }}>
           <Tab label="전체" value="all" />
           <Tab label="PM미지정" value="W00" />
           <Tab label="검토 중" value="검토 중" />
@@ -159,7 +176,7 @@ export default function AdminProjectManagementPage() {
             const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
             return (
               <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: 400 }}>
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: isMobile ? 320 : 400 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
                     <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{ backgroundColor: urgencyColor(proj.urgency), color: 'white' }} size="small" />
                     <Typography variant="caption" color="text.secondary">
@@ -197,7 +214,7 @@ export default function AdminProjectManagementPage() {
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
                   </Typography>
-                  <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: '380px', height: '100px' }}>
+                  <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '310px' : '380px', height: '100px' }}>
                     {proj.description}
                   </Box>
                   <Stack
@@ -216,7 +233,7 @@ export default function AdminProjectManagementPage() {
                             borderRadius: "20px",
                             height: "45px",
                             width: "250px",
-                            fontSize: "16px",
+                            fontSize: isMobile ? "12px" : "16px",
                           }}
                           onClick={() => {
                             setSelectedProjectId(proj.project_id);
@@ -233,7 +250,7 @@ export default function AdminProjectManagementPage() {
                             borderRadius: "20px",
                             height: "45px",
                             width: "250px",
-                            fontSize: "16px",
+                            fontSize: isMobile ? "12px" : "16px",
                           }}
                           onClick={() => navigate(`/admin/channel/${proj.project_id}/common`)}
                           disabled={!isManaged}
@@ -248,7 +265,7 @@ export default function AdminProjectManagementPage() {
                           borderRadius: "20px",
                           height: "45px",
                           width: "250px",
-                          fontSize: "16px",
+                          fontSize: isMobile ? "12px" : "16px",
                         }}
                         onClick={() => {
                           setSelectedProjectId(proj.project_id);

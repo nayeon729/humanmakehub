@@ -11,6 +11,7 @@ import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -26,6 +27,10 @@ export default function AdminProjectCreatePage() {
     urgencyLevel: "",
     user_id: "", // ✅ 클라이언트 ID 입력 받기
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +64,7 @@ export default function AdminProjectCreatePage() {
   return (
     <>
       <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3, pl: 2 }}>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -69,26 +74,26 @@ export default function AdminProjectCreatePage() {
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <FolderIcon sx={{ fontSize: 40, mr: "4px",color:'#fde663ff' }} />
+            <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
+              <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px",color:'#fde663ff' }} />
               {/* <img src={Folder} alt="" style={{ height: "35px" }} /> */}
               <Typography
                 variant="h4"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
+                sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px"}}
               >
                 관리자 프로젝트 생성
               </Typography>
-            </Box>
+            </Stack>
           </Tooltip>
         </Box>
-      <Paper sx={{ p: 4, width: 600 }}>
+      <Paper sx={{ marginLeft: 2, p: 3, width: isMobile ? 320 : 600 }}>
         <Stack spacing={3}>
           {/* 1. 기본 정보 */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <LooksOneRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트의 기본 정보를 입력해주세요.</Typography>
+            <LooksOneRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트의 기본 정보를 입력해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 이름"
@@ -104,12 +109,13 @@ export default function AdminProjectCreatePage() {
             groupId="PROJECT_TYPE"
             defaultValue=""
             onSelectionChange={(val) => setFormData((prev) => ({ ...prev, projectType: val }))}
+            sx={{ maxWidth: '100%', fontSize: isMobile ? '13px' : '14px' }}
           />
 
           {/* 2. 설명 */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트에 대해 구체적으로 설명해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 설명"
@@ -124,8 +130,8 @@ export default function AdminProjectCreatePage() {
 
           {/* 3. 기간 & 금액 */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
+            <Looks3RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >예산과 예상 기간을 알려주세요.</Typography>
           </Box>
           <TextField
             label="예상 기간"
@@ -151,8 +157,8 @@ export default function AdminProjectCreatePage() {
 
           {/* 4. 긴급도 */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks4RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
+            <Looks4RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
           </Box>
 
           {/* 클라이언트 ID 입력 */}
@@ -169,11 +175,12 @@ export default function AdminProjectCreatePage() {
             groupId="URGENCY_LEVEL"
             defaultValue=""
             onSelectionChange={(val) => setFormData((prev) => ({ ...prev, urgencyLevel: val }))}
+            sx={{ maxWidth: '100%', fontSize: isMobile ? '13px' : '14px' }}
           />
 
           {/* 5. 제출 */}
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button variant="contained" onClick={handleSubmit}>프로젝트 등록</Button>
+            <Button variant="contained" onClick={handleSubmit} sx={{ fontSize: isMobile ? '13px' : '14px' }}>프로젝트 등록</Button>
           </Box>
         </Stack>
       </Paper>

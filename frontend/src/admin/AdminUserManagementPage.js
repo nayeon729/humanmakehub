@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Box, Typography, Table, TableHead, TableBody, TableRow, TableCell,
   Paper, Button, Select, MenuItem, Chip, Tabs, Tab, Dialog, DialogTitle,
-  DialogContent, DialogContentText, DialogActions, Stack, TextField, Pagination
+  DialogContent, DialogContentText, DialogActions, Stack, TextField, Pagination, TableContainer
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
@@ -12,6 +12,7 @@ import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -32,6 +33,9 @@ export default function AdminUserManagementPage() {
   const [dialogType, setDialogType] = useState(null);    // 예: 'grade', 'role', 'delete', 'recover'
   const [targetUserId, setTargetUserId] = useState("");
   const [userValue, setUserValue] = useState("");
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const role = sessionStorage.getItem("role");
@@ -339,14 +343,27 @@ export default function AdminUserManagementPage() {
           </Box>
         </Tooltip>
       </Box>
-      <Tabs value={tab} onChange={(e, newVal) => setTab(newVal)} sx={{ mb: 2 }}>
+      <Tabs
+        value={tab}
+        onChange={(e, newVal) => setTab(newVal)}
+        variant={isMobile ? "scrollable" : "standard"}
+        scrollButtons={isMobile ? "auto" : false}
+        sx={{ mb: 2, width: isMobile ? '375px' : '500px',
+          ...(isMobile && {
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          "& .MuiTabs-flexContainer": {
+            flexWrap: "nowrap", // 탭 줄바꿈 방지
+          },
+          }),
+        }}>
         <Tab label="전체" value="all" />
         <Tab label="ADMIN" value="R04" />
         <Tab label="PM" value="R03" />
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
       </Tabs>
-      <Stack direction="row" spacing={1} mb={2} alignItems={"center"} justifyContent='center'>
+      <Stack direction="row" spacing={1} mb={2} alignItems={"center"} justifyContent={isMobile ? "flex-start" : "center"}>
         <TextField
           placeholder="아이디 또는 닉네임 검색"
           value={searchKeyword}
@@ -354,34 +371,42 @@ export default function AdminUserManagementPage() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSearch();
           }}
-          sx={{ width: '400px', boxShadow: '3px 3px 6px gray', borderRadius: '5px' }}
+          sx={{ width: isMobile ? '300px' : '400px', boxShadow: '3px 3px 6px gray', borderRadius: '5px' }}
           size="small"
         />
         <Button variant="outlined" onClick={handleSearch} sx={{ backgroundColor: '#2879E3', color: 'white', height: '35px', }}>
           검색
         </Button>
       </Stack>
-      <Paper sx={{ mt: 2, p: 2 }}>
-        <Table>
+      <Paper sx={{ mt: 2, p: 2, width: isMobile ? "340px" : "98%" }}>
+        <Box
+          sx={{
+            overflowX: isMobile ? "auto" : "unset",  // ✅ 모바일만 스크롤
+            width: "100%",
+          }}
+        >
+        <Box sx={{ minWidth: isMobile ? "600px" : "100%" }}>  {/* ✅ 넓이 강제는 모바일에서만 */}
+          <Table sx={{ width: "100%" }}>
           <TableHead>
             <TableRow >
-              <TableCell sx={{ textAlign: 'center' }}>아이디</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>닉네임</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>등급</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>역할</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>이메일</TableCell>
-              <TableCell sx={{ textAlign: 'center' }}>관리</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>아이디</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>닉네임</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>등급</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>역할</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>이메일</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>관리</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {paginatedUsers.map((user) => (
               <TableRow key={user.user_id}>
-                <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
+                <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.user_id}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}><Typography
                   sx={{
                     cursor: "pointer",
                     textDecoration: "none",
-                    "&:hover": { color: "primary.dark" }
+                    "&:hover": { color: "primary.dark" },
+                    fontSize: isMobile ? '11px' : '14px'
                   }}
                   onClick={() => {
                     const path = user.role === "R01"
@@ -413,7 +438,7 @@ export default function AdminUserManagementPage() {
                               window.location.reload(); // ✅ 새로고침으로 되돌림!
                             });
                         }}
-                        sx={{ minWidth: 50 }}
+                        sx={{ maxWidth: isMobile ? '70px' : '80px', fontSize: isMobile ? '11px' : '14px' }}
                       />
 
                     </Box>
@@ -442,16 +467,16 @@ export default function AdminUserManagementPage() {
                               window.location.reload(); // ✅ 새로고침으로 되돌림!
                             });
                         }}
-                        sx={{ minWidth: 50 }}
+                        sx={{ maxWidth: isMobile ? '90px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
                       />
                     </Box>
                   ) : (
-                    <Typography>
+                    <Typography sx={{ fontSize: isMobile ? '11px' : '14px' }}>
                       {getRoleLabel(user.role)}
                     </Typography>
                   )}
                 </TableCell >
-                <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
+                <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.email}</TableCell>
                 <TableCell align="center">
                   {userRole === "R04" && user.role !== "R04" ? (
                     user.del_yn === 'Y' ? (
@@ -463,6 +488,7 @@ export default function AdminUserManagementPage() {
                           setSelectedUserId(user.user_id);
                           setRecoverDialogOpen(true);
                         }}
+                        sx ={{ fontSize: isMobile ? '11px' : '14px' }}
                       >
                         복구
                       </Button>
@@ -475,6 +501,7 @@ export default function AdminUserManagementPage() {
                           setSelectedUserId(user.user_id);
                           setDeleteDialogOpen(true); // 삭제 확인 다이얼로그
                         }}
+                        sx ={{ fontSize: isMobile ? '11px' : '14px' }}
                       >
                         정지
                       </Button>
@@ -489,6 +516,8 @@ export default function AdminUserManagementPage() {
             ))}
           </TableBody>
         </Table>
+        </Box>
+        </Box>
       </Paper>
       <Box mt={2} display="flex" justifyContent="center">
         <Pagination
