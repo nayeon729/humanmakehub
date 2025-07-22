@@ -63,7 +63,7 @@ export default function AdminProjectCreatePage() {
 
   return (
     <>
-      <Box sx={{ p:2, pt:3}}>
+      <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3, pl: 2 }}>
           <Tooltip
             title={
