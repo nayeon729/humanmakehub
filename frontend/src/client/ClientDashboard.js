@@ -63,7 +63,7 @@ export default function ClientDashboard() {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                고객이 의뢰한 프로젝트의 진행도에 대한<br/> 알림을 확인할 수 있는 페이지입니다.
               </Typography>
             }
             placement="right"

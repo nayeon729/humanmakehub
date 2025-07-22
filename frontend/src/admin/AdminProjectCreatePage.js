@@ -68,7 +68,7 @@ export default function AdminProjectCreatePage() {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                PM이 직접 고객을 지정하여 프로젝트를 생성할 수 있는 페이지입니다.
               </Typography>
             }
             placement="right"

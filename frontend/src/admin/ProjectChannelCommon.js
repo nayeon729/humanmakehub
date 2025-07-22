@@ -101,7 +101,7 @@ export default function ProjectChannelCommonPage() {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                팀원들이 공통으로 알아야 하는 프로젝트의 정보에<br/>  대해서 공지하는 페이지입니다.
               </Typography>
             }
             placement="right"

@@ -138,7 +138,7 @@ export default function TopNavbar() {
             <ListItemIcon><ListIcon fontSize="small" /></ListItemIcon>
             <ListItemText>프로젝트 목록</ListItemText>
           </MenuItem>
-          <MenuItem {...commonProps("/member/notice")}>
+          <MenuItem {...commonProps("/member/notice/list")}>
             <ListItemIcon><AnnouncementIcon fontSize="small" /></ListItemIcon>
             <ListItemText>공지사항</ListItemText>
           </MenuItem>
@@ -257,7 +257,7 @@ export default function TopNavbar() {
                 {isChannelPage && (role === "R03" || role === "R04") && (
                   <>
                     <Divider sx={{ my: 1 }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>채널 메뉴</Typography>
+                    <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1, ml:1 }}>채널 메뉴</Typography>
                     {/* ✅ 공용 메뉴 */}
                     <List>
                       <ListItem disablePadding>

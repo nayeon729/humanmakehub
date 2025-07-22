@@ -49,7 +49,7 @@ export default function AdminNoticeCreatePage() {
                 <Tooltip
                     title={
                         <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                            This little budf is <b>really cute</b> 🐤
+                            공지사항을 작성할 수 있는 페이지입니다.
                         </Typography>
                     }
                     placement="right"
