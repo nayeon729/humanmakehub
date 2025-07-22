@@ -319,7 +319,7 @@ export default function AdminUserManagementPage() {
   };
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom:'30px' }}>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>

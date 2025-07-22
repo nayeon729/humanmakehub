@@ -142,7 +142,6 @@ section {
     padding: 60px 10px;
     background: white;
     overflow: hidden;
-    max-width: 1200px;
 }
 
 
@@ -224,24 +223,8 @@ section {
 /*HeroSlider 화면 CSS END*/
 
 
-/* 🔧 슬라이더 높이 조정 */
-.portfolio-slider-container {
-    max-height: 800px;
-    /* 최대 높이 제한 */
-    height: 100%;
-    /* 부모 높이에 맞추기 */
-    overflow: hidden;
-    padding: 0 16px;
-}
 
 /* 🔧 슬라이드 안 요소 정렬 */
-.portfolio-slider-container .slick-slide>div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    box-sizing: border-box;
-}
 
 .portfolio-slide-card {
     height: 200px;
@@ -252,7 +235,7 @@ section {
     flex-direction: column;
     justify-content: space-between;
     background: white;
-    padding: 20px;
+    padding: 5px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     margin: 8px 0;
@@ -277,9 +260,19 @@ section {
     box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-    .portfolio-slider-container {
-        height: calc(100vh - 200px);
-        /* 헤더/마진 고려 */
-    }
+@media (max-width: 800px) {
+  .portfolio-slide-card {
+    min-height: 280px;
+    padding: 12px;
+    text-align: left;
+  }
+
+  .portfolio-slide-card h4 {
+    font-size: 1rem;
+  }
+
+  .portfolio-slide-card p {
+    font-size: 0.88rem;
+    -webkit-line-clamp: 3; /* 3줄 말줄임으로 변경 */
+  }
 }
