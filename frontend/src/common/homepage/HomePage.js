@@ -864,13 +864,11 @@ export default function HomePage() {
                 display: "flex",
                 "@media(max-width:1199px)": { flexDirection: "column", },
                 "@media(min-width:1200px)": { flexDirection: "flex", gap: 4 },
-                // 간격 조금 주면 보기 좋음
               }}>
               <Box
                 sx={{
                   "@media(max-width:1199px)": {marginTop: "10px",},
                   "@media(min-width:1200px)": { marginTop: "35px", },
-                  // 간격 조금 주면 보기 좋음
                 }}>
                 {/* 고객정보 */}
                 <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>

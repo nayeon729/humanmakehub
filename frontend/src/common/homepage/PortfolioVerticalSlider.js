@@ -94,42 +94,44 @@ export default function HomePage() {
                                         if (isClickable) window.open(getValidLink(item.link), "_blank");
                                     }}
                                 >
-                                    <h4>{item.title}</h4>
-                                    <p>{item.content}</p>
+                                    <div className="card-content">
+                                        <h4>{item.title}</h4>
+                                        <p>{item.content}</p>
 
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            gap: 8,
-                                            flexWrap: "wrap",
-                                            marginBottom: 8,
-                                        }}
-                                    >
-                                        {item?.tags &&
-                                            item.tags.map((tag, i) => (
-                                                <span
-                                                    key={i}
-                                                    style={{
-                                                        fontSize: "clamp(11px, 2.3vw, 12px)",
-                                                        backgroundColor: "#e3f2fd",
-                                                        color: "#1976d2",
-                                                        padding: "4px 10px",
-                                                        borderRadius: 20,
-                                                    }}
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                    </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                gap: 8,
+                                                flexWrap: "wrap",
+                                                marginBottom: 8,
+                                            }}
+                                        >
+                                            {item?.tags &&
+                                                item.tags.map((tag, i) => (
+                                                    <span
+                                                        key={i}
+                                                        style={{
+                                                            fontSize: "clamp(11px, 2.3vw, 12px)",
+                                                            backgroundColor: "#e3f2fd",
+                                                            color: "#1976d2",
+                                                            padding: "4px 10px",
+                                                            borderRadius: 20,
+                                                        }}
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                        </div>
 
-                                    <div
-                                        style={{
-                                            fontSize: "clamp(13px, 2.4vw, 14px)",
-                                            color: "#222",
-                                            fontWeight: 600,
-                                        }}
-                                    >
-                                        {item.estimated_dt} · {item.budget}
+                                        <div
+                                            style={{
+                                                fontSize: "clamp(13px, 2.4vw, 14px)",
+                                                color: "#222",
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            {item.estimated_dt} · {item.budget}
+                                        </div>
                                     </div>
                                 </div>
                             );

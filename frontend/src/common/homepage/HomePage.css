@@ -230,10 +230,7 @@ section {
     height: 200px;
     /* ✅ 이걸 고정해야 밀리지 않음 */
     overflow: hidden;
-    /* 글자가 넘치면 말줄임 처리 */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
     background: white;
     padding: 5px 20px;
     border-radius: 12px;
@@ -241,15 +238,25 @@ section {
     margin: 8px 0;
     width: 100%;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items:baseline;
+  height: 100%;
 }
 
 /* 링크가 있는 경우에만 호버와 포인터 효과 */
 .portfolio-slide-card.clickable {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .portfolio-slide-card.clickable:hover {
-  background-color: #f0f8ff;
+    background-color: #f0f8ff;
 }
 
 .slick-slide>div {
@@ -261,18 +268,18 @@ section {
 }
 
 @media (max-width: 800px) {
-  .portfolio-slide-card {
-    min-height: 280px;
-    padding: 12px;
-    text-align: left;
-  }
+    .portfolio-slide-card {
+        min-height: 280px;
+        text-align: left;
+    }
 
-  .portfolio-slide-card h4 {
-    font-size: 1rem;
-  }
+    .portfolio-slide-card h4 {
+        font-size: 1rem;
+    }
 
-  .portfolio-slide-card p {
-    font-size: 0.88rem;
-    -webkit-line-clamp: 3; /* 3줄 말줄임으로 변경 */
-  }
+    .portfolio-slide-card p {
+        font-size: 0.88rem;
+        -webkit-line-clamp: 3;
+        /* 3줄 말줄임으로 변경 */
+    }
 }

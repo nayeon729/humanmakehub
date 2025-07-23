@@ -33,16 +33,25 @@ export default function ClientDashboard() {
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      const token = sessionStorage.getItem("token"); // 또는 sessionStorage.getItem()
+useEffect(() => {
+  const fetchAlerts = async () => {
+    try {
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/common/alerts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlerts(res.data);
-    };
-    fetchAlerts();
-  }, []);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+        navigate("/login");
+      } else {
+        console.error("알림 불러오기 실패", error);
+      }
+    }
+  };
+  fetchAlerts();
+}, [navigate]);
 
   const handleCloseAlert = async (alertId) => {
     try {

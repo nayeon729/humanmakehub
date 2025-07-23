@@ -73,9 +73,9 @@ const HeroSlider = () => {
   centerPadding: "0px",
   slidesToShow: 3,
   autoplay: true,                  
-  autoplaySpeed: 3000,             // 3초 간격
-  infinite: true,                  // 반복
-  pauseOnHover: false,             // 마우스 올려도 멈추지 않게
+  autoplaySpeed: 3000,
+  infinite: true,
+  pauseOnHover: false,
   dots: true,
   arrows: true,
   responsive: [
@@ -90,7 +90,7 @@ const HeroSlider = () => {
 };
 
   return (
-    <div className="hero-slider-container">
+    <div className="hero-slider-container" style={{maxWidth:"1400px"}}>
       <Slider {...settings}>
         {heroSlides.map((slide, idx) => (
           <div key={idx} className="slide-card">

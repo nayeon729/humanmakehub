@@ -1,7 +1,7 @@
 """
 ----------------------------------------------------------------------
 파일명     : admin_routes.py
-설명       : 관리자(Admin) 및 프로젝트 매니저(PM)를 위한 전용 API 라우터
+설명       : 관리자(Admin, R04) 및 프로젝트 매니저(PM R03)를 위한 전용 API 라우터
 
 주요 기능
 ----------------------------------------------------------------------
@@ -840,7 +840,7 @@ async def create_project_channel(
     if user["role"] not in ("R03", "R04"):
         raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
 
-    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    allowed_types = {"image/jpeg","image/jpg", "image/png", "image/gif", "image/webp"}
     UPLOAD_DIR = "C:/Users/admin/uploads/projectchannel"
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -892,7 +892,6 @@ async def create_project_channel(
                 """, (project_id,))
                 team_members = cursor.fetchall()
                 link1 = f"{FRONT_BASE_URL}/member/channel/{project_id}/common"
-                link2 = f"{FRONT_BASE_URL}/member/channel/{project_id}/pm/{user_id}"
                 for member in team_members:
                     target_user = member["user_id"]
                     cursor.execute("""
@@ -908,6 +907,7 @@ async def create_project_channel(
                         user["user_id"]
                     ))
             else:
+                link2 = f"{FRONT_BASE_URL}/member/channel/{project_id}/pm/{user_id}"
                 cursor.execute("""
                     INSERT INTO alerts (target_user, value_id, category, title, message, link, create_dt, create_id)
                     VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
@@ -960,7 +960,7 @@ def get_project_channel_detail(channel_id: int, user: dict = Depends(get_current
             for img in images:
                 if img["file_path"].startswith("C:/Users/admin/uploads"):
                     img["file_path"] = img["file_path"].replace(
-                        "C:/Users/admin/uploads", "http://localhost:8000/static"
+                        "C:/Users/admin/uploads", "http://localhost:8001/static"
                     )
 
             return {
