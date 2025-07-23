@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, Typography, Paper, Grid, Button, LinearProgress, Chip, Stack,
+  Box, Typography, Paper, Grid, Button, LinearProgress, Chip, Stack,useTheme, useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,8 @@ const MemberProjectList = () => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     fetchInvitesAndConfirmed();
   }, []);
@@ -76,18 +77,18 @@ const MemberProjectList = () => {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center" ,mb:3}}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+              작업한 프로젝트와 초대받은 프로젝트를 조회 할 수 있는 페이지입니다.
             </Typography>
           }
           placement="right"
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff'  }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
@@ -98,13 +99,13 @@ const MemberProjectList = () => {
             </Typography>
           </Box>
         </Tooltip>
-        </Box>
+      </Box>
       <Grid container spacing={5}>
         {invites.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>
             <Paper elevation={4} sx={{
               p: 2, borderRadius: 3, display: "flex", flexDirection: "column", justifyContent: "space-between",
-              gap: 1, width: 400, height: 520, overflow: "hidden",
+              gap: 1, width: isMobile?350:400, height: 520, overflow: "hidden",
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />
@@ -123,6 +124,7 @@ const MemberProjectList = () => {
               <Typography variant="body2">예상 예산: {project.budget?.toLocaleString()}원</Typography>
               <Typography variant="body2">요구사항</Typography>
               <Box sx={{
+                overflowX: 'hidden', overflowY: 'auto', wordBreak: 'break-word',
                 border: "1px solid #ccc", borderRadius: 2,
                 padding: 1.5, mt: 0.3, bgcolor: "#f9f9f9", height: 100
               }}>

@@ -133,12 +133,12 @@ export default function AdminProjectManagementPage() {
             arrow
           >
             <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-              <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px",color:'#fde663ff'}} />
+              <FolderIcon sx={{ fontSize:40, mr: "4px",color:'#fde663ff'}} />
               <Typography
                 variant="h4"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px"}}> 전체 프로젝트</Typography>
+                sx={{ mb: 0, cursor: "help", fontSize: "34px"}}> 전체 프로젝트</Typography>
             </Stack>
           </Tooltip>
           <IconButton onClick={() => navigate("/admin/create")}>
@@ -176,7 +176,7 @@ export default function AdminProjectManagementPage() {
             const isManaged = proj.pm_id && proj.pm_id !== null && proj.pm_id !== "미지정";
             return (
               <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: isMobile ? 320 : 400 }}>
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, width: isMobile ? 335 : 400 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
                     <Chip label={urgencyMap[proj.urgency] || "없음"} sx={{ backgroundColor: urgencyColor(proj.urgency), color: 'white' }} size="small" />
                     <Typography variant="caption" color="text.secondary">
@@ -214,7 +214,7 @@ export default function AdminProjectManagementPage() {
                   <Typography variant="body2" gutterBottom>
                     <strong>요구사항:</strong> <br />
                   </Typography>
-                  <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '310px' : '380px', height: '100px' }}>
+                  <Box sx={{ overflowX: 'hidden', overflowY: 'auto', wordBreak: 'break-word', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '95%' : '380px', height: '100px' }}>
                     {proj.description}
                   </Box>
                   <Stack
@@ -284,7 +284,7 @@ export default function AdminProjectManagementPage() {
         </Grid>
       </Box>
       {/* Pagination */}
-      <Box mt={2} display="flex" justifyContent="center">
+      <Box mt={2} mb={2} display="flex" justifyContent="center">
         <Pagination
           count={totalPages}
           page={currentPage}

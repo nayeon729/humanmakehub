@@ -88,7 +88,7 @@ export default function ClientUserEditPage() {
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+              고객의 회원정보를 수정하는 페이지 입니다.
             </Typography>
           }
           placement="right"

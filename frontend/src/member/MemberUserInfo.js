@@ -8,6 +8,8 @@ import {
   Divider,
   Grid,
   Paper,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
@@ -141,10 +143,10 @@ function ReadOnlyView({ userInfo }) {
               <Typography>{userInfo.email} / {userInfo.phone || "-"}</Typography>
             </Box>
 
-            <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Stack direction="row" spacing={1} gap={0.5} flexWrap="wrap">
               {userInfo.skills?.length > 0 ? (
                 userInfo.skills.map((skill) => (
-                  <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1 }}>
+                  <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1}}>
                     <Typography variant="body2">
                       {skill.skill_name} | {skill.is_fresher === "Y" ? "신입" : `${skill.years}년`}
                     </Typography>
@@ -222,7 +224,7 @@ function EditableView({ userInfo, myId }) {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                회원정보를 조회/수정하고 회원탈퇴를 할 수 있는 페이지입니다.
               </Typography>
             }
             placement="right"
@@ -251,7 +253,7 @@ function EditableView({ userInfo, myId }) {
           "& fieldset": { border: "none" },
           borderTop: "1px solid #ddd",
           borderLeft: "1px solid #ddd",
-          height: 650,
+          // height: 650,
         }}>
 
           <Typography variant="h6" gutterBottom>
@@ -265,10 +267,10 @@ function EditableView({ userInfo, myId }) {
             <Typography>{userInfo.email} / {userInfo.phone || "-"}</Typography>
           </Box>
 
-          <Stack direction="row" spacing={1} flexWrap="wrap">
+          <Stack direction="row" spacing={1} gap={0.5}flexWrap="wrap">
             {userInfo.skills?.length > 0 ? (
               userInfo.skills.map((skill) => (
-                <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1 }}>
+                <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1, mt:'1px'}}>
                   <Typography variant="body2">
                     {skill.skill_name} | {skill.is_fresher === "Y" ? "신입" : `${skill.years}년`}
                   </Typography>
@@ -282,23 +284,23 @@ function EditableView({ userInfo, myId }) {
           <Divider sx={{ borderBottomWidth: 2, borderColor: "black", my: 3 }} />
 
           <Stack spacing={2}>
-            <Grid container spacing={30} justifyContent="center">
+            <Grid container spacing={6} justifyContent="center">
               <Grid item xs={12} sm={6} md={5} sx={{ textAlign: "center" }}>
                 <Typography fontWeight="bold" mb={1}>주요 기술</Typography>
                 <Typography sx={{ whiteSpace: "pre-line" }}>{userInfo.tech || "-"}</Typography>
               </Grid>
-              <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
+              <Grid item xs={12} md={6} mb={5} sx={{ textAlign: "center" }}>
                 <Typography fontWeight="bold" mb={1}>경험</Typography>
                 <Typography sx={{ whiteSpace: "pre-line" }}>{userInfo.experience || "-"}</Typography>
               </Grid>
             </Grid>
 
             <Box sx={{ textAlign: "center", mt: 4 }}>
-              <Typography sx={{ mb: 5 }}>
+              <Typography sx={{ mb: 8 }}>
                 <strong>Git 주소</strong>{" "}
                 {userInfo.git ? <a href={userInfo.git} target="_blank" rel="noreferrer">{userInfo.git}</a> : "-"}
               </Typography>
-              <Typography sx={{ mb: 5 }}>
+              <Typography sx={{ mb: 6 }}>
                 <strong>포트폴리오 주소</strong>{" "}
                 {userInfo.portfolio ? <a href={userInfo.portfolio} target="_blank" rel="noreferrer">{userInfo.portfolio}</a> : "-"}
               </Typography>

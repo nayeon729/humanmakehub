@@ -78,7 +78,7 @@ export default function MemberProjectChannel() {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                프로젝트에 필요한 공지사항을 확인 하실 수 있는 페이지 입니다.
               </Typography>
             }
             placement="right"

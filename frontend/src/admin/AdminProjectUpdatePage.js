@@ -6,7 +6,9 @@ import {
   Typography,
   Stack,
   InputAdornment,
-  Paper
+  Paper,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useParams, useNavigate } from "react-router-dom";
@@ -35,7 +37,8 @@ export default function AdminProjectUpdatePage() {
     ugencyLevel: "",
     user_id: "",
   });
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -97,7 +100,7 @@ export default function AdminProjectUpdatePage() {
   };
 
   return (
-    <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
+    <Box sx={{ p: 2, pt: 3 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <Tooltip
           title={
@@ -109,22 +112,23 @@ export default function AdminProjectUpdatePage() {
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px",color:'#fde663ff' }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
               gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >관리자 프로젝트 수정
+              sx={{ mb: 0, cursor: "help", fontSize: "34px" }}
+            >
+            관리자 프로젝트 수정
             </Typography>
           </Box>
         </Tooltip>
       </Box>
-      <Paper sx={{ p: 4, width: 600 }}>
+      <Paper sx={{ p: 2, width: isMobile?'90%':'92%' }}>
         <Stack spacing={3}>
           <Box sx={{ display: "flex", gap: 1 }}>
-            <LooksOneRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트의 기본 정보를 입력해주세요.</Typography>
+            <LooksOneRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx={{fontSize: isMobile ? "17px" : "20px"}}>프로젝트의 기본 정보를 입력해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 이름"
@@ -142,8 +146,8 @@ export default function AdminProjectUpdatePage() {
           />
 
           <Box sx={{ display: "flex", gap: 1 }}>
-            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx={{fontSize: isMobile ? "17px" : "20px"}}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 설명"
@@ -157,8 +161,8 @@ export default function AdminProjectUpdatePage() {
           />
 
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
+            <Looks3RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx={{fontSize: isMobile ? "17px" : "20px"}}>예산과 예상 기간을 알려주세요.</Typography>
           </Box>
           <TextField
             label="예상 기간"
@@ -179,8 +183,8 @@ export default function AdminProjectUpdatePage() {
           />
 
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks4RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
+            <Looks4RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={2} sx={{fontSize: isMobile ? "17px" : "20px"}}>의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
           </Box>
           <TextField
             label="클라이언트 ID"

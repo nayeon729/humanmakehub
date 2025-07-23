@@ -6,6 +6,8 @@ import {
   Paper,
   IconButton,
   Stack,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
@@ -18,6 +20,8 @@ export default function AlertBox({
   onClose,
   color,
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Paper
       elevation={3}
@@ -29,7 +33,7 @@ export default function AlertBox({
         mb: 2,
         borderRadius: 2,
         position: "relative",
-        height: 60,
+        height: isMobile?75:60,
         border:'4px solid ',
         borderColor: color,
       }}
@@ -43,11 +47,11 @@ export default function AlertBox({
       </IconButton>
 
       <Stack direction="row" spacing={2} alignItems="flex-start">
-        <CheckCircleIcon sx={{ fontSize: 26, mt:1, color:color}} />
+        {!isMobile&&(<CheckCircleIcon sx={{ fontSize: 26, mt:1, color:color}} />)}
 
         <Box flexGrow={1}>
           <Typography variant="h8" fontWeight="bold">
-            {title}
+            {isMobile&&(<CheckCircleIcon sx={{ fontSize: 19, color:color, mr:1, mb:-0.5}} />)}{title}
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <Typography variant="body2" sx={{ mt: 1 }}>
@@ -57,7 +61,7 @@ export default function AlertBox({
             {/* 버튼 영역 */}
               <Button
                 variant="text"
-                sx={{ backgroundColor: "transparent", color: color, border:"1px solid",borderColor:color, borderRadius:"10px", position:'absolute', top:'40px',right:'10px', height:'25px'}}
+                sx={{ backgroundColor: "transparent", color: color, border:"1px solid",borderColor:color, borderRadius:"10px", position:'absolute', top:isMobile?'65px':'40px',right:'10px', height:isMobile?'18px':'25px'}}
                 onClick={onConfirm}
               >
                 {confirmText}

@@ -255,9 +255,11 @@ export default function RegisterPage() {
                 </Stack>
               </Box>
             ))}
+            <Box sx={{display:'flex', justifyContent:'center', mt:5}}>
             <Button variant="contained" size="large" onClick={handleSubmit}>
               수정 완료
             </Button>
+            </Box>
           </>
         </Paper>
       </Container>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Button, TextField, Table, TableHead, TableRow,
-    TableCell, TableBody, Paper, Stack, Chip, Pagination
+    TableCell, TableBody, Paper, Stack, Chip, Pagination, useTheme, useMediaQuery
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
@@ -21,6 +21,8 @@ export default function AdminNoticeListPage() {
 
     const itemsPerPage = 10;
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const fetchNotices = async (page = 1, keyword = "") => {
         try {
@@ -67,7 +69,7 @@ export default function AdminNoticeListPage() {
                     <Tooltip
                         title={
                             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                                관리자가 등록한 공지사항을 확인할 수 있는 <br/>화면입니다.
+                                관리자가 등록한 공지사항을 확인할 수 있는 <br />화면입니다.
                             </Typography>
                         }
                         placement="right"
@@ -92,7 +94,7 @@ export default function AdminNoticeListPage() {
                 )}
             </Stack>
 
-            <Stack direction="row" spacing={1} my={2} alignItems={"center"} justifyContent='center'>
+            <Stack direction="row" spacing={1} my={2} alignItems={"center"} justifyContent='center' >
                 <TextField
                     label="검색어를 입력하세요"
                     variant="outlined"
@@ -100,7 +102,7 @@ export default function AdminNoticeListPage() {
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
                     fullWidth
-                    sx={{ width: '400px', boxShadow: '1px 2px 4px #9D9D9D', borderRadius: '5px' }}
+                    sx={{ width: isMobile?'250px':'400px', boxShadow: '1px 2px 4px #9D9D9D', borderRadius: '5px', }}
                 />
                 <Button variant="outlined" onClick={handleSearch} sx={{ backgroundColor: '#2879E3', color: 'white', height: '35px', }}>검색</Button>
             </Stack>
@@ -109,9 +111,9 @@ export default function AdminNoticeListPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>분류</TableCell>
-                            <TableCell>제목</TableCell>
-                            <TableCell>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
+                            <TableCell sx={{textAlign:'center', width:'16%'}}>분류</TableCell>
+                            <TableCell sx={{textAlign:'center', width:isMobile?'50%':'70%'}}>제목</TableCell>
+                            <TableCell sx={{textAlign:'center'}}>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -127,8 +129,8 @@ export default function AdminNoticeListPage() {
                                     sx={{ cursor: 'pointer' }}
                                 >
 
-                                    <TableCell sx={{ textAlign: 'center', width: '140px' }}>
-                                        <Chip label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: '65px' }} />
+                                    <TableCell sx={{ textAlign: 'center'}}>
+                                        <Chip p={0} label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: isMobile?'43px':'65px', fontSize:isMobile?'10px':'12px' }} />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }} >{notice.title}</TableCell>
                                     <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>

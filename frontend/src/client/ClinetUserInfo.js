@@ -130,7 +130,7 @@ function ClientEditableView({ userInfo }) {
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+              고객이 회원정보를 조회/수정하고 <br/> 회원 탈퇴 할 수 있는 페이지입니다.
             </Typography>
           }
           placement="right"

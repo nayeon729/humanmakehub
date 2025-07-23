@@ -47,7 +47,10 @@ export default function AdminProjectManagementPage() {
 
   useEffect(() => {
     if (inviteModalOpen) {
+      setSearchKeyword("");
       handleSearch();
+      
+      
     }
   }, [inviteModalOpen]);
 
@@ -240,6 +243,8 @@ export default function AdminProjectManagementPage() {
       setFilteredDevelopers(res.data.users);
       setTotalCount(res.data.total);
       setCurrentPage(page);
+      
+      
     } catch (error) {
       console.error("개발자 검색 실패", error);
       showAlert("개발자 목록을 불러오지 못했습니다.");
@@ -326,12 +331,12 @@ export default function AdminProjectManagementPage() {
           arrow
         >
           <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px", color:'#fde663ff' }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
               gutterBottom
-              sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px" }}>
+              sx={{ mb: 0, cursor: "help", fontSize: "34px" }}>
               프로젝트 관리
             </Typography>
           </Stack>
@@ -345,7 +350,7 @@ export default function AdminProjectManagementPage() {
             .padStart(2, "0")}.${dateObj.getDate().toString().padStart(2, "0")}`;
           return (
             <Grid item xs={12} sm={6} md={4} key={proj.project_id}>
-              <Paper elevation={3} sx={{ p: 3, pt: 2, borderRadius: 2, width: isMobile ? 320 : 400 }}>
+              <Paper elevation={3} sx={{ p: 3, pt: 2, borderRadius: 2, width: isMobile ? 335 : 400 }}>
                 <Box mb={1}
                   sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <Box sx={{ display: "flex", flex: '4' }}>
@@ -400,7 +405,7 @@ export default function AdminProjectManagementPage() {
                 <Typography variant="body2" gutterBottom>
                   <strong>요구사항:</strong> <br />
                 </Typography>
-                <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '310px' : '390px', height: '100px', marginLeft: '-3px', marginTop: '5px' }}>
+                <Box sx={{ overflowX: 'hidden', overflowY: 'auto', whiteSpace: 'pre-wrap', border: '1px solid #D9D9D9', borderRadius: '5px', p: 1, width: isMobile ? '95%' : '390px', height: '100px', marginLeft: '-3px', marginTop: '5px' }}>
                   {proj.description}
                 </Box>
                 <Box sx={{ mt: 2 }}>
@@ -587,8 +592,8 @@ export default function AdminProjectManagementPage() {
       <Dialog open={inviteModalOpen} onClose={() => setInviteModalOpen(false)}>
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           개발자 초대
-          <button onClick={() => setInviteModalOpen(false)} style={{ color: "red", width: "30px", p: 0, m: 0, border: 'none', backgroundColor: 'transparent' }}>
-            ❌
+          <button onClick={() => setInviteModalOpen(false)} style={{ color: "#e01f1f", width: "30px", p: 0, m: 0, border: 'none', backgroundColor: 'transparent', fontWeight:'800', fontSize:'20px'}}>
+            X
           </button>
         </DialogTitle>
         <DialogContent>
@@ -605,7 +610,7 @@ export default function AdminProjectManagementPage() {
           </Box>
 
           {/* ✅ 필터링 옵션 */}
-          <Box sx={{ display: "flex", gap: 5, mb: 2 }}>
+          <Box sx={{ display: "flex", gap: 6, mb: 2 }}>
             <Box>
               <Typography fontWeight="bold">등급</Typography>
               {["S", "A", "B", "C"].map((rank) => (

@@ -140,9 +140,11 @@ export default function RegisterPage() {
                     </Stack>
                 </Box>
                 ))}
+                <Box sx={{display:'flex', justifyContent:'center'}}>
               <Button variant="contained" onClick={handleSubmit} sx={{mt:3, width:"200px"}}>
                 작성 완료
               </Button>
+              </Box>
             </Box>
         </Paper>
       </Container>

@@ -88,10 +88,10 @@ function App() {
               <Box
                 sx={{
                   width: "100%",
-                  px: 2,
-                  transform: "scale(0.70)", // 모바일 전용 줌
+                  // px: 2,
+                  transform: "scale(1)", // 모바일 전용 줌
                   transformOrigin: "top center",
-                  minWidth: "480px", // 모바일 전용 최소 너비
+                  minWidth: "400px", // 모바일 전용 최소 너비
                 }}
               >
                 <Routes>

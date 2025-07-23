@@ -9,7 +9,7 @@
  */
 
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper } from "@mui/material";
+import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper, useTheme, useMediaQuery } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
 import LooksOneRoundedIcon from '@mui/icons-material/LooksOneRounded';
@@ -34,6 +34,8 @@ const ClientUserInfo = () => {
     ugencyLevel: "",
   });
   const { showAlert } = useAlert();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -63,19 +65,19 @@ const ClientUserInfo = () => {
   };
 
   return (
-    <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-      <Box sx={{ display: "flex", alignItems: "center" ,mb:3}}>
+    <Box sx={{ p: 2, pt: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              의뢰하고 싶은 프로젝트를 생성할 수 있는 <br/>페이지입니다.
+              의뢰하고 싶은 프로젝트를 생성할 수 있는 <br />페이지입니다.
             </Typography>
           }
           placement="right"
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff'  }} />
+            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
@@ -86,12 +88,12 @@ const ClientUserInfo = () => {
             </Typography>
           </Box>
         </Tooltip>
-        </Box>
-      <Paper sx={{ p: 3, width: 600 }}>
+      </Box>
+      <Paper sx={{ p: 2, }}>
         <Stack spacing={3}>
           <Box sx={{ display: "flex", gap: 1 }}>
-            <LooksOneRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트의 기본 정보를 입력해주세요.</Typography>
+            <LooksOneRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }}>프로젝트의 기본 정보를 입력해주세요.</Typography>
           </Box>
           {/* 프로젝트 기본 정보 */}
           <TextField
@@ -110,9 +112,9 @@ const ClientUserInfo = () => {
             onSelectionChange={(val) => setFormData((prevData) => ({ ...prevData, projectType: val }))}
             sx={{ minWidth: 300 }}
           />
-          <Box sx={{ display: "flex", gap: 1}}>
-            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <LooksTwoRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }}>프로젝트에 대해 구체적으로 설명해주세요.</Typography>
           </Box>
           {/* 프로젝트 내용 */}
           <TextField
@@ -121,11 +123,13 @@ const ClientUserInfo = () => {
             value={formData.projectContent}
             onChange={handleChange}
             fullWidth
+            minRows={3}
             required
+            multiline
           />
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks3RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-            <Typography variant="h6" mb={2}>예산과 예상 기간을 알려주세요.</Typography>
+            <Looks3RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }}>예산과 예상 기간을 알려주세요.</Typography>
           </Box>
           {/* 예상 기간 */}
           <TextField
@@ -152,8 +156,8 @@ const ClientUserInfo = () => {
             }}
           />
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Looks4RoundedIcon color="primary" sx={{ fontSize: 32 }} />
-          <Typography variant="h6" mb={2}>프로젝트의 긴급도를 알려주세요.</Typography>
+            <Looks4RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
+            <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }}>프로젝트의 긴급도를 알려주세요.</Typography>
           </Box>
           {/* 프로젝트 긴급도 */}
           <Combo

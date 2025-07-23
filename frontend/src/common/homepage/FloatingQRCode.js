@@ -9,7 +9,7 @@ export default function FloatingQRCode() {
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              This little budf is <b>really cute</b> 🐤
+                오픈채팅으로 이동하여 문의 할 수 있는 QR입니다.
             </Typography>
           }
           placement="left"

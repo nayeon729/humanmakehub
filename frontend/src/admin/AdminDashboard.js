@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, useTheme, useMediaQuery } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,9 @@ export default function AdminDashboard() {
   const BASE_URL = process.env.REACT_APP_API_URL;
   const [alerts, setAlerts] = useState([]);
   const { showAlert } = useAlert();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -120,7 +123,7 @@ export default function AdminDashboard() {
       <Grid container spacing={3} mt={1}>
         {cards.map((card, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
-            <Paper sx={{ py: 8, borderRadius: 2, textAlign: "center", boxShadow: 2, minWidth: '470px' }}>
+            <Paper sx={{ py: 8, borderRadius: 2, textAlign: "center", boxShadow: 2, minWidth: isMobile?'375px':'470px' }}>
               {card.icon}
               <Typography variant="subtitle1" fontWeight={600} mt={1}>
                 {card.title}

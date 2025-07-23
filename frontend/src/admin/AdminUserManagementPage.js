@@ -348,7 +348,7 @@ export default function AdminUserManagementPage() {
         onChange={(e, newVal) => setTab(newVal)}
         variant={isMobile ? "scrollable" : "standard"}
         scrollButtons={isMobile ? "auto" : false}
-        sx={{ mb: 2, width: isMobile ? '375px' : '500px',
+        sx={{ mb: 2, width: isMobile ? '370px' : '500px',
           ...(isMobile && {
           overflowX: "auto",
           whiteSpace: "nowrap",
@@ -363,7 +363,7 @@ export default function AdminUserManagementPage() {
         <Tab label="멤버" value="R02" />
         <Tab label="클라이언트" value="R01" />
       </Tabs>
-      <Stack direction="row" spacing={1} mb={2} alignItems={"center"} justifyContent={isMobile ? "flex-start" : "center"}>
+      <Stack direction="row" spacing={1} mb={2} alignItems={"center"} justifyContent={isMobile ? "center" : "center"}>
         <TextField
           placeholder="아이디 또는 닉네임 검색"
           value={searchKeyword}
@@ -378,19 +378,19 @@ export default function AdminUserManagementPage() {
           검색
         </Button>
       </Stack>
-      <Paper sx={{ mt: 2, p: 2, width: isMobile ? "340px" : "98%" }}>
+      <Paper sx={{ mt: 2, p: 2, width: isMobile ? "350px" : "98%" }}>
         <Box
           sx={{
             overflowX: isMobile ? "auto" : "unset",  // ✅ 모바일만 스크롤
             width: "100%",
           }}
         >
-        <Box sx={{ minWidth: isMobile ? "600px" : "100%" }}>  {/* ✅ 넓이 강제는 모바일에서만 */}
+        <Box sx={{ minWidth: isMobile ? "300px" : "100%" }}>  {/* ✅ 넓이 강제는 모바일에서만 */}
           <Table sx={{ width: "100%" }}>
           <TableHead>
             <TableRow >
               <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>아이디</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>닉네임</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' , minWidth:isMobile?'80px':'100px'}}>닉네임</TableCell>
               <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>등급</TableCell>
               <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>역할</TableCell>
               <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>이메일</TableCell>

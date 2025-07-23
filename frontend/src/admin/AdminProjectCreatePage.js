@@ -63,8 +63,8 @@ export default function AdminProjectCreatePage() {
 
   return (
     <>
-      <Box sx={{ display: "block", justifyContent: "center", py: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3, pl: 2 }}>
+      <Box sx={{ p:2, pt:3}}>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 3, }}>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -74,26 +74,26 @@ export default function AdminProjectCreatePage() {
             placement="right"
             arrow
           >
-            <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-              <FolderIcon sx={{ fontSize: isMobile ? 25 : 40, mr: "4px",color:'#fde663ff' }} />
+            <Stack direction="row" alignItems="center" justifyContent='center' >
+              <FolderIcon sx={{ fontSize: 40, mr: "4px",color:'#fde663ff' }} />
               {/* <img src={Folder} alt="" style={{ height: "35px" }} /> */}
               <Typography
                 variant="h4"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mb: 0, cursor: "help", fontSize: isMobile ? "20px" : "34px"}}
+                sx={{ mb: 0, cursor: "help", fontSize: "34px"}}
               >
-                관리자 프로젝트 생성
+              관리자 프로젝트 생성
               </Typography>
             </Stack>
           </Tooltip>
         </Box>
-      <Paper sx={{ marginLeft: 2, p: 3, width: isMobile ? 320 : 600 }}>
+      <Paper sx={{ p: 2, width: isMobile ? '90%' : '92%' }}>
         <Stack spacing={3}>
           {/* 1. 기본 정보 */}
           <Box sx={{ display: "flex", gap: 1 }}>
             <LooksOneRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
-            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트의 기본 정보를 입력해주세요.</Typography>
+            <Typography variant="h6" mb={0} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트의 기본 정보를 입력해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 이름"
@@ -115,7 +115,7 @@ export default function AdminProjectCreatePage() {
           {/* 2. 설명 */}
           <Box sx={{ display: "flex", gap: 1 }}>
             <LooksTwoRoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
-            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트에 대해 구체적으로 설명해주세요.</Typography>
+            <Typography variant="h6" mb={0} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >프로젝트에 대해 구체적으로 설명해주세요.</Typography>
           </Box>
           <TextField
             label="프로젝트 설명"
@@ -131,7 +131,7 @@ export default function AdminProjectCreatePage() {
           {/* 3. 기간 & 금액 */}
           <Box sx={{ display: "flex", gap: 1 }}>
             <Looks3RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
-            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >예산과 예상 기간을 알려주세요.</Typography>
+            <Typography variant="h6" mb={0} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >예산과 예상 기간을 알려주세요.</Typography>
           </Box>
           <TextField
             label="예상 기간"
@@ -158,7 +158,7 @@ export default function AdminProjectCreatePage() {
           {/* 4. 긴급도 */}
           <Box sx={{ display: "flex", gap: 1 }}>
             <Looks4RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
-            <Typography variant="h6" mb={2} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
+            <Typography variant="h6" mb={0} sx= {{ fontSize: isMobile ? "17px" : "20px" }} >의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
           </Box>
 
           {/* 클라이언트 ID 입력 */}

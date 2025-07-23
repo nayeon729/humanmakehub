@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chip } from "@mui/material";
+import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chip, useTheme, useMediaQuery } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
@@ -13,7 +13,8 @@ export default function getAskList() {
   const [askList, setAskList] = useState([]);
   const token = sessionStorage.getItem("token");
   const { showAlert } = useAlert();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     getAskList();
   }, []);
@@ -61,30 +62,30 @@ export default function getAskList() {
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              고객이 등록한 문의사항을 확인하는 페이지입니다.<br/>
-              이름, 연락처, 문의 항목과 내용을 보고 [확인] 처리를 <br/>할 수 있어요!
+              고객이 등록한 문의사항을 확인하는 페이지입니다.<br />
+              이름, 연락처, 문의 항목과 내용을 보고 [확인] 처리를 <br />할 수 있어요!
             </Typography>
           }
           placement="right"
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                      <HelpSharpIcon  color= 'primary' sx={{ fontSize: "40px", mr: "4px", }}/>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            gutterBottom
-            sx={{ mb: 0, cursor: "help", }}
-          >
-            문의사항 목록
-          </Typography>
+            <HelpSharpIcon color='primary' sx={{ fontSize: "40px", mr: "4px", }} />
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0, cursor: "help", }}
+            >
+              문의사항 목록
+            </Typography>
           </Box>
         </Tooltip>
       </Box>
       {askList && askList.map((list, index) => {
         return (
 
-          <Paper key={index} sx={{ my: 2, p: 2, border: '1px solid #ddd', borderRadius: 2, width: "400px" }}>
+          <Paper key={index} sx={{ my: 2, p: 2, border: '1px solid #ddd', borderRadius: 2, width: isMobile ? "90%" : "95%" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography sx={{ color: "gray", fontWeight: "bold" }}>{list.del_yn == 'Y' ? "확인완료" : "보류"}</Typography>
               <Button onClick={() => handleConfirm(list.ask_id)} sx={{ marginRight: "-10px" }}>확인</Button>

@@ -61,7 +61,7 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
     return "선택하세요";
   };
 
-  const hide_label_groups =["USER_ROLE", "PROJECT_STATUS","USER_GRADE"]
+  const hide_label_groups =["USER_ROLE", "PROJECT_STATUS","USER_GRADE","NOTICE_TYPE"]
    const shouldCreateLabel = !hide_label_groups.includes(groupId);  // 예시: USER_ROLE에선 라벨을 생성하지 않음
 
   return (

@@ -840,7 +840,7 @@ export default function HomePage() {
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                This little budf is <b>really cute</b> 🐤
+                의뢰하고 싶으신 프로젝트를 간략하게 작성해주시면<br/>빠른 시일 내에 연락을 드립니다.
               </Typography>
             }
             placement="right"
@@ -922,15 +922,6 @@ export default function HomePage() {
               <Box>
                 {/* 문의항목 체크 */}
                 <Box sx={{ mt: 4, mb: 4 }}>
-                  <Tooltip
-                    title={
-                      <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                        This little budf is <b>really cute</b> 🐤
-                      </Typography>
-                    }
-                    placement="right"
-                    arrow
-                  >
                     <Typography
                       variant="subtitle1"
                       fontWeight="bold"
@@ -944,7 +935,6 @@ export default function HomePage() {
                     >
                       문의 항목 (중복 선택 가능)
                     </Typography>
-                  </Tooltip>
                   <Box
                     sx={{
                       width: { xs: 350, md: 600 },
@@ -985,15 +975,6 @@ export default function HomePage() {
 
                 {/* 내용 */}
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Tooltip
-                    title={
-                      <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                        This little budf is <b>really cute</b> 🐤
-                      </Typography>
-                    }
-                    placement="right"
-                    arrow
-                  >
                     <Typography
                       variant="subtitle1"
                       fontWeight="bold"
@@ -1007,7 +988,6 @@ export default function HomePage() {
                     >
                       문의 내용 *
                     </Typography>
-                  </Tooltip>
                   <TextField
                     name="askMessage"
                     multiline

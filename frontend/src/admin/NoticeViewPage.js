@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Paper, LinearProgress, Select, MenuItem,
     Slider, Grid, Chip, Stack, Button, Dialog, DialogTitle,
-    DialogContent, DialogContentText, DialogActions,
+    DialogContent, DialogContentText, DialogActions, useTheme,useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,8 @@ export default function AdminNoticeViewPage() {
     const BASE_URL = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const { showAlert } = useAlert();
+    const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         const role = sessionStorage.getItem("role");
@@ -95,15 +97,23 @@ export default function AdminNoticeViewPage() {
                             <Chip
                                 label={noticeTypeMap[notice.target_type] || notice.target_type}
                                 color="primary"
-                                sx={{ mt: 3, mr: 1, width: '65px', pb: '3px' }}
+                                sx={{ mt: 3, mr: 1, width: '65px', pb: '2px', height:'25px' }}
                             />
-                            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ mt: 3 }}>
+                            <Typography fontWeight="bold" gutterBottom sx={{ mt: 3, fontSize:isMobile?'h6':'h5' }}>
                                 {notice.title}
                             </Typography>
                         </Box>
+                        
+                    </Stack>
+                    <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
+
+                    <Box mt={1} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="caption" color="text.secondary">
+                            {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
+                        </Typography>
                         <Box>
                             {["R03", "R04"].includes(userRole) && (
-                                <Box mt={5} sx={{ display: "flex", flexDirection: "row" }}>
+                                <Box sx={{ display: "flex", flexDirection: "row" }}>
                                     <button
                                         style={{ background: "none", width: '35px', border: 'none', padding: '0px', color: 'blue', cursor: 'pointer' }}
                                         onClick={() => navigate(`/admin/notice/${notice.notice_id}/update`)}
@@ -121,14 +131,8 @@ export default function AdminNoticeViewPage() {
 
 
                         </Box>
-                    </Stack>
-                    <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
-
-                    <Box mt={1} sx={{ display: 'flex', justifyContent: 'end' }}>
-                        <Typography variant="caption" color="text.secondary">
-                            {notice.create_dt?.slice(0, 10).replace(/-/g, '.')}
-                        </Typography>
                     </Box>
+                    
                     <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
                         {notice.content}
                     </Typography>
