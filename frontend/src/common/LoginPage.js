@@ -72,7 +72,7 @@ export default function LoginPage() {
   } catch (error) {
     console.error("로그인 실패", error);
     if (error.response?.status === 401) {
-      showAlert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      showAlert(error.response?.data.detail);
     }
     if (error.response?.status === 500) {
       showAlert("아이디 또는 비밀번호가 올바르지 않습니다.");

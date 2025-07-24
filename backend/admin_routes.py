@@ -110,7 +110,7 @@ def get_all_users(user: dict = Depends(get_current_user)):
     try:
         conn = pymysql.connect(**db_config)
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            cursor.execute("SELECT user_id, nickname, email, grade, role, del_yn FROM user")
+            cursor.execute("SELECT user_id, nickname, email, grade, role, status, del_yn FROM user WHERE del_yn = 'N'")
             return cursor.fetchall()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -214,7 +214,7 @@ def update_user_role(user_id: str, update: RoleUpdate, user: dict = Depends(get_
     finally:
         conn.close()
 
-
+# 정지
 @router.delete("/users/{user_id}/delete")
 def delete_user(user_id: str, user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
@@ -224,19 +224,20 @@ def delete_user(user_id: str, user: dict = Depends(get_current_user)):
         with conn.cursor() as cursor:
             cursor.execute("""
                 UPDATE user 
-                SET del_yn = 'Y',
+                SET status = 'N',
                     update_id = %s,
                     update_dt = NOW()
                 WHERE user_id = %s
             """, (user["user_id"], user_id))
         conn.commit()
-        return {"message": "사용자가 삭제되었습니다."}
+        return {"message": "사용자가 정지되었습니다."}
     except Exception as e:
         print("❌ 삭제 중 오류 발생:", e)
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
 
+# 복구
 @router.put("/users/{user_id}/recover")
 def recover_user(user_id: str, user: dict = Depends(get_current_user)):
     if user["role"] not in ("R03", "R04"):
@@ -246,7 +247,7 @@ def recover_user(user_id: str, user: dict = Depends(get_current_user)):
         with conn.cursor() as cursor:
             cursor.execute("""
                 UPDATE user 
-                SET del_yn = 'N',
+                SET status = 'Y',
                     update_id = %s,
                     update_dt = NOW()
                 WHERE user_id = %s

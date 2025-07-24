@@ -64,36 +64,48 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = pymysql.connect(**db_config)
     try:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-            cursor.execute("SELECT * FROM user WHERE user_id = %s AND del_yn = 'N'", (form_data.username,))
+            cursor.execute("SELECT * FROM user WHERE user_id = %s", (form_data.username,))
             user = cursor.fetchone()
 
-        if not user:
-            logger.warning(f"🚫 로그인 실패 (아이디 없음): {form_data.username}")
-            raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 올바르지 않습니다.")
-        
-        if not bcrypt.checkpw(form_data.password.encode(), user["password"].encode()):
-            logger.warning(f"🚫 로그인 실패 (비밀번호 틀림): {form_data.username}")
-            raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 올바르지 않습니다.")
+            if not user:
+                logger.warning("🚫 아이디 없음")
+                raise HTTPException(status_code=401, detail="아이디가 존재하지 않습니다.")
+            
+            if not bcrypt.checkpw(form_data.password.encode(), user["password"].encode()):
+                logger.warning("🚫 비밀번호 오류")
+                raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
 
-        logger.info(f"🎉 로그인 성공: user_id={user['user_id']}, role={user['role']}")
+            if user["del_yn"] == "Y":
+                logger.warning("🚫 탈퇴한 계정")
+                raise HTTPException(status_code=401, detail="탈퇴된 아이디입니다.")
 
+            if user["status"] == "N":
+                logger.warning("🚫 정지된 계정")
+                raise HTTPException(status_code=401, detail="활동이 정지된 아이디입니다.")
+
+            
+
+        # ✅ 커서 블록 종료 후에는 cursor 사용 X
+
+        logger.info(f"🎉 로그인 성공: {user['user_id']}")
         access_token = create_access_token(data={
-            "sub": str(user["user_id"]),
+            "sub": user["user_id"],
             "nickname": user["nickname"],
             "role": user["role"]
         })
 
         return {"access_token": access_token, "token_type": "bearer"}
 
-    except HTTPException as http_exc:
-        # 401 또는 403 오류는 그냥 다시 raise 해주기
-        raise http_exc
-    
+    except HTTPException as e:
+        raise e
+
     except Exception as e:
-        logger.error(f"💥 로그인 중 예외 발생: {str(e)}", exc_info=True)
+        logger.error(f"💥 서버 에러: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
     finally:
         conn.close()
+
 
 # ---------- 내 정보 조회 ----------
 @router.get("/me")

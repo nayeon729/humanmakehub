@@ -230,10 +230,10 @@ export default function AdminUserManagementPage() {
       });
       fetchUsers();
       setDeleteDialogOpen(false);
-      showAlert("✅ 사용자가 삭제(표시)되었습니다.");
+      showAlert("✅ 사용자가 정지(표시)되었습니다.");
     } catch (error) {
-      console.error("❌ 사용자 삭제 실패", error);
-      showAlert("❌ 사용자 삭제에 실패했습니다.");
+      console.error("❌ 사용자 정지 실패", error);
+      showAlert("❌ 사용자 정지에 실패했습니다.");
     }
   };
 
@@ -479,10 +479,10 @@ export default function AdminUserManagementPage() {
                 <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.email}</TableCell>
                 <TableCell align="center">
                   {userRole === "R04" && user.role !== "R04" ? (
-                    user.del_yn === 'Y' ? (
+                    user.status !== 'Y' ? (
                       <Button
                         variant="outlined"
-                        color={user.del_yn === 'Y' ? "success" : "error"}
+                        color={user.status !== 'Y' ? "success" : "error"}
                         size="small"
                         onClick={() => {
                           setSelectedUserId(user.user_id);
@@ -499,7 +499,7 @@ export default function AdminUserManagementPage() {
                         size="small"
                         onClick={() => {
                           setSelectedUserId(user.user_id);
-                          setDeleteDialogOpen(true); // 삭제 확인 다이얼로그
+                          setDeleteDialogOpen(true); // 정지 확인 다이얼로그
                         }}
                         sx ={{ fontSize: isMobile ? '11px' : '14px' }}
                       >
@@ -531,10 +531,10 @@ export default function AdminUserManagementPage() {
         />
       </Box>
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>사용자 삭제 확인</DialogTitle>
+        <DialogTitle>사용자 정지 확인</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            정말로 이 사용자를 삭제하시겠습니까?
+            정말로 이 사용자를 정지하시겠습니까?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -543,7 +543,7 @@ export default function AdminUserManagementPage() {
             setDialogType("delete");
             setDialogOpen(true);
           }} color="error" variant="contained">
-            삭제 확인
+            정지 확인
           </Button>
         </DialogActions>
       </Dialog>
@@ -576,7 +576,7 @@ export default function AdminUserManagementPage() {
           } else if (dialogType === "role") {
             handleRoleChange(targetUserId, userValue, password);   // 역할 변경 처리 함수
           } else if (dialogType === "delete") {
-            handleDeleteConfirm(password); // 삭제 처리 함수
+            handleDeleteConfirm(password); // 정지 처리 함수
           } else if (dialogType === "recover") {
             handleRecoverUser(password); // 복구 처리 함수
           }
