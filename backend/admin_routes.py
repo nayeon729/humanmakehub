@@ -509,6 +509,58 @@ def filter_member_users(
     finally:
         conn.close()
 
+@router.post("/client/filter")
+def filter_client_users(
+    keyword: str = Body(default=""),
+    page: int = Body(default=1),
+    page_size: int = Body(default=5),
+    user: dict = Depends(get_current_user),
+):
+    if user["role"] not in ("R03", "R04"):
+        raise HTTPException(status_code=403, detail="관리자만 접근 가능합니다.")
+
+    try:
+        conn = pymysql.connect(**db_config)
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            offset = (page - 1) * page_size
+            base_sql = """
+                FROM user u
+                WHERE u.role = 'R01' AND u.del_yn = 'N'
+            """
+            where = []
+            params = []
+
+            if keyword:
+                where.append("(u.user_id LIKE %s OR u.email LIKE %s)")
+                params.extend([f"%{keyword}%", f"%{keyword}%"])
+
+            if where:
+                base_sql += " AND " + " AND ".join(where)
+
+            # 전체 개수
+            count_sql = "SELECT COUNT(*) " + base_sql
+            cursor.execute(count_sql, params)
+            total = cursor.fetchone()["COUNT(*)"]
+
+            # 데이터 조회
+            data_sql = f"""
+                SELECT u.user_id, u.nickname, u.email
+                {base_sql}
+                ORDER BY u.user_id DESC
+                LIMIT %s OFFSET %s
+            """
+            cursor.execute(data_sql, params + [page_size, offset])
+            users = cursor.fetchall()
+
+            return {
+                "total": total,
+                "users": users
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
 
 @router.delete("/projects/{project_id}/delete")
 def delete_project(project_id: str, user: dict = Depends(get_current_user)):

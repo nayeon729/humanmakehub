@@ -75,25 +75,27 @@ export default function ClientUserInfo() {
 
 function ClientReadOnlyView({ userInfo }) {
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <AccountCircleIcon sx={{ fontSize: 40, color:'#9d9d9d' }} />
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          클라이언트 정보
-        </Typography>
+    <Box sx={{ p: 2, pt: 3, display: "flex", justifyContent: "center" }}>
+      <Box sx={{ flex: 1, p: 3, maxWidth: "700px" }}>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <AccountCircleIcon sx={{ fontSize: 40, color: '#9d9d9d' }} />
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            클라이언트 정보
+          </Typography>
+        </Box>
+        <Card sx={{ p: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            안녕하세요! <strong>{userInfo.nickname}</strong> 님
+          </Typography>
+          <Divider sx={{ my: 2 }} />
+          <Stack spacing={2}>
+            <InfoItem label="아이디" value={userInfo.user_id} />
+            <InfoItem label="이메일" value={userInfo.email} />
+            <InfoItem label="휴대전화" value={userInfo.phone || "-"} />
+            <InfoItem label="회사명" value={userInfo.company || "-"} />
+          </Stack>
+        </Card>
       </Box>
-      <Card sx={{ p: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          안녕하세요! <strong>{userInfo.nickname}</strong> 님
-        </Typography>
-        <Divider sx={{ my: 2 }} />
-        <Stack spacing={2}>
-          <InfoItem label="아이디" value={userInfo.user_id} />
-          <InfoItem label="이메일" value={userInfo.email} />
-          <InfoItem label="휴대전화" value={userInfo.phone || "-"} />
-          <InfoItem label="회사명" value={userInfo.company || "-"} />
-        </Stack>
-      </Card>
     </Box>
   );
 }
@@ -130,14 +132,14 @@ function ClientEditableView({ userInfo }) {
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              고객이 회원정보를 조회/수정하고 <br/> 회원 탈퇴 할 수 있는 페이지입니다.
+              고객이 회원정보를 조회/수정하고 <br /> 회원 탈퇴 할 수 있는 페이지입니다.
             </Typography>
           }
           placement="right"
           arrow
         >
           <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px", color:'#9d9d9d' }} />
+            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px", color: '#9d9d9d' }} />
             <Typography
               variant="h4"
               fontWeight="bold"
