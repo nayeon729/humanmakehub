@@ -94,10 +94,6 @@ export default function MemberUserInfo() {
   };
   return (
     <>
-      {/* <Typography variant="h4" fontWeight="bold" gutterBottom>
-        <img src={DevIcon} alt="개발자" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} />
-        회원정보
-      </Typography> */}
 
       {isReadonly ? (
         <ReadOnlyView userInfo={userInfo} />
@@ -112,9 +108,8 @@ export default function MemberUserInfo() {
 function ReadOnlyView({ userInfo }) {
   return (
     <>
-      <Box sx={{ p: 2, pt: 3 }}>
-
-        <Box sx={{ flex: 1, p: 3 }}>
+      <Box sx={{ p: 2, pt: 3, display:"flex", justifyContent:"center"}}>
+        <Box sx={{ flex: 1,  maxWidth:"700px"}}>
           <Box sx={{ display: "flex", gap: 1 }}>
             <AccountCircleIcon sx={{ fontSize: 40, mr:'4px', color:'#9d9d9d' }} />
             <Typography variant="h4" fontWeight="bold" gutterBottom>

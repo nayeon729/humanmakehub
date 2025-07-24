@@ -867,13 +867,13 @@ export default function HomePage() {
             <Box
               sx={{
                 display: "flex",
-                "@media(max-width:1199px)": { flexDirection: "column", },
-                "@media(min-width:1200px)": { flexDirection: "flex", gap: 4 },
+                "@media(max-width:1230px)": { flexDirection: "column", },
+                "@media(min-width:1231px)": { flexDirection: "flex", gap: 4 },
               }}>
               <Box
                 sx={{
-                  "@media(max-width:1199px)": {marginTop: "10px",},
-                  "@media(min-width:1200px)": { marginTop: "35px", },
+                  "@media(max-width:1230px)": {marginTop: "10px",},
+                  "@media(min-width:1231px)": { marginTop: "35px", },
                 }}>
                 {/* 고객정보 */}
                 <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>이름*</Typography>

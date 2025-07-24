@@ -140,6 +140,9 @@ export default function RegisterPage() {
     // IPv4 주소 (0~255 범위 숫자들) → ❌
     if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) return false;
 
+    // 도메인이 숫자로만 구성된 label로 시작하는 경우 막기
+    if (/^[0-9]+\./.test(hostname)) return false;
+
     // 여기를 통과하면 도메인처럼 생긴 걸로 판단 → ✅
     return true;
   };
@@ -154,7 +157,11 @@ export default function RegisterPage() {
       if (!isValidHostname(parsed.hostname)) return ""; // 유효하지 않으면 거름
       return parsed.href;
     } catch (e) {
-      const fixed = `https://${trimmed}`;
+      // www.가 이미 있으면 그대로, 없으면 붙여줌
+      const fixed = trimmed.startsWith("www.")
+        ? `https://${trimmed}`
+        : `https://www.${trimmed}`;
+        
       try {
         const parsed = new URL(fixed);
         if (!isValidHostname(parsed.hostname)) return "";

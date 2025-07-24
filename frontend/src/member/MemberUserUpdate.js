@@ -40,7 +40,12 @@ export default function MemberUserEditPage() {
 
   const isValidURL = (url) => {
     try {
-      const parsed = new URL(url);
+      // http나 https 없으면 http:// 붙이기
+      const withProtocol = url.startsWith("http://") || url.startsWith("https://")
+        ? url
+        : "http://" + url;
+
+      const parsed = new URL(withProtocol);
       return parsed.protocol === "http:" || parsed.protocol === "https:";
     } catch {
       return false;
@@ -48,7 +53,7 @@ export default function MemberUserEditPage() {
   };
 
   const isValidGitURL = (url) =>
-    /^https?:\/\/(www\.)?(github\.com|gitlab\.com|bitbucket\.org)\/.+/.test(url);
+    /^(https?:\/\/)?(www\.)?(github\.com|gitlab\.com|bitbucket\.org)\/.+/.test(url);
 
   const toggleTech = (tech) => {
     setSelectedTechs((prev) => {
@@ -115,9 +120,14 @@ export default function MemberUserEditPage() {
   }, []);
 
   const handleSubmit = async (password) => {
-    if (git && !isValidGitURL(git)) return showAlert("유효하지 않은 Git 주소입니다.");
-    if (portfolio && !isValidURL(portfolio))
+    const normalizedLink1 = normalizeLink(git);
+    if (git && !normalizedLink1) {
+      return showAlert("유효하지 않은 Git 주소입니다.");
+    }
+    const normalizedLink2 = normalizeLink(portfolio);
+    if (portfolio && !normalizedLink2) {
       return showAlert("유효하지 않은 포트폴리오 주소입니다.");
+    }
 
     try {
       const token = sessionStorage.getItem("token");
@@ -133,8 +143,8 @@ export default function MemberUserEditPage() {
         {
           tech,
           experience,
-          git,
-          portfolio,
+          git: normalizedLink1,
+          portfolio: normalizedLink2,
           skills: selectedTechs.map((skill) => {
             const detail = skillDetails[skill.code_id] || {};
             return {
@@ -156,6 +166,48 @@ export default function MemberUserEditPage() {
     } catch (err) {
       console.error("수정 실패", err);
       showAlert("수정 중 오류 발생");
+    }
+  };
+
+  const isValidHostname = (hostname) => {
+    // 숫자만 (ex: 652165165) → ❌
+    if (/^[0-9]+$/.test(hostname)) return false;
+
+    // 점(.)이 없음 → ❌ (ex: "localhost"도 거름)
+    if (!hostname.includes(".")) return false;
+
+    // IPv4 주소 (0~255 범위 숫자들) → ❌
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) return false;
+
+    // 도메인이 숫자로만 구성된 label로 시작하는 경우 막기
+    if (/^[0-9]+\./.test(hostname)) return false;
+
+    // 여기를 통과하면 도메인처럼 생긴 걸로 판단 → ✅
+    return true;
+  };
+
+  const normalizeLink = (url) => {
+    if (!url || typeof url !== "string") return "";
+
+    const trimmed = url.trim();
+
+    try {
+      const parsed = new URL(trimmed);
+      if (!isValidHostname(parsed.hostname)) return ""; // 유효하지 않으면 거름
+      return parsed.href;
+    } catch (e) {
+      // www.가 이미 있으면 그대로, 없으면 붙여줌
+      const fixed = trimmed.startsWith("www.")
+        ? `https://${trimmed}`
+        : `https://www.${trimmed}`;
+        
+      try {
+        const parsed = new URL(fixed);
+        if (!isValidHostname(parsed.hostname)) return "";
+        return parsed.href;
+      } catch {
+        return "";
+      }
     }
   };
 
@@ -243,7 +295,7 @@ export default function MemberUserEditPage() {
                   onChange={(e) => {
                     const val = e.target.value;
                     setGit(val);
-                    setGitError(val && !isValidGitURL(val));
+                    setGitError(val && !isValidURL(val));
                   }}
                 />
               </Box>
@@ -301,7 +353,7 @@ export default function MemberUserEditPage() {
               {selectedTechs.map((tech) => (
                 <Paper key={tech.code_id} sx={{ p: 2, bgcolor: "#fafafa" }}>
                   <Typography variant="subtitle2" fontWeight="bold">
-                    {tech.label || tech.code_name} 경력 입력
+                    {tech.label || tech.skill_name} 경력 입력
                   </Typography>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <TextField
