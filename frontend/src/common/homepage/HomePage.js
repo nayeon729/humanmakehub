@@ -109,6 +109,11 @@ export default function HomePage() {
 
       showAlert("🎉 문의가 성공적으로 접수되었습니다!");
 
+      // ✅ 초기화 처리!
+      form.reset();  // 모든 input, textarea 초기화
+      setSelectedItems([]);  // 선택된 Chip 목록 초기화
+      document.querySelector("#privacy").checked = false;  // 체크박스 해제
+
     } catch (err) {
       console.log(err.response?.data?.detail || "문의사항전송중 오류");
     }
@@ -890,7 +895,7 @@ export default function HomePage() {
                   }} />
 
                 <Typography sx={{ fontWeight: "bold", fontSize: "17px", mb: "4px", mt: "4px" }}>연락처*</Typography>
-                <TextField fullWidth name="phone" placeholder="010-1234-5678" variant="outlined" required
+                <TextField fullWidth name="phone" variant="outlined" required
                   sx={{
                     backgroundColor: "#fff", width: { xs: 350, md: 600 },
                     borderRadius: "5px",

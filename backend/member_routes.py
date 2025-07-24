@@ -90,8 +90,23 @@ def withdraw_user(user: dict = Depends(get_current_user)):
     conn = pymysql.connect(**db_config)
     try:
         with conn.cursor() as cursor:
+            # 유저테이블 delyn Y
             cursor.execute("""
                 UPDATE user
+                SET del_yn = 'Y', update_dt = NOW()
+                WHERE user_id = %s AND del_yn = 'N'
+            """, (user["user_id"],))
+
+            # 유저스킬테이블 delyn Y
+            cursor.execute("""
+                UPDATE user_skills
+                SET del_yn = 'Y', update_dt = NOW()
+                WHERE user_id = %s AND del_yn = 'N'
+            """, (user["user_id"],))
+
+            # teammember테이블 delyn Y
+            cursor.execute("""
+                UPDATE team_member
                 SET del_yn = 'Y', update_dt = NOW()
                 WHERE user_id = %s AND del_yn = 'N'
             """, (user["user_id"],))
@@ -564,7 +579,7 @@ async def create_project_channel_with_file(
     if user["role"] != "R02":
         raise HTTPException(status_code=403, detail="관리자 권한 필요")
 
-    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    allowed_types = {"image/jpeg", "image/jpg",  "image/png", "image/gif", "image/webp"}
     UPLOAD_DIR = "C:/Users/admin/uploads/projectchannel"
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -656,7 +671,7 @@ def update_project_channel(
     user: dict = Depends(get_current_user)
 ):
     
-    allowed_types = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    allowed_types = {"image/jpeg", "image/jpg",  "image/png", "image/gif", "image/webp"}
     UPLOAD_DIR = "C:/Users/admin/uploads/projectchannel"
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     try:

@@ -9,6 +9,7 @@
  */
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Stack, InputAdornment, Paper, useTheme, useMediaQuery } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";
@@ -36,6 +37,7 @@ const ClientUserInfo = () => {
   const { showAlert } = useAlert();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -58,6 +60,7 @@ const ClientUserInfo = () => {
         },
       });
       showAlert("프로젝트가 생성되었습니다.");
+      navigate("/client/list");
     } catch (error) {
       console.error("프로젝트 생성 실패:", error);
       showAlert("프로젝트 생성에 실패했습니다.");

@@ -438,7 +438,7 @@ export default function AdminUserManagementPage() {
                               window.location.reload(); // ✅ 새로고침으로 되돌림!
                             });
                         }}
-                        sx={{ maxWidth: isMobile ? '70px' : '80px', fontSize: isMobile ? '11px' : '14px' }}
+                        sx={{ maxWidth: isMobile ? '80px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
                       />
 
                     </Box>

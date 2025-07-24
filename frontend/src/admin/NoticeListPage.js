@@ -63,7 +63,7 @@ export default function AdminNoticeListPage() {
     };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, pt:3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Tooltip

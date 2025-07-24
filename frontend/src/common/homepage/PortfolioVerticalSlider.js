@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-    Box
+    Box, useMediaQuery, useTheme
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,9 +8,8 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import "./HomePage.css"; // 이 파일에 CSS 클래스 작성해야 함
+import "./HomePage.css";
 import axios from "../axiosInstance"
-
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -18,6 +17,8 @@ import "slick-carousel/slick/slick-theme.css";
 export default function HomePage() {
     const BASE_URL = process.env.REACT_APP_API_URL;
     const [portfolio, setPortfolio] = useState([]);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const navigate = useNavigate();
 
@@ -95,7 +96,7 @@ export default function HomePage() {
                                     }}
                                 >
                                     <div className="card-content">
-                                        <h4>{item.title}</h4>
+                                        <h4 style={{ marginBottom: isMobile?"10px":"-3px",marginTop: isMobile?"50px":"30px" }}>{item.title}</h4>
                                         <p>{item.content}</p>
 
                                         <div
@@ -103,7 +104,7 @@ export default function HomePage() {
                                                 display: "flex",
                                                 gap: 8,
                                                 flexWrap: "wrap",
-                                                marginBottom: 8,
+                                                marginBottom: 4,
                                             }}
                                         >
                                             {item?.tags &&

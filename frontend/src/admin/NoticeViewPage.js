@@ -97,7 +97,7 @@ export default function AdminNoticeViewPage() {
                             <Chip
                                 label={noticeTypeMap[notice.target_type] || notice.target_type}
                                 color="primary"
-                                sx={{ mt: 3, mr: 1, width: '65px', pb: '2px', height:'25px' }}
+                                sx={{ mt: 2.5, mr: 1, width: '65px', pb: '2px' }}
                             />
                             <Typography fontWeight="bold" gutterBottom sx={{ mt: 3, fontSize:isMobile?'h6':'h5' }}>
                                 {notice.title}

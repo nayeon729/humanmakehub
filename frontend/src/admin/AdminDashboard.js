@@ -145,7 +145,7 @@ export default function AdminDashboard() {
             description={alert.message}
             confirmText="바로가기"
             onConfirm={() => window.location.href = alert.link}
-            onClose={() => handleCloseshowAlert(alert.alert_id)}
+            onClose={() => handleCloseAlert(alert.alert_id)}
             color={color}
           />
         )

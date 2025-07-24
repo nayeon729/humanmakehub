@@ -118,7 +118,7 @@ export default function AdminProjectManagementPage() {
       showAlert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       return;
     }
-    if (!newProgress) {
+    if (newProgress === undefined || newProgress === null) {
       showAlert("새 상태가 유효하지 않습니다.");
       return;
     }

@@ -230,9 +230,8 @@ section {
     height: 200px;
     /* ✅ 이걸 고정해야 밀리지 않음 */
     overflow: hidden;
-    align-items: center;
     background: white;
-    padding: 5px 20px;
+    padding: 0px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     margin: 8px 0;
@@ -246,8 +245,9 @@ section {
 .card-content {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items:baseline;
-  height: 100%;
+
 }
 
 /* 링크가 있는 경우에만 호버와 포인터 효과 */
