@@ -22,6 +22,7 @@ export default function TopNavbar() {
   const isChannelPage = location.pathname.includes("/channel");
   const [channelMenuOpen, setChannelMenuOpen] = useState(false);
   useEffect(() => {
+    console.log('실행');
     const storedRole = sessionStorage.getItem("role");
     const storedNickname = sessionStorage.getItem("nickname");
     setRole(storedRole);

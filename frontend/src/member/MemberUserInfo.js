@@ -68,30 +68,6 @@ export default function MemberUserInfo() {
 
   if (!userInfo) return <Typography>로딩중...</Typography>;
 
-
-  const handleWithdraw = async (password) => {
-
-    try {
-      const token = sessionStorage.getItem("token");
-
-      // ✅ 먼저 비밀번호 확인
-      await axios.post(`${BASE_URL}/member/verify-password`, { password }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      // ✅ 통과하면 탈퇴 요청
-      await axios.put(`${BASE_URL}/member/withdraw`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      showAlert("탈퇴가 완료되었습니다.");
-      sessionStorage.removeItem("token");
-      navigate("/");
-    } catch (err) {
-      showAlert("비밀번호가 일치하지 않거나 오류 발생");
-      console.error(err);
-    }
-  };
   return (
     <>
 
@@ -205,6 +181,9 @@ function EditableView({ userInfo, myId }) {
 
       showAlert("탈퇴가 완료되었습니다.");
       sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("nickname");
       navigate("/");
     } catch (err) {
       showAlert("비밀번호가 일치하지 않거나 오류 발생");
