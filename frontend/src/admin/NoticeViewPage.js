@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Paper, LinearProgress, Select, MenuItem,
     Slider, Grid, Chip, Stack, Button, Dialog, DialogTitle,
-    DialogContent, DialogContentText, DialogActions, useTheme,useMediaQuery
+    DialogContent, DialogContentText, DialogActions, useTheme, useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Tooltip from "@mui/material/Tooltip";
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function AdminNoticeViewPage() {
     const { noticeId } = useParams();
@@ -20,7 +21,7 @@ export default function AdminNoticeViewPage() {
     const navigate = useNavigate();
     const { showAlert } = useAlert();
     const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         const role = sessionStorage.getItem("role");
@@ -67,8 +68,16 @@ export default function AdminNoticeViewPage() {
 
     return (
         <>
-            <Box sx={{ p: 2 }}>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+            <Box sx={{ p: 2, pt:3 }}>
+                <Stack sx={{ display: 'flex', flexDirection: 'row', mb:'20px' }}>
+                    <Typography
+                        variant="h4"
+                        fontWeight="bold"
+                        gutterBottom
+                        sx={{ mb: 0}}
+                    >
+                        공지사항
+                    </Typography>
                     <Tooltip
                         title={
                             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -78,19 +87,9 @@ export default function AdminNoticeViewPage() {
                         placement="right"
                         arrow
                     >
-                        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                            <CampaignIcon color='error' sx={{ fontSize: 40, mr: "4px" }} />
-                            <Typography
-                                variant="h4"
-                                fontWeight="bold"
-                                gutterBottom
-                                sx={{ mb: 0, cursor: "help", }}
-                            >
-                                공지사항
-                            </Typography>
-                        </Box>
+                        <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
                     </Tooltip>
-                </Box>
+                </Stack>
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2 }}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Box display="flex" direction="row">
@@ -99,11 +98,11 @@ export default function AdminNoticeViewPage() {
                                 color="primary"
                                 sx={{ mt: 2.5, mr: 1, width: '65px', pb: '2px' }}
                             />
-                            <Typography fontWeight="bold" gutterBottom sx={{ mt: 3, fontSize:isMobile?'h6':'h5' }}>
+                            <Typography fontWeight="bold" gutterBottom sx={{ mt: 3, fontSize: isMobile ? 'h6' : 'h5' }}>
                                 {notice.title}
                             </Typography>
                         </Box>
-                        
+
                     </Stack>
                     <hr style={{ border: "none", height: "1px", backgroundColor: "#ccc", opacity: 0.5 }} />
 
@@ -132,7 +131,7 @@ export default function AdminNoticeViewPage() {
 
                         </Box>
                     </Box>
-                    
+
                     <Typography variant="body1" mt={2} sx={{ whiteSpace: "pre-line" }}>
                         {notice.content}
                     </Typography>

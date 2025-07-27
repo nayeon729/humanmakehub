@@ -8,6 +8,7 @@ import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ProjectChannelUpdatePage() {
     const { channel_id, project_id } = useParams();
@@ -163,20 +164,30 @@ export default function ProjectChannelUpdatePage() {
         setImages(prev => prev.filter((_, i) => i !== index));
     };
     return (
-        <Box sx={{ p: 2, pt:3 }}>
+        <Box sx={{ p: 2, pt: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                            <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
-                            <Typography
-                                variant="h4"
-                                fontWeight="bold"
-                                gutterBottom
-                                sx={{ mb: 0, cursor: "help", }}
-                            >
-                                {projectTitle}글 수정
-                            </Typography>
-                        </Box>
+                    <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            gutterBottom
+                            sx={{ mb: 0, }}
+                        >
+                            {projectTitle}글 수정
+                        </Typography>
+                        <Tooltip
+                            title={
+                                <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                                    채널의 글을 수정할 수 있는 페이지입니다.
+                                </Typography>
+                            }
+                            placement="right"
+                            arrow
+                        >
+                            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                        </Tooltip>
+                    </Stack>
                 </Box>
             </Stack>
             <Paper sx={{ p: 3, mt: 2 }}>

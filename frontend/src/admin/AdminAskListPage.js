@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chip, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Chip, useTheme, useMediaQuery, Stack } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 import axios from "../common/axiosInstance"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-import HelpSharpIcon from '@mui/icons-material/HelpSharp';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function getAskList() {
   const navigate = useNavigate();
@@ -57,8 +57,17 @@ export default function getAskList() {
 
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Box sx={{ p: 2, pt: 3 }}>
+
+      <Stack sx={{ display: 'flex', flexDirection: 'row'}}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0 }}
+        >
+          문의사항 목록
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -69,19 +78,12 @@ export default function getAskList() {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <HelpSharpIcon color='primary' sx={{ fontSize: "40px", mr: "4px", }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              문의사항 목록
-            </Typography>
-          </Box>
+
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+
         </Tooltip>
-      </Box>
+      </Stack>
+
       {askList && askList.map((list, index) => {
         return (
 

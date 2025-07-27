@@ -16,6 +16,7 @@ import axios from "../common/axiosInstance"
 import Tooltip from "@mui/material/Tooltip";
 import WorkIcon from '@mui/icons-material/Work';
 import add from "../assets/create.png"
+import HelpIcon from '@mui/icons-material/Help';
 
 const MemberProjectList = () => {
   const navigate = useNavigate();
@@ -72,9 +73,17 @@ const MemberProjectList = () => {
   if (loading) return <Typography variant="h6">로딩 중...</Typography>;
 
   return (
-    <Box sx={{ flex: 1, p: 3 }}>
+    <Box sx={{  p: 2, pt: 3  }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Stack sx={{display:'flex', flexDirection:'row', pl:'2px' }}>
+          <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0}}
+            >
+              포트폴리오 목록
+            </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -85,19 +94,9 @@ const MemberProjectList = () => {
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <WorkIcon  sx={{ fontSize: "40px", mr: "4px", color:'#774000ff' }}/>
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              포트폴리오 목록
-            </Typography>
-            </Box>
+            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
-        </Box>
+        </Stack>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>
           <img src={add} alt="글 생성 아이콘" style={{ width: '30px', height: '30px' }} />
         </IconButton>

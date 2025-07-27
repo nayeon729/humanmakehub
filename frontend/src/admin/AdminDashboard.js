@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Grid, Paper, Typography, List, ListItem, ListItemText, useTheme, useMediaQuery, Stack } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import AlertCard from "../components/AlertCard";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import BeenhereIcon from '@mui/icons-material/Beenhere';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function AdminDashboard() {
 
@@ -95,8 +96,17 @@ export default function AdminDashboard() {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Tooltip
+
+        <Stack sx={{display:'flex', flexDirection:'row'}}>
+          <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0}}
+            >
+              관리자 대시보드
+            </Typography>
+            <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
               관리자만 접근 가능한 대시보드입니다.<br/>
@@ -106,19 +116,9 @@ export default function AdminDashboard() {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <BeenhereIcon color='primary' sx={{ fontSize: "40px", mr: "4px" }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              관리자 대시보드
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
         </Tooltip>
-      </Box>
+        </Stack>
 
       <Grid container spacing={3} mt={1}>
         {cards.map((card, idx) => (

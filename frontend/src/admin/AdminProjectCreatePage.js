@@ -15,6 +15,7 @@ import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
 import { useMediaQuery, useTheme } from "@mui/material";
+import HelpIcon from '@mui/icons-material/Help';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -101,7 +102,15 @@ export default function AdminProjectCreatePage() {
   return (
     <>
       <Box sx={{ p: 2, pt: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3, }}>
+        <Stack sx={{display:'flex', flexDirection:'row', mb:'20px'}}>
+          <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, fontSize: "34px" }}
+              >
+                관리자 프로젝트 생성
+              </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -111,20 +120,9 @@ export default function AdminProjectCreatePage() {
             placement="right"
             arrow
           >
-            <Stack direction="row" alignItems="center" justifyContent='center' >
-              <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
-              {/* <img src={Folder} alt="" style={{ height: "35px" }} /> */}
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", fontSize: "34px" }}
-              >
-                관리자 프로젝트 생성
-              </Typography>
-            </Stack>
+            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
-        </Box>
+        </Stack>
         <Paper sx={{ p: 2, width: isMobile ? '90%' : '92%' }}>
           <Stack spacing={3}>
             {/* 1. 기본 정보 */}

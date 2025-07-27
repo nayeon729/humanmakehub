@@ -6,6 +6,7 @@ import DevIcon from "../assets/dev-icon.png";
 import AlertCard from "../components/AlertCard";
 import Tooltip from "@mui/material/Tooltip";
 import BeenhereIcon from '@mui/icons-material/Beenhere';
+import HelpIcon from '@mui/icons-material/Help';
 
 
 export default function MemberDashboard() {
@@ -51,7 +52,15 @@ export default function MemberDashboard() {
   return (
     <Box sx={{ p: 2, pt: 3 }}>
 
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0}}
+        >
+          개발자 대시보드
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -61,19 +70,9 @@ export default function MemberDashboard() {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <BeenhereIcon color='primary' sx={{ fontSize: "40px", mr: "4px" }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              개발자 대시보드
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
-      </Box>
+      </Stack>
 
 
       {alerts.map((alert) => {

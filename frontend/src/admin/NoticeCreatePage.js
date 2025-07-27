@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    Box, TextField, Typography, Button, MenuItem, Paper
+    Box, TextField, Typography, Button, MenuItem, Paper, Stack
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import Combo from "../components/Combo";
 import { useAlert } from "../components/CommonAlert";
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Tooltip from "@mui/material/Tooltip";
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function AdminNoticeCreatePage() {
     const [title, setTitle] = useState("");
@@ -44,8 +45,16 @@ export default function AdminNoticeCreatePage() {
     };
 
     return (
-        <Box sx={{ p: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Box sx={{  p: 2, pt: 3  }}>
+            <Stack sx={{ display: 'flex', flexDirection: 'row' , mb:'20px',pl:'2px' }}>
+                <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    gutterBottom
+                    sx={{ mb: 0}}
+                >
+                    공지 사항 작성
+                </Typography>
                 <Tooltip
                     title={
                         <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -55,19 +64,9 @@ export default function AdminNoticeCreatePage() {
                     placement="right"
                     arrow
                 >
-                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                        <CampaignIcon color='error' sx={{ fontSize: 40, mr: "4px"}} />
-                        <Typography
-                            variant="h4"
-                            fontWeight="bold"
-                            gutterBottom
-                            sx={{ mb: 0, cursor: "help", }}
-                        >
-                            공지 사항 작성
-                        </Typography>
-                    </Box>
+                    <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
                 </Tooltip>
-            </Box>
+            </Stack>
             <Paper sx={{ p: 3, mt: 2 }}>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="body2" fontWeight={600}>제목</Typography>

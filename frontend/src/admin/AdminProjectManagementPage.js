@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
 import Pagination from "@mui/material/Pagination";
 import { useMediaQuery, useTheme } from "@mui/material";
+import HelpIcon from '@mui/icons-material/Help';
 
 
 export default function AdminProjectManagementPage() {
@@ -49,8 +50,8 @@ export default function AdminProjectManagementPage() {
     if (inviteModalOpen) {
       setSearchKeyword("");
       handleSearch();
-      
-      
+
+
     }
   }, [inviteModalOpen]);
 
@@ -243,8 +244,8 @@ export default function AdminProjectManagementPage() {
       setFilteredDevelopers(res.data.users);
       setTotalCount(res.data.total);
       setCurrentPage(page);
-      
-      
+
+
     } catch (error) {
       console.error("개발자 검색 실패", error);
       showAlert("개발자 목록을 불러오지 못했습니다.");
@@ -319,27 +320,25 @@ export default function AdminProjectManagementPage() {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+      <Stack sx={{ display: 'flex', flexDirection: 'row', mb:"15px"}}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0,  fontSize: "34px" }}>
+          프로젝트 관리
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              담당한 프로젝트 상세 정보를 확인하는 페이지입니다.<br/>
-              진행률 조정, 상태 변경, 멤버 관리를 할 수 있고 <br/>프로젝트 채널을 통해 팀원과의 소통이 가능합니다.
+              담당한 프로젝트 상세 정보를 확인하는 페이지입니다.<br />
+              진행률 조정, 상태 변경, 멤버 관리를 할 수 있고 <br />프로젝트 채널을 통해 팀원과의 소통이 가능합니다.
             </Typography>
           }
           placement="right"
           arrow
         >
-          <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color:'#fde663ff' }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", fontSize: "34px" }}>
-              프로젝트 관리
-            </Typography>
-          </Stack>
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
       </Stack>
       <Grid container spacing={3}>
@@ -592,7 +591,7 @@ export default function AdminProjectManagementPage() {
       <Dialog open={inviteModalOpen} onClose={() => setInviteModalOpen(false)}>
         <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           개발자 초대
-          <button onClick={() => setInviteModalOpen(false)} style={{ color: "#e01f1f", width: "30px", p: 0, m: 0, border: 'none', backgroundColor: 'transparent', fontWeight:'800', fontSize:'20px'}}>
+          <button onClick={() => setInviteModalOpen(false)} style={{ color: "#e01f1f", width: "30px", p: 0, m: 0, border: 'none', backgroundColor: 'transparent', fontWeight: '800', fontSize: '20px' }}>
             X
           </button>
         </DialogTitle>

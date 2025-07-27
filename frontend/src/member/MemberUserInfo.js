@@ -19,7 +19,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useParams, useSearchParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
-
+import HelpIcon from '@mui/icons-material/Help';
 
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -84,10 +84,10 @@ export default function MemberUserInfo() {
 function ReadOnlyView({ userInfo }) {
   return (
     <>
-      <Box sx={{ p: 2, pt: 3, display:"flex", justifyContent:"center"}}>
-        <Box sx={{ flex: 1,  maxWidth:"700px"}}>
+      <Box sx={{ p: 2, pt: 3, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ flex: 1, maxWidth: "700px" }}>
           <Box sx={{ display: "flex", gap: 1 }}>
-            <AccountCircleIcon sx={{ fontSize: 40, mr:'4px', color:'#9d9d9d' }} />
+            <AccountCircleIcon sx={{ fontSize: 40, mr: '4px', color: '#9d9d9d' }} />
             <Typography variant="h4" fontWeight="bold" gutterBottom>
               회원정보
             </Typography>
@@ -117,7 +117,7 @@ function ReadOnlyView({ userInfo }) {
             <Stack direction="row" spacing={1} gap={0.5} flexWrap="wrap">
               {userInfo.skills?.length > 0 ? (
                 userInfo.skills.map((skill) => (
-                  <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1}}>
+                  <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1 }}>
                     <Typography variant="body2">
                       {skill.skill_name} | {skill.is_fresher === "Y" ? "신입" : `${skill.years}년`}
                     </Typography>
@@ -194,7 +194,15 @@ function EditableView({ userInfo, myId }) {
   return (
     <>
       <Box sx={{ p: 2, pt: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ mb: 0,}}
+          >
+            회원정보
+          </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -204,19 +212,9 @@ function EditableView({ userInfo, myId }) {
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <AccountCircleIcon sx={{ fontSize: 40, mr: "4px", color:'#9d9d9d'  }} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                회원정보
-              </Typography>
-            </Box>
+            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
           </Tooltip>
-        </Box>
+        </Stack>
         <Paper sx={{
           p: 3,
           mt: 2,
@@ -241,10 +239,10 @@ function EditableView({ userInfo, myId }) {
             <Typography>{userInfo.email} / {userInfo.phone || "-"}</Typography>
           </Box>
 
-          <Stack direction="row" spacing={1} gap={0.5}flexWrap="wrap">
+          <Stack direction="row" spacing={1} gap={0.5} flexWrap="wrap">
             {userInfo.skills?.length > 0 ? (
               userInfo.skills.map((skill) => (
-                <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1, mt:'1px'}}>
+                <Box key={skill.code_id} sx={{ px: 2, py: 1, bgcolor: "#f0f0f0", borderRadius: 3, mb: 1, mt: '1px' }}>
                   <Typography variant="body2">
                     {skill.skill_name} | {skill.is_fresher === "Y" ? "신입" : `${skill.years}년`}
                   </Typography>

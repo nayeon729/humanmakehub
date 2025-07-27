@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import { useMediaQuery, useTheme } from "@mui/material";
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
@@ -319,42 +320,41 @@ export default function AdminUserManagementPage() {
   };
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", marginBottom:'30px' }}>
+      <Stack sx={{ display: 'flex', flexDirection: 'row', mt:'2px',mb:'25px'}}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0 }}
+        >
+          회원정보
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
-              회원들의 역할과 등급을 확인하고 관리할 수 있어요!<br/>
+              회원들의 역할과 등급을 확인하고 관리할 수 있어요!<br />
               사용자 닉네임을 클릭하면 회원정보를 조회 할 수 있습니다.
             </Typography>
           }
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <AccountCircleIcon sx={{ fontSize: "40px", mr: "4px" , color:'#9d9d9d'}} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              회원정보
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
-      </Box>
+      </Stack>
       <Tabs
         value={tab}
         onChange={(e, newVal) => setTab(newVal)}
         variant={isMobile ? "scrollable" : "standard"}
         scrollButtons={isMobile ? "auto" : false}
-        sx={{ mb: 2, width: isMobile ? '370px' : '500px',
+        sx={{
+          mb: 2, width: isMobile ? '370px' : '500px',
           ...(isMobile && {
-          overflowX: "auto",
-          whiteSpace: "nowrap",
-          "& .MuiTabs-flexContainer": {
-            flexWrap: "nowrap", // 탭 줄바꿈 방지
-          },
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            "& .MuiTabs-flexContainer": {
+              flexWrap: "nowrap", // 탭 줄바꿈 방지
+            },
           }),
         }}>
         <Tab label="전체" value="all" />
@@ -385,138 +385,138 @@ export default function AdminUserManagementPage() {
             width: "100%",
           }}
         >
-        <Box sx={{ minWidth: isMobile ? "300px" : "100%" }}>  {/* ✅ 넓이 강제는 모바일에서만 */}
-          <Table sx={{ width: "100%" }}>
-          <TableHead>
-            <TableRow >
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>아이디</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' , minWidth:isMobile?'80px':'100px'}}>닉네임</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>등급</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>역할</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>이메일</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>관리</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedUsers.map((user) => (
-              <TableRow key={user.user_id}>
-                <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.user_id}</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}><Typography
-                  sx={{
-                    cursor: "pointer",
-                    textDecoration: "none",
-                    "&:hover": { color: "primary.dark" },
-                    fontSize: isMobile ? '11px' : '14px'
-                  }}
-                  onClick={() => {
-                    const path = user.role === "R01"
-                      ? `/admin/client/${user.user_id}?readonly=1`
-                      : `/admin/member/${user.user_id}?readonly=1`;
-                    navigate(path);
-                  }}
-                >
-                  {user.nickname}
-                </Typography></TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  {user.role === "R02" ? (
-                    <Box>
-                      <Combo
-                        groupId="USER_GRADE"
-                        defaultValue={user.grade}
-                        onSelectionChange={(val) => {
-                          const userCheck = users.find(u => u.user_id === user.user_id);
-                          if (!userCheck || userCheck.grade === val) return; // 🔒 변경 안 됐으면 바로 리턴
+          <Box sx={{ minWidth: isMobile ? "300px" : "100%" }}>  {/* ✅ 넓이 강제는 모바일에서만 */}
+            <Table sx={{ width: "100%" }}>
+              <TableHead>
+                <TableRow >
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>아이디</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px', minWidth: isMobile ? '80px' : '100px' }}>닉네임</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>등급</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>역할</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>이메일</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>관리</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedUsers.map((user) => (
+                  <TableRow key={user.user_id}>
+                    <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.user_id}</TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}><Typography
+                      sx={{
+                        cursor: "pointer",
+                        textDecoration: "none",
+                        "&:hover": { color: "primary.dark" },
+                        fontSize: isMobile ? '11px' : '14px'
+                      }}
+                      onClick={() => {
+                        const path = user.role === "R01"
+                          ? `/admin/client/${user.user_id}?readonly=1`
+                          : `/admin/member/${user.user_id}?readonly=1`;
+                        navigate(path);
+                      }}
+                    >
+                      {user.nickname}
+                    </Typography></TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {user.role === "R02" ? (
+                        <Box>
+                          <Combo
+                            groupId="USER_GRADE"
+                            defaultValue={user.grade}
+                            onSelectionChange={(val) => {
+                              const userCheck = users.find(u => u.user_id === user.user_id);
+                              if (!userCheck || userCheck.grade === val) return; // 🔒 변경 안 됐으면 바로 리턴
 
-                          showConfirm("등급을 변경하시겠습니까?", () => {
-                            setTargetUserId(user.user_id);
-                            setUserValue(val);
+                              showConfirm("등급을 변경하시겠습니까?", () => {
+                                setTargetUserId(user.user_id);
+                                setUserValue(val);
 
-                            setDialogType("grade");
-                            setDialogOpen(true);
-                          },
-                            () => {
-                              window.location.reload(); // ✅ 새로고침으로 되돌림!
-                            });
-                        }}
-                        sx={{ maxWidth: isMobile ? '80px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
-                      />
+                                setDialogType("grade");
+                                setDialogOpen(true);
+                              },
+                                () => {
+                                  window.location.reload(); // ✅ 새로고침으로 되돌림!
+                                });
+                            }}
+                            sx={{ maxWidth: isMobile ? '80px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
+                          />
 
-                    </Box>
-                  ) : (
-                    <Typography />
-                  )}
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  {userRole === "R04" && user.role !== "R01" && user.role !== "R04" ? (
-                    <Box>
-                      <Combo
-                        groupId="USER_ROLE"
-                        defaultValue={user.role}
-                        onSelectionChange={(val) => {
-                          const userCheck = users.find(u => u.user_id === user.user_id);
-                          if (!userCheck || userCheck.role === val) return; // 🔒 변경 안 됐으면 바로 리턴
+                        </Box>
+                      ) : (
+                        <Typography />
+                      )}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {userRole === "R04" && user.role !== "R01" && user.role !== "R04" ? (
+                        <Box>
+                          <Combo
+                            groupId="USER_ROLE"
+                            defaultValue={user.role}
+                            onSelectionChange={(val) => {
+                              const userCheck = users.find(u => u.user_id === user.user_id);
+                              if (!userCheck || userCheck.role === val) return; // 🔒 변경 안 됐으면 바로 리턴
 
-                          showConfirm("역할을 변경하시겠습니까?", () => {
-                            setTargetUserId(user.user_id);
-                            setUserValue(val);
+                              showConfirm("역할을 변경하시겠습니까?", () => {
+                                setTargetUserId(user.user_id);
+                                setUserValue(val);
 
-                            setDialogType("role");
-                            setDialogOpen(true);
-                          },
-                            () => {
-                              window.location.reload(); // ✅ 새로고침으로 되돌림!
-                            });
-                        }}
-                        sx={{ maxWidth: isMobile ? '90px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
-                      />
-                    </Box>
-                  ) : (
-                    <Typography sx={{ fontSize: isMobile ? '11px' : '14px' }}>
-                      {getRoleLabel(user.role)}
-                    </Typography>
-                  )}
-                </TableCell >
-                <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.email}</TableCell>
-                <TableCell align="center">
-                  {userRole === "R04" && user.role !== "R04" ? (
-                    user.status !== 'Y' ? (
-                      <Button
-                        variant="outlined"
-                        color={user.status !== 'Y' ? "success" : "error"}
-                        size="small"
-                        onClick={() => {
-                          setSelectedUserId(user.user_id);
-                          setRecoverDialogOpen(true);
-                        }}
-                        sx ={{ fontSize: isMobile ? '11px' : '14px' }}
-                      >
-                        복구
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        size="small"
-                        onClick={() => {
-                          setSelectedUserId(user.user_id);
-                          setDeleteDialogOpen(true); // 정지 확인 다이얼로그
-                        }}
-                        sx ={{ fontSize: isMobile ? '11px' : '14px' }}
-                      >
-                        정지
-                      </Button>
-                    )
-                  ) : (
-                    <Typography>
-                      -
-                    </Typography>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        </Box>
+                                setDialogType("role");
+                                setDialogOpen(true);
+                              },
+                                () => {
+                                  window.location.reload(); // ✅ 새로고침으로 되돌림!
+                                });
+                            }}
+                            sx={{ maxWidth: isMobile ? '90px' : '100px', fontSize: isMobile ? '11px' : '14px' }}
+                          />
+                        </Box>
+                      ) : (
+                        <Typography sx={{ fontSize: isMobile ? '11px' : '14px' }}>
+                          {getRoleLabel(user.role)}
+                        </Typography>
+                      )}
+                    </TableCell >
+                    <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '11px' : '14px' }}>{user.email}</TableCell>
+                    <TableCell align="center">
+                      {userRole === "R04" && user.role !== "R04" ? (
+                        user.status !== 'Y' ? (
+                          <Button
+                            variant="outlined"
+                            color={user.status !== 'Y' ? "success" : "error"}
+                            size="small"
+                            onClick={() => {
+                              setSelectedUserId(user.user_id);
+                              setRecoverDialogOpen(true);
+                            }}
+                            sx={{ fontSize: isMobile ? '11px' : '14px' }}
+                          >
+                            복구
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            onClick={() => {
+                              setSelectedUserId(user.user_id);
+                              setDeleteDialogOpen(true); // 정지 확인 다이얼로그
+                            }}
+                            sx={{ fontSize: isMobile ? '11px' : '14px' }}
+                          >
+                            정지
+                          </Button>
+                        )
+                      ) : (
+                        <Typography>
+                          -
+                        </Typography>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
         </Box>
       </Paper>
       <Box mt={2} display="flex" justifyContent="center">

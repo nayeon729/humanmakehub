@@ -19,6 +19,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import Tooltip from "@mui/material/Tooltip";
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import Pagination from "@mui/material/Pagination";
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ProjectChannelPmPage() {
   const { project_id, user_id } = useParams();
@@ -148,7 +149,15 @@ export default function ProjectChannelPmPage() {
     <Box sx={{ p: 2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Stack sx={{display:'flex', flexDirection:'row'}}>
+            <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ mb: 0 }}
+                >
+                  {projectTitle}
+                </Typography>
             <Tooltip
               title={
                 <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -158,19 +167,9 @@ export default function ProjectChannelPmPage() {
               placement="right"
               arrow
             >
-              <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
-                <Typography
-                  variant="h4"
-                  fontWeight="bold"
-                  gutterBottom
-                  sx={{ mb: 0, cursor: "help", }}
-                >
-                  {projectTitle}
-                </Typography>
-              </Box>
+              <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
             </Tooltip>
-          </Box>
+          </Stack>
         </Stack>
         <IconButton
           onClick={() => navigate(`/member/channel/${project_id}/create`)}

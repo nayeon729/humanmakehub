@@ -10,6 +10,10 @@ import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
 import { useMediaQuery, useTheme } from "@mui/material";
+import HelpIcon from '@mui/icons-material/Help';
+
+
+
 
 export default function AdminProjectManagementPage() {
   const [projects, setProjects] = useState([]);
@@ -122,6 +126,12 @@ export default function AdminProjectManagementPage() {
     <>
       <Box sx={{ p: 2, pt: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
+          <Stack sx={{display:'flex', flexDirection:'row'}}>
+          <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0, fontSize: "34px"}}> 전체 프로젝트</Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -132,15 +142,9 @@ export default function AdminProjectManagementPage() {
             placement="right"
             arrow
           >
-            <Stack direction="row" alignItems="center" justifyContent='center' spacing={1}>
-              <FolderIcon sx={{ fontSize:40, mr: "4px",color:'#fde663ff'}} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", fontSize: "34px"}}> 전체 프로젝트</Typography>
-            </Stack>
+            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
+          </Stack>
           <IconButton onClick={() => navigate("/admin/create")}>
             <img src={pjadd} alt="추가" style={{ width: isMobile ? 30 : 35, height: isMobile ? 25 : 30, marginRight:3 }} />
           </IconButton>

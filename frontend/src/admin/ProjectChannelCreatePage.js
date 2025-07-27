@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ProjectChannelCreatePage() {
   const [title, setTitle] = useState("");
@@ -21,6 +22,7 @@ export default function ProjectChannelCreatePage() {
   const { showAlert } = useAlert();
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
+  
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
@@ -145,7 +147,15 @@ export default function ProjectChannelCreatePage() {
   return (
     <Box sx={{p:2, pt: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Stack sx={{display:'flex', flexDirection:'row'}}>
+          <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0,}}
+              >
+                {projectTitle} 글 작성
+              </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -155,19 +165,9 @@ export default function ProjectChannelCreatePage() {
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                {projectTitle} 글 작성
-              </Typography>
-            </Box>
+            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
-        </Box>
+        </Stack>
       </Stack>
 
       <Paper sx={{ p: 3, mt: 2 }}>

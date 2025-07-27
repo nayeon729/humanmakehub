@@ -10,12 +10,13 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Paper, Grid, Button, LinearProgress, Chip, useTheme, useMediaQuery, Stack } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import HelpIcon from '@mui/icons-material/Help';
 
 const ClientProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -73,7 +74,15 @@ const ClientProjectList = () => {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+      <Stack sx={{display:'flex', flexDirection:'row', mb:'20px'}}>
+        <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ mb: 0 }}
+            >
+              프로젝트 목록
+            </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -83,19 +92,9 @@ const ClientProjectList = () => {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              프로젝트 목록
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
         </Tooltip>
-      </Box>
+      </Stack>
       <Box sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Grid container spacing={5} >
           {projects.map((project) => (

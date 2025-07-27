@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
-
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ProjectChannelViewPage() {
     const { project_id, channel_id } = useParams();
@@ -61,7 +61,7 @@ export default function ProjectChannelViewPage() {
 
         try {
             const token = sessionStorage.getItem("token");
-            const userRole = sessionStorage.getItem("role"); 
+            const userRole = sessionStorage.getItem("role");
 
             const rolePath = (userRole === "R02")
                 ? "member"
@@ -88,17 +88,27 @@ export default function ProjectChannelViewPage() {
             <Box sx={{ flex: 1, p: 3 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                        <Stack sx={{display:'flex', flexDirection:'row'}}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
                                 gutterBottom
-                                sx={{ mb: 0, cursor: "help", }}
+                                sx={{ mb: 0}}
                             >
                                 {projectTitle}
                             </Typography>
-                        </Box>
+                            <Tooltip
+                                title={
+                                    <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                                     채널의 글을 상세히 확인 할 수 있는 페이지입니다.
+                                    </Typography>
+                                }
+                                placement="right"
+                                arrow
+                            >
+                                <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                            </Tooltip>
+                        </Stack>
                     </Box>
                 </Stack>
                 <Paper sx={{ p: 3, pt: 0, borderRadius: 2, mt: 3 }}>
@@ -115,7 +125,7 @@ export default function ProjectChannelViewPage() {
                                     <Button
                                         sx={{ color: '#1976d2', fontSize: '12px', minWidth: '20px' }}
                                         onClick={() => {
-                                            const role = sessionStorage.getItem("role");  
+                                            const role = sessionStorage.getItem("role");
                                             const basePath = role === "R02" ? "member" : "admin";
                                             navigate(`/${basePath}/channel/${project_id}/update/${channel.channel_id}`);
                                         }}

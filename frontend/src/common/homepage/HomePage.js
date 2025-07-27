@@ -13,7 +13,6 @@ import FloatingQRCode from "./FloatingQRCode";
 import HeroSlider from "./HeroSlider";
 import PortfolioVerticalSlider from "./PortfolioVerticalSlider";
 import { useAlert } from "../../components/CommonAlert";
-import Tooltip from "@mui/material/Tooltip";
 
 
 export default function HomePage() {
@@ -842,17 +841,7 @@ export default function HomePage() {
       <section className="contact_wrap" id="contactSection" style={{ backgroundColor: "#ffb300", padding: "96px 0", display: "column", justifyContent: "center", alignItems: "center" }}>
         <div className="contact_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
           <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
-          <Tooltip
-            title={
-              <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                의뢰하고 싶으신 프로젝트를 간략하게 작성해주시면<br/>빠른 시일 내에 연락을 드립니다.
-              </Typography>
-            }
-            placement="right"
-            arrow
-          >
-            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold", cursor: "help", }}>HumanMakeHub에 문의하기</strong>
-          </Tooltip>
+            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold" }}>HumanMakeHub에 문의하기</strong>
         </div>
         <form id="askSend">
           <Box
@@ -933,7 +922,6 @@ export default function HomePage() {
                         fontSize: "17px",
                         display: "inline-block",
                         width: "fit-content",
-                        cursor: "help",
                       }}
                     >
                       문의 항목 (중복 선택 가능)
@@ -986,7 +974,6 @@ export default function HomePage() {
                         fontSize: "17px",
                         display: "inline-block",
                         width: "fit-content",
-                        cursor: "help",
                       }}
                     >
                       문의 내용 *

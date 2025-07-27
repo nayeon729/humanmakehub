@@ -8,7 +8,7 @@ import axios from "../common/axiosInstance"
 import add from "../assets/create.png"
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Tooltip from "@mui/material/Tooltip";
-
+import HelpIcon from '@mui/icons-material/Help';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -63,30 +63,30 @@ export default function AdminNoticeListPage() {
     };
 
     return (
-        <Box sx={{ p: 2, pt:3 }}>
+        <Box sx={{ p: 2, pt: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Tooltip
-                        title={
-                            <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                                관리자가 등록한 공지사항을 확인할 수 있는 <br />화면입니다.
-                            </Typography>
-                        }
-                        placement="right"
-                        arrow
-                    >
-                        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                            <CampaignIcon color='error' sx={{ fontSize: "40px", mr: "4px" }} />
-                            <Typography
-                                variant="h4"
-                                fontWeight="bold"
-                                gutterBottom
-                                sx={{ mb: 0, cursor: "help", }}
-                            >
-                                공지사항</Typography>
-                        </Box>
-                    </Tooltip>
-                </Box>
+                    <Stack sx={{ display: 'flex', flexDirection: 'row', pl:'2px' }}>
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            gutterBottom
+                            sx={{ mb: 0}}
+                        >
+                            공지사항</Typography>
+                        <Tooltip
+                            title={
+                                <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                                    관리자가 등록한 공지사항을 확인할 수 있는 <br />화면입니다.
+                                </Typography>
+                            }
+                            placement="right"
+                            arrow
+                        >
+
+                            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                        </Tooltip>
+                    </Stack>
+
                 {["R03", "R04"].includes(userRole) && (
                     <Button onClick={() => navigate("/admin/notice/create")} sx={{ marginRight: '-8px' }}>
                         <img src={add} style={{ width: '30px', height: '30px' }} />
@@ -102,7 +102,7 @@ export default function AdminNoticeListPage() {
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
                     fullWidth
-                    sx={{ width: isMobile?'250px':'400px', boxShadow: '1px 2px 4px #9D9D9D', borderRadius: '5px', }}
+                    sx={{ width: isMobile ? '250px' : '400px', boxShadow: '1px 2px 4px #9D9D9D', borderRadius: '5px', }}
                 />
                 <Button variant="outlined" onClick={handleSearch} sx={{ backgroundColor: '#2879E3', color: 'white', height: '35px', }}>검색</Button>
             </Stack>
@@ -111,9 +111,9 @@ export default function AdminNoticeListPage() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{textAlign:'center', width:'16%'}}>분류</TableCell>
-                            <TableCell sx={{textAlign:'center', width:isMobile?'50%':'70%'}}>제목</TableCell>
-                            <TableCell sx={{textAlign:'center'}}>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
+                            <TableCell sx={{ textAlign: 'center', width: '16%' }}>분류</TableCell>
+                            <TableCell sx={{ textAlign: 'center', width: isMobile ? '50%' : '70%' }}>제목</TableCell>
+                            <TableCell sx={{ textAlign: 'center' }}>{notices.create_dt ? notices.create_dt.slice(0, 10) : "날짜"}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -129,8 +129,8 @@ export default function AdminNoticeListPage() {
                                     sx={{ cursor: 'pointer' }}
                                 >
 
-                                    <TableCell sx={{ textAlign: 'center'}}>
-                                        <Chip p={0} label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: isMobile?'43px':'65px', fontSize:isMobile?'10px':'12px' }} />
+                                    <TableCell sx={{ textAlign: 'center' }}>
+                                        <Chip p={0} label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: isMobile ? '43px' : '65px', fontSize: isMobile ? '10px' : '12px' }} />
                                     </TableCell>
                                     <TableCell sx={{ textAlign: 'center' }} >{notice.title}</TableCell>
                                     <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>

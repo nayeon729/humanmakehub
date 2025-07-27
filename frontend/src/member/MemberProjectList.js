@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box, Typography, Paper, Grid, Button, LinearProgress, Chip, Stack,useTheme, useMediaQuery
+  Box, Typography, Paper, Grid, Button, LinearProgress, Chip, Stack, useTheme, useMediaQuery
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import Folder from "../assets/folder.png";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import HelpIcon from '@mui/icons-material/Help';
 
 const MemberProjectList = () => {
   const [invites, setInvites] = useState([]);
@@ -77,7 +78,15 @@ const MemberProjectList = () => {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+      <Stack sx={{ display: 'flex', flexDirection: 'row', mb:'20px' }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0,}}
+        >
+          프로젝트 목록
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -87,25 +96,15 @@ const MemberProjectList = () => {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              프로젝트 목록
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
-      </Box>
+      </Stack>
       <Grid container spacing={5}>
         {invites.map((project) => (
           <Grid item xs={12} sm={6} md={4} key={project.request_id}>
             <Paper elevation={4} sx={{
               p: 2, borderRadius: 3, display: "flex", flexDirection: "column", justifyContent: "space-between",
-              gap: 1, width: isMobile?350:400, height: 520, overflow: "hidden",
+              gap: 1, width: isMobile ? 350 : 400, height: 520, overflow: "hidden",
             }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Chip label={`긴급도: ${project.urgency_level || "없음"}`} color="success" size="small" />

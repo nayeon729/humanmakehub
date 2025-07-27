@@ -8,6 +8,7 @@ import chatting from "../assets/chatting.png";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ProjectChannelUpdatePage() {
     const { channel_id, project_id } = useParams();
@@ -164,18 +165,27 @@ export default function ProjectChannelUpdatePage() {
         <Box sx={{ p: 2, pt: 3 }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                        {/* <img src={chatting} alt="채팅" width={40} height={40} style={{ verticalAlign: "middle", marginRight: 8 }} /> */}
-                        <TextsmsOutlinedIcon sx={{ fontSize: "40px", mr: "4px" }} />
+                    <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
                         <Typography
                             variant="h4"
                             fontWeight="bold"
                             gutterBottom
-                            sx={{ mb: 0, cursor: "help", }}
+                            sx={{ mb: 0 }}
                         >
                             {projectTitle} 글 수정
                         </Typography>
-                    </Box>
+                        <Tooltip
+                            title={
+                                <Typography sx={{ fontSize: 13, color: "#fff" }}>
+                                    채널의 글을 수정 할 수 있는 페이지입니다.
+                                </Typography>
+                            }
+                            placement="right"
+                            arrow
+                        >
+                            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                        </Tooltip>
+                    </Stack>
                 </Box>
             </Stack>
 

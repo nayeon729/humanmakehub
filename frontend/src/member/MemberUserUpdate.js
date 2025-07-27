@@ -19,6 +19,7 @@ import PasswordConfirmDialog from "../components/PasswordConfirmDialog";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
+import HelpIcon from '@mui/icons-material/Help';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -217,7 +218,18 @@ export default function MemberUserEditPage() {
     <>
       <Box sx={{ p: 2, pt: 3 }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <Tooltip
+          
+            <Stack sx={{display:'flex', flexDirection:'row'}}>
+              
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ mb: 0 }}
+              >
+                회원정보 수정
+              </Typography>
+              <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
                 회원정보를 수정 할 수 있는 페이지입니다.
@@ -226,18 +238,9 @@ export default function MemberUserEditPage() {
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <AccountCircleIcon sx={{ fontSize: 40, mr: "4px", color:'#9d9d9d'  }} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                회원정보 수정
-              </Typography>
-            </Box>
+            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
+            </Stack>
           </Box>
           <Card sx={{ p: 4, height: "auto" }}>
             <Typography variant="h6" gutterBottom>

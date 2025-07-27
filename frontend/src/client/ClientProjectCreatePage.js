@@ -21,6 +21,7 @@ import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
+import HelpIcon from '@mui/icons-material/Help';
 
 const ClientUserInfo = () => {
 
@@ -69,7 +70,15 @@ const ClientUserInfo = () => {
 
   return (
     <Box sx={{ p: 2, pt: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+      <Stack sx={{ display: 'flex', flexDirection: 'row', mb:'20px' }}>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ mb: 0}}
+        >
+          프로젝트 생성
+        </Typography>
         <Tooltip
           title={
             <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -79,19 +88,9 @@ const ClientUserInfo = () => {
           placement="right"
           arrow
         >
-          <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-            <FolderIcon sx={{ fontSize: 40, mr: "4px", color: '#fde663ff' }} />
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ mb: 0, cursor: "help", }}
-            >
-              프로젝트 생성
-            </Typography>
-          </Box>
+          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
-      </Box>
+      </Stack>
       <Paper sx={{ p: 2, }}>
         <Stack spacing={3}>
           <Box sx={{ display: "flex", gap: 1 }}>

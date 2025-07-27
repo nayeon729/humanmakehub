@@ -16,6 +16,7 @@ import Folder from "../assets/folder.png"
 import MobileFullPageLayout from "../common/MobileFullPageLayout";
 import Tooltip from "@mui/material/Tooltip";
 import BeenhereIcon from '@mui/icons-material/Beenhere';
+import HelpIcon from '@mui/icons-material/Help';
 
 export default function ClientDashboard() {
   const navigate = useNavigate();
@@ -33,25 +34,25 @@ export default function ClientDashboard() {
 
   const BASE_URL = process.env.REACT_APP_API_URL;
 
-useEffect(() => {
-  const fetchAlerts = async () => {
-    try {
-      const token = sessionStorage.getItem("token");
-      const res = await axios.get(`${BASE_URL}/common/alerts`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAlerts(res.data);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-        navigate("/login");
-      } else {
-        console.error("알림 불러오기 실패", error);
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+        const res = await axios.get(`${BASE_URL}/common/alerts`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAlerts(res.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+          navigate("/login");
+        } else {
+          console.error("알림 불러오기 실패", error);
+        }
       }
-    }
-  };
-  fetchAlerts();
-}, [navigate]);
+    };
+    fetchAlerts();
+  }, [navigate]);
 
   const handleCloseAlert = async (alertId) => {
     try {
@@ -68,29 +69,27 @@ useEffect(() => {
   return (
     <MobileFullPageLayout>
       <Box sx={{ p: 2, pt: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ mb: 0 }}
+          >
+            고객 대시보드
+          </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
-                고객이 의뢰한 프로젝트의 진행도에 대한<br/> 알림을 확인할 수 있는 페이지입니다.
+                고객이 의뢰한 프로젝트의 진행도에 대한<br /> 알림을 확인할 수 있는 페이지입니다.
               </Typography>
             }
             placement="right"
             arrow
           >
-            <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-              <BeenhereIcon  color='primary' sx={{ fontSize: "40px", mr: "4px" ,}} />
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, cursor: "help", }}
-              >
-                고객 대시보드
-              </Typography>
-            </Box>
+            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
           </Tooltip>
-        </Box>
+        </Stack>
         {alerts.map((alert) => {
           const color = categoryColors[alert.category] || categoryColors.default;
           return (
