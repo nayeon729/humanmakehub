@@ -10,24 +10,28 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const location = useLocation();
   const { user_id, email } = location.state || {};
-
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+~`\-=\[\]{};:"\\|,.<>\/?]).{8,}$/;
 
   const BASE_URL = process.env.REACT_APP_API_URL; // 실제 API 주소
   const { showAlert } = useAlert();
 
   const handleSubmit = async () => {
+    if (!passwordRegex.test(password)) {
+      return showAlert("❌ 비밀번호는 8자 이상, 영문+숫자+특수문자를 포함해야 합니다.");
+    }
     if (password == confirmPassword) {
       const payload = {
         user_id: user_id,
         email: email,
         password: password,
+        confirm_password: confirmPassword
       };
       try {
         const res = await axios.post(`${BASE_URL}/user/pwFind`, payload);
         showAlert("비밀번호 재설정 성공!");
         navigate("/login");
       } catch (error) {
-        showAlert("비밀번호 재설정 실패: ");
+        showAlert("비밀번호 재설정 실패 ");
       }
     } else {
       showAlert("비밀번호가 일치하지 않습니다.");

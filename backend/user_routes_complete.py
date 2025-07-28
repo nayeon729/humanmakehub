@@ -6,7 +6,7 @@ import pymysql
 import bcrypt
 from jwt_auth import create_access_token, get_current_user
 from database import db_config
-
+import re
 import random, string
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
@@ -34,6 +34,7 @@ class UserRegister(BaseModel):
     nickname: str
     email: EmailStr
     password: str
+    confirm_password: str
     role: str
     phone: Optional[str] = None
     company: Optional[str] = None
@@ -48,7 +49,7 @@ class FindRequest(BaseModel):
     user_id: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
-
+    confirm_password: Optional[str] = None
 class askSend(BaseModel):
     username: str
     company: str
@@ -58,6 +59,16 @@ class askSend(BaseModel):
     category: Optional[str] = None
     askMessage: str
 
+def validate_password(password: str):
+    password_regex = re.compile(
+        r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+~`\-=\[\]{};:"\\|,.<>\/?]).{8,}$'
+    )
+    
+    if not password_regex.match(password):
+        raise HTTPException(
+            status_code=400,
+            detail="❌ 비밀번호는 8자 이상이며, 영문+숫자+특수문자를 포함해야 합니다."
+        )
 # ---------- 로그인 ----------
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -170,10 +181,14 @@ def get_my_info(user: dict = Depends(get_current_user)):
 # ---------- 회원가입 ----------
 @router.post("/register")
 def register_user(user: UserRegister):
+    
     conn = pymysql.connect(**db_config)
     try:
         with conn.cursor() as cursor:
             cursor.execute("SELECT user_id FROM user WHERE user_id = %s", (user.user_id,))
+            if user.password != user.confirm_password:
+                raise HTTPException(status_code=400, detail="❌ 비밀번호가 일치하지 않습니다.")
+            validate_password(user.password)
             if cursor.fetchone():
                 raise HTTPException(status_code=400, detail="이미 사용 중인 아이디입니다.")
             cursor.execute("SELECT user_id FROM user WHERE email = %s", (user.email,))
@@ -448,6 +463,9 @@ def idFind(email: str):
 
 @router.post("/pwFind")
 def idFind(data: FindRequest):
+    if data.password != data.confirm_password:
+            raise HTTPException(status_code=400, detail="❌ 비밀번호가 일치하지 않습니다.")
+    validate_password(data.password)
     # DB 연결
     conn = pymysql.connect(**db_config)
     with conn.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -457,7 +475,7 @@ def idFind(data: FindRequest):
         cursor.execute("""
             UPDATE user SET password = %s, update_dt = NOW() WHERE user_id = %s AND email = %s AND del_yn ='N'
         """, (hashed_pw, data.user_id, data.email,))
-
+        
         conn.commit()
 
         if cursor.rowcount == 0:

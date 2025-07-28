@@ -48,6 +48,11 @@ export default function ProjectChannelCreatePage() {
       return;
     }
 
+     if (images.length > 5) {
+    showAlert("❌ 이미지는 최대 5개까지만 첨부할 수 있어요!");
+    return;
+  }
+  
     const formData = new FormData();
     formData.append("title", title);
     formData.append("user_id", String(userId));

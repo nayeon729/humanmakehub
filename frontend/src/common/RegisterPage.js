@@ -32,6 +32,8 @@ export default function RegisterPage() {
   const [code, setCode] = useState("");
   const [emailSend, setEmailSend] = useState(false);
 
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+~`\-=\[\]{};:"\\|,.<>\/?]).{8,}$/;
+
   const BASE_URL = process.env.REACT_APP_API_URL;
   const { showAlert } = useAlert();
   useEffect(() => {
@@ -96,6 +98,14 @@ export default function RegisterPage() {
       }
 
       if (field === "email") {
+        const email = form.email.trim();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showAlert("❌ 이메일 형식이 올바르지 않습니다.");
+          setEmailChecked(false);
+          return;
+        }
         const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
           email: form.email,
         });
@@ -137,6 +147,9 @@ export default function RegisterPage() {
     if (!form.agreeTerms) {
       return showAlert("이용약관에 동의해야 합니다.");
     }
+    if (!passwordRegex.test(form.password)) {
+      return showAlert("❌ 비밀번호는 8자 이상, 영문+숫자+특수문자를 포함해야 합니다.");
+    }
     if (form.password !== form.confirmPassword) {
       return showAlert("비밀번호가 일치하지 않습니다.");
     }
@@ -150,6 +163,7 @@ export default function RegisterPage() {
         nickname: form.nickname,
         email: form.email,
         password: form.password,
+        confirm_password: form.confirmPassword,
         role,
         phone: form.phone || "",         // ✅ null 방지
         company: form.company || "",
@@ -222,7 +236,7 @@ export default function RegisterPage() {
                   />
                   <Button variant="outlined" onClick={() => checkDuplicate("email")} sx={{ width: "150px", paddingY: 2 }}>이메일 인증</Button>
                 </Stack>
-                <Stack  spacing={1} alignItems="center">
+                <Stack spacing={1} alignItems="center">
                   {emailSend && (
                     <>
                       {startTimer && (
@@ -231,24 +245,30 @@ export default function RegisterPage() {
                           <EmailTimer start={startTimer} onExpire={() => showAlert("시간 초과")} />
                         </div>
                       )}
-                      <Box sx={{display:"flex", width:"100%", gap:1}}>
-                      <TextField
-                        label="인증 코드"
-                        variant="outlined"
-                        fullWidth
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                      />
+                      <Box sx={{ display: "flex", width: "100%", gap: 1 }}>
+                        <TextField
+                          label="인증 코드"
+                          variant="outlined"
+                          fullWidth
+                          value={code}
+                          onChange={(e) => setCode(e.target.value)}
+                        />
 
-                      <Button variant="contained" color="primary" onClick={handleVerify} disabled={emailChecked} sx={{ width: "150px", paddingY: 2 }}>
-                        인증 확인
-                      </Button>
+                        <Button variant="contained" color="primary" onClick={handleVerify} disabled={emailChecked} sx={{ width: "150px", paddingY: 2 }}>
+                          인증 확인
+                        </Button>
                       </Box>
                     </>
                   )}
                 </Stack>
 
-                <TextField type="password" label="비밀번호" name="password" value={form.password} onChange={handleFormChange} />
+                <TextField type="password" label="비밀번호" name="password" value={form.password} onChange={handleFormChange}
+                  error={form.password.length > 0 && !passwordRegex.test(form.password)}
+                  helperText={
+                    form.password.length > 0 && !passwordRegex.test(form.password)
+                      ? "8자 이상, 영문+숫자+특수문자 포함"
+                      : ""
+                  } />
                 <TextField type="password" label="비밀번호 확인" name="confirmPassword" value={form.confirmPassword} onChange={handleFormChange} />
 
                 <TextField
