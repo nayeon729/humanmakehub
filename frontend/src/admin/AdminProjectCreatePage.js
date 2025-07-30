@@ -76,6 +76,9 @@ export default function AdminProjectCreatePage() {
   };
 
   const handleSubmit = async () => {
+    if(formData.projectName.length>30){
+      return showAlert('프로젝트 제목은 30까지 입력 할 수 있습니다.')
+    }
     try {
       const token = sessionStorage.getItem("token");
 
@@ -120,7 +123,7 @@ export default function AdminProjectCreatePage() {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
+            <HelpIcon sx={{color:'gray', fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
         </Stack>
         <Paper sx={{ p: 2, width: isMobile ? '90%' : '92%' }}>
@@ -174,6 +177,7 @@ export default function AdminProjectCreatePage() {
               value={formData.estimatedDuration}
               onChange={handleChange}
               fullWidth
+              required
               InputProps={{
                 endAdornment: <InputAdornment position="end">일</InputAdornment>,
               }}
@@ -185,6 +189,7 @@ export default function AdminProjectCreatePage() {
               value={formData.budget}
               onChange={handleChange}
               fullWidth
+              required
               InputProps={{
                 endAdornment: <InputAdornment position="end">원</InputAdornment>,
               }}
@@ -212,7 +217,7 @@ export default function AdminProjectCreatePage() {
               value={formData.user_id}
               onChange={handleChange}
               fullWidth
-              required
+              // required
             />
 
             <Combo

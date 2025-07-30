@@ -51,9 +51,6 @@ app.add_middleware(
 from user_routes_complete import router as user_router
 from admin_routes import router as admin_router
 
-print("✅ admin_router.routes 확인")
-for r in admin_router.routes:
-    print("📎", r.path)
 
 
 # ✅ 라우터 포함

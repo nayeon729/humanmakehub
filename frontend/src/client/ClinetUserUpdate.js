@@ -57,6 +57,9 @@ export default function ClientUserEditPage() {
   }, []);
 
   const handleSubmit = async (password) => {
+    if(company.length>50){
+      return showAlert("회사명은 50자까지 입력 가능합니다.");
+    }
     try {
       const token = sessionStorage.getItem("token");
       // ✅ 먼저 비밀번호 확인
@@ -103,7 +106,7 @@ export default function ClientUserEditPage() {
           placement="right"
           arrow
         >
-          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+          <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
       </Stack>
       <Card sx={{ p: 4 }}>

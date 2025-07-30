@@ -60,7 +60,7 @@ export default function LoginPage() {
 
             <TextField
               type="password"
-              label="비밀번호"
+              label="비밀번호(8자 이상, 영문+숫자+특수문자 포함)"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)} />

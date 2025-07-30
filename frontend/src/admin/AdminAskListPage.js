@@ -79,7 +79,7 @@ export default function getAskList() {
           arrow
         >
 
-          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+          <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px"}} />
 
         </Tooltip>
       </Stack>
@@ -110,7 +110,7 @@ export default function getAskList() {
               </Box>
             )}
             <Typography><strong>문의 내용</strong></Typography>
-            <Box sx={{ border: "1px solid gray", borderRadius: "5px", p: 1, height: "100px" }}>
+            <Box sx={{ border: "1px solid gray", borderRadius: "5px", p: 1, height: "100px", whiteSpace: 'pre-wrap'}}>
               <Typography>{list?.description}</Typography>
             </Box>
           </Paper>

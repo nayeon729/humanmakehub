@@ -86,7 +86,9 @@ export default function RegisterPage() {
       const res = await axios.post(`${BASE_URL}/user/check-duplicate`, {
         user_id: form.username,
       });
-
+      if(form.username.length<8){
+      return showAlert("아이디는 8자이상 입력해야합니다.");
+    }
       if (field === "user_id") {
         if (res.data.user_idExists) {
           showAlert("이미 사용 중인 아이디입니다.");
@@ -147,6 +149,13 @@ export default function RegisterPage() {
     if (!form.agreeTerms) {
       return showAlert("이용약관에 동의해야 합니다.");
     }
+    if(form.nickname.length>10){
+      return showAlert("이름은 10자까지 입력 가능합니다.");
+    }
+    if(form.phone.length>11){
+      return showAlert("전화번호는 11자까지 입력 가능합니다.")
+    }
+
     if (!passwordRegex.test(form.password)) {
       return showAlert("❌ 비밀번호는 8자 이상, 영문+숫자+특수문자를 포함해야 합니다.");
     }
@@ -155,6 +164,9 @@ export default function RegisterPage() {
     }
     if (!usernameChecked || !emailChecked) {
       return showAlert("아이디/이메일/이름 중복확인을 완료하세요.");
+    }
+    if(form.company.length>50){
+      return showAlert("회사명은 50자까지 입력 가능합니다.");
     }
 
     try {
@@ -221,7 +233,7 @@ export default function RegisterPage() {
               </Stack>
               <Stack spacing={2} mt={3}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <TextField fullWidth label="아이디" name="username" value={form.username} onChange={handleFormChange} />
+                  <TextField fullWidth label="아이디(8자 이상)" name="username" value={form.username} onChange={handleFormChange} />
                   <Button variant="outlined" onClick={() => checkDuplicate("user_id")} sx={{ width: "150px", paddingY: 2 }}>중복확인</Button>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center">
@@ -262,7 +274,7 @@ export default function RegisterPage() {
                   )}
                 </Stack>
 
-                <TextField type="password" label="비밀번호" name="password" value={form.password} onChange={handleFormChange}
+                <TextField type="password" label="비밀번호(8자 이상, 영문+숫자+특수문자 포함)" name="password" value={form.password} onChange={handleFormChange}
                   error={form.password.length > 0 && !passwordRegex.test(form.password)}
                   helperText={
                     form.password.length > 0 && !passwordRegex.test(form.password)

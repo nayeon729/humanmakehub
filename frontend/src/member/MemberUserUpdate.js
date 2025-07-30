@@ -129,6 +129,12 @@ export default function MemberUserEditPage() {
     if (portfolio && !normalizedLink2) {
       return showAlert("유효하지 않은 포트폴리오 주소입니다.");
     }
+    if(tech.length>400){
+      return showAlert("주요기술은 최대 400자까지 입력 할 수 있습니다.")
+    }
+    if(experience.length>400){
+      return showAlert("경험은 최대 400자까지 입력 할 수 있습니다.")
+    }
 
     try {
       const token = sessionStorage.getItem("token");
@@ -238,7 +244,7 @@ export default function MemberUserEditPage() {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
+            <HelpIcon sx={{color:'gray', fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
             </Stack>
           </Box>

@@ -48,7 +48,7 @@ export default function RegisterPage() {
       const fixed = trimmed.startsWith("www.")
         ? `https://${trimmed}`
         : `https://www.${trimmed}`;
-        
+
       try {
         const parsed = new URL(fixed);
         if (!isValidHostname(parsed.hostname)) return "";
@@ -93,6 +93,12 @@ export default function RegisterPage() {
     }
 
     try {
+      if (form.title.length > 30) {
+        return showAlert('포토폴리오 제목은 30자까지 입력 할 수 있습니다.');
+      }
+      if (form.content.length > 100) {
+        return showAlert('포토폴리오 내용은 100자까지 입력 할 수 있습니다.');
+      }
       if (!form.title) {
         return showAlert("제목을 입력해주세요");
       }
@@ -198,7 +204,7 @@ export default function RegisterPage() {
                   }}
                 />
                 <FormControlLabel
-                sx={{ width: "13%" }}
+                  sx={{ width: "13%" }}
                   control={
                     <Checkbox
                       checked={form.linkPublic || false}

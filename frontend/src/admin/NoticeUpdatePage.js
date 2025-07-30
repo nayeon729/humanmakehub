@@ -41,6 +41,9 @@ export default function AdminNoticeCreatePage() {
     };
 
     const handleUpdate = async () => {
+        if(title.length>50){
+            return showAlert('공지사항 제목은 50자까지 입력 할 수 있습니다.')
+        }
         if (!title || !targetType || !content) {
             showAlert("모든 필수 항목을 입력해주세요.");
             return;
@@ -84,7 +87,7 @@ export default function AdminNoticeCreatePage() {
                     placement="right"
                     arrow
                 >
-                    <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                    <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
                 </Tooltip>
             </Stack>
             <Paper sx={{ p: 3, mt: 2 }}>

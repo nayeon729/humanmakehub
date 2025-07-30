@@ -45,6 +45,9 @@ const ClientUserInfo = () => {
   };
 
   const handleSubmit = async () => {
+    if(formData.projectName.length>30){
+      return showAlert('프로젝트 제목은 30글자까지 입력 할 수 있습니다.')
+    }
     try {
       const token = sessionStorage.getItem('token');
 
@@ -88,7 +91,7 @@ const ClientUserInfo = () => {
           placement="right"
           arrow
         >
-          <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+          <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
         </Tooltip>
       </Stack>
       <Paper sx={{ p: 2, }}>

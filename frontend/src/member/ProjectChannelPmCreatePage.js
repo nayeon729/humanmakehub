@@ -35,10 +35,14 @@ export default function ProjectChannelCreatePage() {
       showAlert("모든 필수 항목을 입력해주세요.");
       return;
     }
-     if (images.length > 5) {
-    showAlert("❌ 이미지는 최대 5개까지만 첨부할 수 있어요!");
-    return;
-  }
+    if (images.length > 5) {
+      showAlert("이미지는 최대 5개까지만 첨부할 수 있습니다.");
+      return;
+    }
+    if(title.length>30){
+      showAlert("제목은 최대 30글자까지 입력 할 수 있습니다.");
+      return;
+    }
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
@@ -165,7 +169,7 @@ export default function ProjectChannelCreatePage() {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+            <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
           </Tooltip>
         </Stack>
       </Stack>

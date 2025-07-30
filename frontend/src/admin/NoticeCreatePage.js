@@ -20,6 +20,9 @@ export default function AdminNoticeCreatePage() {
     const BASE_URL = process.env.REACT_APP_API_URL; // 서버 주소
 
     const handleSubmit = async () => {
+        if(title.length>50){
+            return showAlert('공지사항 제목은 50자까지 입력 할 수 있습니다.')
+        }
         if (!title || !targetType || !content) {
             showAlert("모든 필수 항목을 입력해주세요.");
             return;
@@ -64,12 +67,12 @@ export default function AdminNoticeCreatePage() {
                     placement="right"
                     arrow
                 >
-                    <HelpIcon sx={{ fontSize: 22, mt: "2px", mr: "4px" }} />
+                    <HelpIcon sx={{color:'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
                 </Tooltip>
             </Stack>
             <Paper sx={{ p: 3, mt: 2 }}>
                 <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" fontWeight={600}>제목</Typography>
+                    <Typography variant="body2" fontWeight={600}>제목*</Typography>
                     <TextField
                         fullWidth
                         value={title}
@@ -78,7 +81,7 @@ export default function AdminNoticeCreatePage() {
                     />
                 </Box>
                 <Box sx={{ mb: 5 }}>
-                    <Typography variant="body2" fontWeight={600}>분류</Typography>
+                    <Typography variant="body2" fontWeight={600}>분류*</Typography>
                     <Combo
                         groupId="NOTICE_TYPE"
                         value={targetType}
@@ -88,7 +91,7 @@ export default function AdminNoticeCreatePage() {
                     />
                 </Box>
                 <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2">내용</Typography>
+                    <Typography variant="body2" fontWeight={600}>내용*</Typography>
                     <TextField
                         multiline
                         rows={8}

@@ -91,6 +91,12 @@ export default function RegisterPage() {
     }
 
     try {
+      if (form.title.length > 30) {
+        return showAlert('포토폴리오 제목은 30자까지 입력 할 수 있습니다.');
+      }
+      if (form.content.length > 100) {
+        return showAlert('포토폴리오 내용은 100자까지 입력 할 수 있습니다.');
+      }
       if (!form.title) {
         return showAlert("제목을 입력해주세요");
       }
@@ -161,7 +167,7 @@ export default function RegisterPage() {
       const fixed = trimmed.startsWith("www.")
         ? `https://${trimmed}`
         : `https://www.${trimmed}`;
-        
+
       try {
         const parsed = new URL(fixed);
         if (!isValidHostname(parsed.hostname)) return "";
@@ -218,38 +224,38 @@ export default function RegisterPage() {
                 }}
               />
               <Stack direction="row" spacing={1}>
-              <TextField
-                fullWidth
-                label="포트폴리오 URL"
-                value={form.link}
-                error={portfolioError}
-                helperText={
-                  portfolioError ? "올바른 URL 형식으로 입력해주세요." : ""
-                }
-                placeholder="ex) www.yourportfolio.com"
-                onChange={(e) => {
-                  const val = e.target.value;
-                  const normalized = normalizeLink(val);
+                <TextField
+                  fullWidth
+                  label="포트폴리오 URL"
+                  value={form.link}
+                  error={portfolioError}
+                  helperText={
+                    portfolioError ? "올바른 URL 형식으로 입력해주세요." : ""
+                  }
+                  placeholder="ex) www.yourportfolio.com"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const normalized = normalizeLink(val);
 
-                  setForm({ ...form, link: val });
+                    setForm({ ...form, link: val });
 
-                  // 유효하지 않은 경우에만 에러 표시
-                  setPortfolioError(val !== "" && normalized === "");
-                }}
-              />
+                    // 유효하지 않은 경우에만 에러 표시
+                    setPortfolioError(val !== "" && normalized === "");
+                  }}
+                />
 
-              <FormControlLabel
-              sx={{ width: "13%" }}
-                control={
-                  <Checkbox
-                    checked={form.linkPublic || false}
-                    onChange={(e) =>
-                      setForm({ ...form, linkPublic: e.target.checked })
-                    }
-                  />
-                }
-                label="링크 공개"
-              />
+                <FormControlLabel
+                  sx={{ width: "13%" }}
+                  control={
+                    <Checkbox
+                      checked={form.linkPublic || false}
+                      onChange={(e) =>
+                        setForm({ ...form, linkPublic: e.target.checked })
+                      }
+                    />
+                  }
+                  label="링크 공개"
+                />
               </Stack>
             </Stack>
             {Object.entries(techStacks).map(([category, techs]) => (
@@ -262,10 +268,10 @@ export default function RegisterPage() {
                 </Stack>
               </Box>
             ))}
-            <Box sx={{display:'flex', justifyContent:'center', mt:5}}>
-            <Button variant="contained" size="large" onClick={handleSubmit}>
-              수정 완료
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+              <Button variant="contained" size="large" onClick={handleSubmit}>
+                수정 완료
+              </Button>
             </Box>
           </>
         </Paper>

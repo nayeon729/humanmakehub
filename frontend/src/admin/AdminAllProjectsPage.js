@@ -142,7 +142,7 @@ export default function AdminProjectManagementPage() {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
+            <HelpIcon sx={{color:'gray', fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
           </Stack>
           <IconButton onClick={() => navigate("/admin/create")}>

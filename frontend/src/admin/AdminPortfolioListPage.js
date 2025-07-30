@@ -94,7 +94,7 @@ const MemberProjectList = () => {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{ fontSize:22, mt:"2px",mr: "4px"}} />  
+            <HelpIcon sx={{color:'gray', fontSize:22, mt:"2px",mr: "4px"}} />  
           </Tooltip>
         </Stack>
         <IconButton color="primary" onClick={() => navigate("/admin/portfolioCreate")}>
@@ -112,7 +112,7 @@ const MemberProjectList = () => {
             <Typography variant="subtitle1" fontWeight="bold">
               {post.title}
             </Typography>
-            <Typography variant="body2" sx={{ color: "gray" }}>
+            <Typography variant="body2" sx={{ color: "gray", whiteSpace: 'pre-wrap' }}>
               {post.content.length > 100 ? post.content.slice(0, 100) + "..." : post.content}
             </Typography>
             <div style={{
