@@ -33,7 +33,7 @@ const ClientUserInfo = () => {
     projectDescription: "",
     budget: "",
     estimatedDuration: "",
-    ugencyLevel: "",
+    urgencyLevel: "",
   });
   const { showAlert } = useAlert();
   const theme = useTheme();
@@ -45,6 +45,9 @@ const ClientUserInfo = () => {
   };
 
   const handleSubmit = async () => {
+    if (!formData.projectName || !formData.projectType || !formData.projectContent || !formData.estimatedDuration || !formData.budget || !formData.urgencyLevel || !formData.user_id) {
+      return showAlert('모든 필수 입력 항목을 채워주세요.');
+    }
     if(formData.projectName.length>30){
       return showAlert('프로젝트 제목은 30글자까지 입력 할 수 있습니다.')
     }
@@ -168,7 +171,7 @@ const ClientUserInfo = () => {
           <Combo
             groupId="URGENCY_LEVEL"                      // ✅ 이게 핵심!
             defaultValue=""
-            onSelectionChange={(val) => setFormData((prevData) => ({ ...prevData, ugencyLevel: val }))}
+            onSelectionChange={(val) => setFormData((prevData) => ({ ...prevData, urgencyLevel: val }))}
             sx={{ minWidth: 300 }}
           />
 

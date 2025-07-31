@@ -39,7 +39,7 @@ export default function AdminProjectUpdatePage() {
     projectContent: "",
     estimatedDuration: "",
     budget: "",
-    ugencyLevel: "",
+    urgencyLevel: "",
     user_id: "",
   });
   const theme = useTheme();
@@ -94,7 +94,7 @@ export default function AdminProjectUpdatePage() {
           projectContent: data.description,
           estimatedDuration: data.estimated_duration,
           budget: data.budget,
-          ugencyLevel: data.urgency,
+          urgencyLevel: data.urgency,
           user_id: data.client_id,
         });
       } catch (err) {
@@ -110,6 +110,9 @@ export default function AdminProjectUpdatePage() {
   };
 
   const handleSubmit = async () => {
+    if (!formData.projectName || !formData.projectType || !formData.projectContent || !formData.estimatedDuration || !formData.budget || !formData.urgencyLevel || !formData.user_id) {
+      return showAlert('모든 필수 입력 항목을 채워주세요.');
+    }
     if(formData.projectName.length>30){
       return showAlert('프로젝트 제목은 30자까지 입력 할 수 있습니다.')
     }
@@ -128,7 +131,7 @@ export default function AdminProjectUpdatePage() {
         category: cleanedFormData.projectType,
         estimated_duration: cleanedFormData.estimatedDuration,
         budget: cleanedFormData.budget,
-        urgency: cleanedFormData.ugencyLevel,
+        urgency: cleanedFormData.urgencyLevel,
         client_id: cleanedFormData.user_id,
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -249,8 +252,8 @@ export default function AdminProjectUpdatePage() {
 
             <Combo
               groupId="URGENCY_LEVEL"
-              defaultValue={formData.ugencyLevel}
-              onSelectionChange={(val) => setFormData((prev) => ({ ...prev, ugencyLevel: val }))}
+              defaultValue={formData.urgencyLevel}
+              onSelectionChange={(val) => setFormData((prev) => ({ ...prev, urgencyLevel: val }))}
             />
 
             <Box sx={{ display: "flex", justifyContent: "center" }}>

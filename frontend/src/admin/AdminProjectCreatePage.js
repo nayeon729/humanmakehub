@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Box, Button, TextField, Typography, Stack, InputAdornment, Paper, Dialog, DialogTitle,
-  DialogContent, Pagination
+  DialogContent, Pagination, useMediaQuery, useTheme
 } from "@mui/material";
 import axios from "../common/axiosInstance"
 import Combo from "../components/Combo";  // 공통코드용 Combo 컴포넌트
@@ -14,7 +14,6 @@ import Folder from "../assets/folder.png"
 import { useAlert } from "../components/CommonAlert";
 import Tooltip from "@mui/material/Tooltip";
 import FolderIcon from '@mui/icons-material/Folder';
-import { useMediaQuery, useTheme } from "@mui/material";
 import HelpIcon from '@mui/icons-material/Help';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -43,6 +42,7 @@ export default function AdminProjectCreatePage() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [itemsPerPage] = useState(5); // 한 페이지당 아이템 개수 (백엔드의 page_size와 일치시킵니다)
   const [totalClients, setTotalClients] = useState(0); // 전체 클라이언트 수
+
 
   useEffect(() => {
     if (searchDialogOpen) {
@@ -76,7 +76,10 @@ export default function AdminProjectCreatePage() {
   };
 
   const handleSubmit = async () => {
-    if(formData.projectName.length>30){
+     if (!formData.projectName || !formData.projectType || !formData.projectContent || !formData.estimatedDuration || !formData.budget || !formData.urgencyLevel || !formData.user_id) {
+      return showAlert('모든 필수 입력 항목을 채워주세요.');
+    }
+    if (formData.projectName.length > 30) {
       return showAlert('프로젝트 제목은 30까지 입력 할 수 있습니다.')
     }
     try {
@@ -105,15 +108,15 @@ export default function AdminProjectCreatePage() {
   return (
     <>
       <Box sx={{ p: 2, pt: 3 }}>
-        <Stack sx={{display:'flex', flexDirection:'row', mb:'20px'}}>
+        <Stack sx={{ display: 'flex', flexDirection: 'row', mb: '20px' }}>
           <Typography
-                variant="h4"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ mb: 0, fontSize: "34px" }}
-              >
-                관리자 프로젝트 생성
-              </Typography>
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ mb: 0, fontSize: "34px" }}
+          >
+            관리자 프로젝트 생성
+          </Typography>
           <Tooltip
             title={
               <Typography sx={{ fontSize: 13, color: "#fff" }}>
@@ -123,7 +126,7 @@ export default function AdminProjectCreatePage() {
             placement="right"
             arrow
           >
-            <HelpIcon sx={{color:'gray', fontSize:22, mt:"2px",mr: "4px"}} />  
+            <HelpIcon sx={{ color: 'gray', fontSize: 22, mt: "2px", mr: "4px" }} />
           </Tooltip>
         </Stack>
         <Paper sx={{ p: 2, width: isMobile ? '90%' : '92%' }}>
@@ -198,15 +201,17 @@ export default function AdminProjectCreatePage() {
             {/* 4. 긴급도 */}
             <Box sx={{ display: "flex", gap: 1 }}>
               <Looks4RoundedIcon color="primary" sx={{ fontSize: isMobile ? 25 : 32 }} />
-              <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }} >의뢰한 클라이언트 ID와 프로젝트의 긴급도를 알려주세요.</Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                sx={{ width: "150px" }}
-                onClick={() => setSearchDialogOpen(true)}
-              >
-                🔍 클라이언트 검색
-              </Button>
+              <Box sx={{ display: isMobile?"block":"flex", gap: 1 }}>
+                <Typography variant="h6" mb={0} sx={{ fontSize: isMobile ? "17px" : "20px" }} >클라이언트 ID와 긴급도를 알려주세요.</Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ width: "150px" }}
+                  onClick={() => setSearchDialogOpen(true)}
+                >
+                  🔍 클라이언트 검색
+                </Button>
+              </Box>
             </Box>
 
 
@@ -217,7 +222,7 @@ export default function AdminProjectCreatePage() {
               value={formData.user_id}
               onChange={handleChange}
               fullWidth
-              // required
+              required
             />
 
             <Combo

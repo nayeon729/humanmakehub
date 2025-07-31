@@ -179,10 +179,10 @@ section {
     z-index: 3;
 }
 
-.slide-card:hover {
+/* .slide-card:hover {
     transform: scale(1.03);
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
-}
+} */
 
 .slide-card h3 {
     font-size: 26px;

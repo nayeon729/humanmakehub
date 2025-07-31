@@ -389,7 +389,7 @@ export default function AdminUserManagementPage() {
             <Table sx={{ width: "100%" }}>
               <TableHead>
                 <TableRow >
-                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>아이디</TableCell>
+                  <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px', minWidth: isMobile ? '80px' : '100px' }}>아이디</TableCell>
                   <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px', minWidth: isMobile ? '80px' : '100px' }}>닉네임</TableCell>
                   <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>등급</TableCell>
                   <TableCell sx={{ textAlign: 'center', fontSize: isMobile ? '12px' : '14px' }}>역할</TableCell>

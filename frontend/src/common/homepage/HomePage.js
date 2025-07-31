@@ -47,6 +47,20 @@ export default function HomePage() {
     navigate("/");
   };
 
+    const handleLogoClick = () => {
+    const storedRole = sessionStorage.getItem("role");
+
+    if (storedRole === "R04" || storedRole === "R03") {
+      navigate("/admin/dashboard");
+    } else if (storedRole === "R01") {
+      navigate("/client/dashboard");
+    } else if (storedRole === "R02") {
+      navigate("/member/tasks");
+    } else {
+      navigate("/"); // 로그인 전이면 홈으로
+    }
+  };
+
 
   const techStacks = [
     "React-native", "Firebase", "Kotlin", "Node.js", "React", "Django",
@@ -153,8 +167,9 @@ export default function HomePage() {
               textDecoration: "none"
             }}
           >
-            <span style={{
-              marginLeft: 10,
+            <span 
+             onClick={handleLogoClick}
+            style={{
               fontWeight: 700,
               fontSize: 24,
               color: "#1976d2",
@@ -388,7 +403,7 @@ export default function HomePage() {
               color: "#444",
               marginBottom: 10
             }}>
-              HumanMakeHub는 진정한 협업을 만듭니다.
+              휴먼메이크허브는 진정한 협업을 만듭니다.
             </p>
             <span style={{
               fontSize: isMobile ? 13 : 15,
@@ -411,7 +426,7 @@ export default function HomePage() {
             {[
               {
                 title: "AI 챗봇",
-                icon: "🤖",
+                icon: "💬",
                 items: ["GPT 모델 기반 챗봇", "문서 요약 자동화", "SNS 연동", "DB 학습 처리"]
               },
               {
@@ -528,7 +543,7 @@ export default function HomePage() {
           <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
             <p style={{ fontSize: isMobile ? 15 : 18, color: "#444", fontWeight: 400, lineHeight: 1.8 }}>
               사람과 기술의 조화를 통해 완성도 높은 프로젝트를 만들어갑니다.<br />
-              HumanMakeHub는 최신 기술을 실무에 효과적으로 적용합니다.
+              휴먼메이크허브는 최신 기술을 실무에 효과적으로 적용합니다.
             </p>
           </div>
 
@@ -606,7 +621,7 @@ export default function HomePage() {
 
           {/* 서브 설명 */}
           <p style={{ textAlign: "center", fontSize: 17, color: "#555", lineHeight: 1.7, marginBottom: 60 }}>
-            HumanMakeHub는 아래와 같은 절차를 통해<br />클라이언트의 프로젝트를 체계적으로 진행합니다.
+            휴먼메이크허브는 아래와 같은 절차를 통해<br />클라이언트의 프로젝트를 체계적으로 진행합니다.
           </p>
 
           {/* 단계 박스 */}
@@ -713,10 +728,10 @@ export default function HomePage() {
                 진정성 있는 협업이 변화를 만듭니다.
               </strong>
               <span style={{ fontSize: 16, color: "#555", display: "block", marginBottom: 10 }}>
-                HumanMakeHub와 함께 당신의 아이디어를 현실로 만들어보세요.
+                휴먼메이크허브와 함께 당신의 아이디어를 현실로 만들어보세요.
               </span>
               <p style={{ fontSize: 14, color: "#666", lineHeight: 1.7 }}>
-                HumanMakeHub는 스타트업, 아이디어 기획자, 그리고 외주 클라이언트를 위해<br />
+                휴먼메이크허브는 스타트업, 아이디어 기획자, 그리고 외주 클라이언트를 위해<br />
                 맞춤형 팀을 구성하고, 프로젝트를 수행할 수 있는 협업 플랫폼입니다.<br /><br />
                 우리는 빠른 개발보다 깊은 신뢰를 우선시하며, 한 프로젝트에 몰입하는 문화를 지향합니다.<br />
                 기획, 디자인, 개발, 운영에 이르기까지 각자의 전문성이 조화를 이루는 과정 속에서<br />
@@ -787,7 +802,7 @@ export default function HomePage() {
             </strong>
           </div>
           <p style={{ textAlign: "center", fontSize: 17, color: "#555", lineHeight: 1.7, marginBottom: 60 }}>
-            HumanMakeHub는 사람 중심의 협업과 기술을 바탕으로<br />
+            휴먼메이크허브는 사람 중심의 협업과 기술을 바탕으로<br />
             창의적인 프로젝트를 실현하는 IT 전문 회사입니다.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "center" }}>
@@ -841,7 +856,7 @@ export default function HomePage() {
       <section className="contact_wrap" id="contactSection" style={{ backgroundColor: "#ffb300", padding: "96px 0", display: "column", justifyContent: "center", alignItems: "center" }}>
         <div className="contact_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
           <h3 style={{ fontSize: isMobile ? 20 : 24, color: "#1976d2", fontWeight: 600 }}>CONTACT</h3>
-            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold" }}>HumanMakeHub에 문의하기</strong>
+            <strong style={{ fontSize: 30, color: "#111", fontWeight: "bold" }}>휴먼메이크허브에 문의하기</strong>
         </div>
         <form id="askSend">
           <Box

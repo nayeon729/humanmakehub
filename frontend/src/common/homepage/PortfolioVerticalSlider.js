@@ -53,7 +53,7 @@ export default function HomePage() {
                 <div className="portfolio_title_wrap" style={{ textAlign: "center", marginBottom: 40 }}>
                     <h3 style={{ fontSize: 24, color: "#1976d2" }}>PORTFOLIO</h3>
                     <strong style={{ fontSize: 32, color: "#111", fontWeight: "bold" }}>
-                        HumanMakeHub 포트폴리오 사례
+                        포트폴리오 사례
                     </strong>
                 </div>
                 <div style={{

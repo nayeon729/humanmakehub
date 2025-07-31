@@ -56,8 +56,8 @@ export default function Combo ({ groupId, onSelectionChange, defaultValue = "", 
     if (groupId === "USER_GRADE") return "등급";
     if (groupId === "USER_ROLE") return "역할";
     if (groupId === "NOTICE_TYPE") return "분류";
-    if (groupId === "PROJECT_TYPE") return "프로젝트 카테고리"
-    if (groupId === "URGENCY_LEVEL") return "긴급도"
+    if (groupId === "PROJECT_TYPE") return "프로젝트 카테고리*"
+    if (groupId === "URGENCY_LEVEL") return "긴급도*"
     return "선택하세요";
   };
 
