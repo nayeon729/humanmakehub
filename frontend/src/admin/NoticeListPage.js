@@ -132,7 +132,7 @@ export default function AdminNoticeListPage() {
                                     <TableCell sx={{ textAlign: 'center' }}>
                                         <Chip p={0} label={noticeTypeMap[notice.target_type]} color="primary" sx={{ width: isMobile ? '43px' : '65px', fontSize: isMobile ? '10px' : '12px' }} />
                                     </TableCell>
-                                    <TableCell sx={{ textAlign: 'center',  whiteSpace: 'pre-wrap' }} >{notice.title}</TableCell>
+                                    <TableCell sx={{ textAlign: 'center',  whiteSpace: 'pre-wrap',wordBreak: 'break-word',  }} >{notice.title}</TableCell>
                                     <TableCell sx={{ textAlign: 'center', width: '140px' }}>{notice.create_dt.slice(0, 10)}</TableCell>
                                 </TableRow>
                             );
